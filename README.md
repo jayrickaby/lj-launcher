@@ -7,7 +7,7 @@ This is an accurate-as-possible recreation of Mojang's Classic Minecraft Launche
 I made this in order to understand the fundamentals of how a minecraft launcher works. It taught me how to use dedicated libraries to interact with APIs that provide user authentication, game validity checking and updating attributes. It also required me to create a Microsoft Entra Application, along with applying for access to the Mojang API. It also helped me work with applications that contain different screens, i.e. login screen, main menu, etc. This project incorporates the fundamentals that I learnt from another project, [Run-7](https://github.com/jayrickaby/run-7), to create something that is bigger.
 
 ## Features
-- ~~Microsoft Authentication~~ (TODO)
+- Microsoft Authentication
 - ~~Player Customisation~~ (TODO)
 - ~~Version Configurations, Downloading and Launching~~ (TODO)
 
