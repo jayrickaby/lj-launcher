@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v0.2.0 (2026-07-18)
+
+### Features
+
+- **window**: Add barebones main launcher screen, with fully recreated mcupdate site
+  ([`0f51acf`](https://github.com/jayrickaby/lj-launcher/commit/0f51acf80da071a2a3ce6061a4ad2af2eaf24d1f))
+
+
 ## v0.1.0 (2026-07-16)
 
 ### Features
