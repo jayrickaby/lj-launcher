@@ -1,0 +1,4 @@
+{
+    "title": "Minecraft 1.15.1 Released",
+    "body": "<p>Today we are releasing 1.15.1, a release that addresses some stability and performance issues in 1.15.</p><p>Changes in 1.15.1:</p><p>* Optimized chunk rendering performance, especially for chunks with many different block states<br>* Fixed an error spammed to the game's log files caused by custom spawner blocks spawning villagers<br>* Improved network handling of invalid Biome ids<br>* Fixed a crash in the Realms screen<br>* Fixed bugs<br>- Removed Herobrine</p>"
+}

@@ -1,0 +1,4 @@
+{
+    "title": "Minecraft 1.12.1 Released",
+    "body": "<p>We're all working very hard on 1.13, which will be a technical update to make the game run better than ever & easier for us to add super cool things later. But for now, we decided to create a small bugfix release for a multiplayer security issue in 1.12.</p><p>Changes in 1.12.1</p><p>* Made some optimisations<br>* Updated game credits (Click on the copyright info on the title screen!)<br>* Fixed bug MC-86016 - Some Mojang staff not mentioned in credits.txt<br>* Fixed private bug MC-119011 - Security issue with recipe book</p>"
+}

@@ -1,0 +1,4 @@
+{
+    "title": "Minecraft 1.13.2 Released",
+    "body": "<p>Got the Monday blues? Don't worry! Today we're releasing 1.13.2, a small release to address a few performance issues and upgrade issues left over from 1.13.1.</p><p>We hope this got you covered until Wednesday when we'll release the first snapshot of 1.14: The Village & Pillage Update!</p><p>Changes in 1.13.2:</p><p>* Improved performance of upgrading worlds<br>* Improved startup time<br>* Improved performance of turtle pathfinding<br>* Improved mob spawning performance<br>* General other performance improvements<br>* Fixed bugs</p>"
+}

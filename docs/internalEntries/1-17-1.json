@@ -1,0 +1,4 @@
+{
+    "title": "Minecraft 1.17.1 Released",
+    "body": "<p>We’re now releasing Minecraft: Java Edition 1.17.1. This release changes some behaviours of the features added in Caves & Cliffs: Part I, and it also fixes a few bugs and critical issues.</p><p>Changes in 1.17.1:</p><p>* Blue axolotls can now only be obtained through breeding<br>* Non-screaming goats now have a rare chance to produce a screaming goat when bred<br>* Status effects on goats now also apply when the goat is jumping or ramming<br>* Raised the drop rate for copper ingots from Drowned to 11% + 2% per level of looting<br>* Powder snow now fills cauldrons 2 times faster than before (still pretty slowly, though!)<br>* Zombies, Zombie Villagers, Husks and Drowned will no longer pick up glow ink sacs<br>* Bugs fixed<br>* Various technical changes</p>"
+}

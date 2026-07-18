@@ -27,7 +27,7 @@ class Auth(QObject):
 
     @Property(QUrl, constant=True)
     def loginUrl(self):
-        return(self.__loginUrl)
+        return self.__loginUrl
 
     @Slot(QUrl, result=bool)
     def isUrlLocalHost(self, url):
