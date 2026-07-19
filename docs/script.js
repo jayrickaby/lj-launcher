@@ -68,7 +68,7 @@ const internalEntries = [
     "1-12.json"                         // 7/6/17
 ];
 
-// Prefer Posts over Pages
+// To prefer Posts to Pages
 const CURRENT_VIEWMODE = GLOBAL_POST_CURRENT > -1 ? ViewMode.Posts : ViewMode.Pages;
 
 const GLOBAL_FETCH_LIMIT = 10;
@@ -241,7 +241,7 @@ function createFooter() {
 }
 
 if (CURRENT_VIEWMODE === ViewMode.Posts) {
-    // Get solo'd post
+    // Get soloed post
     if (GLOBAL_POST_CURRENT > INTERNAL_POST_TOTAL) {
         fetchFromTumblr(1, GLOBAL_POST_CURRENT - INTERNAL_POST_TOTAL - 1).then(r => createFooter());
     }

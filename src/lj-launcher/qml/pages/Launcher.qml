@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtWebEngine
 
-import jayrickaby.lj_launcher.auth 1.0
+import jayrickaby.lj_launcher.authentication 1.0
 import jayrickaby.lj_launcher.application 1.0
 
 import "./template"
@@ -50,7 +50,7 @@ LauncherPage {
                     url: Qt.resolvedUrl("https://jayrickaby.github.io/lj-launcher/")
 
                     onJavaScriptConsoleMessage: function(level, message, lineNumber, sourceID) {
-                        console.log("[Web Console]: " + message)
+                        console.log("[Web Console]: " + message);
                     }
                 }
             }
@@ -88,7 +88,7 @@ LauncherPage {
 
                     // Combobox
                     RowLayout {
-                       Text { text: qsTr("Profile:")}
+                       Text { text: qsTr("Profile:") }
                        ComboBox {
                            Layout.preferredWidth: 137
                            Layout.preferredHeight: 20

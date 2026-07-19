@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 
 import jayrickaby.lj_launcher.application 1.0
-import jayrickaby.lj_launcher.auth 1.0
+import jayrickaby.lj_launcher.authentication 1.0
 
 import "./pages"
 
@@ -12,17 +12,16 @@ ApplicationWindow {
     width: 886
     height: 544
 
-    title: Application.defaultTitle
+    title: Application.default_title
 
     visible: true
 
         Connections {
-        target: Auth
+        target: Authentication
 
         function onAuthenticated(status) {
-            print(status)
             if (status) {
-                pageLoader.source = "./pages/Launcher.qml"
+                pageLoader.source = "./pages/Launcher.qml";
             }
         }
     }
@@ -35,6 +34,6 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        Auth.tryStoredRefresh()
+        Authentication.try_stored_refresh();
     }
 }

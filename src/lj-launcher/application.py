@@ -1,6 +1,6 @@
+from pathlib import Path
 from PySide6.QtCore import QObject, Property, QUrl
 from PySide6.QtQml import QmlElement
-from pathlib import Path
 
 QML_IMPORT_NAME = "jayrickaby.lj_launcher.application"
 QML_IMPORT_MAJOR_VERSION = 1
@@ -13,27 +13,36 @@ APP_NAME = "LJ-Launcher"
 class Application(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.__parentPath = Path(__file__).parent
-        self.__defaultTitle = "LJ Launcher"
+        self._default_title = "LJ Launcher"
+        self._parent_path = Path(__file__).parent
 
     @Property(str, constant=True)
-    def defaultIcon(self):
-        return str(self.__parentPath / "qml" / "assets" / "icons" / "icon.png")
+    def default_icon(self):
+        path = self._parent_path / "qml" / "assets" / "icons" / "icon.png"
 
-    @Property(QUrl, constant=True)
-    def parentPath(self):
-        return QUrl.fromLocalFile(self.__parentPath)
-
-    @Property(QUrl, constant=True)
-    def projectRootFolder(self):
-        return QUrl.fromLocalFile((self.__parentPath.parent.parent.absolute()))
-
-    @Property(QUrl, constant=True)
-    def externalFolder(self):
-        return QUrl.fromLocalFile(str(self.__parentPath.parent.parent.absolute() / "external"))
+        return str(path)
 
     @Property(str, constant=True)
-    def defaultTitle(self):
-        return self.__defaultTitle
+    def default_title(self):
+        return self._default_title
+
+    @Property(QUrl, constant=True)
+    def external_folder(self):
+        path = self._parent_path.parent.parent.absolute() / "external"
+
+        return QUrl.fromLocalFile(str(path))
+
+    @Property(QUrl, constant=True)
+    def parent_path(self):
+        path = self._parent_path.absolute()
+
+        return QUrl.fromLocalFile(path)
+
+    @Property(QUrl, constant=True)
+    def project_root_folder(self):
+        path = self._parent_path.parent.parent.absolute()
+
+        return QUrl.fromLocalFile(path)
+
 
 application = Application()
