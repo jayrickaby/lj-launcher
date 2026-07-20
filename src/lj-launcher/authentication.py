@@ -4,13 +4,9 @@ from PySide6.QtQml import QmlElement
 
 from settings import settings
 
-QML_IMPORT_NAME = "jayrickaby.lj_launcher.authentication"
-QML_IMPORT_MAJOR_VERSION = 1
-
 CLIENT_ID = "478514ce-2d7e-4e71-9301-29eb2241e2d6"
 REDIRECT_URI = "http://localhost"
 
-@QmlElement
 class Authentication(QObject):
 
     authenticated = Signal(bool)
@@ -81,7 +77,7 @@ class Authentication(QObject):
             self.authenticated.emit(False)
             return False
 
-        self._save_auth_data(self._result)
+        self._save_auth_data(result)
         self.authenticated.emit(True)
         return True
 

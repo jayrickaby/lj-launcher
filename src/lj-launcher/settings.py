@@ -1,12 +1,7 @@
-from PySide6.QtCore import QObject, Property, Slot, QUrl, QSettings
-from PySide6.QtQml import QmlElement
+from PySide6.QtCore import Property, Slot, QObject, QSettings
 
-from application import application, ORG_NAME, APP_NAME
+from application import APP_NAME, ORG_NAME
 
-QML_IMPORT_NAME = "jayrickaby.lj_launcher.settings"
-QML_IMPORT_MAJOR_VERSION = 1
-
-@QmlElement
 class Settings(QObject):
     def __init__(self, parent=None):
         super().__init__(parent)

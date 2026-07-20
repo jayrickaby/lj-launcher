@@ -86,3 +86,9 @@ insecure = false
 [tool.semantic_release.publish]
 dist_glob_patterns = ["dist/*"]
 upload_to_vcs_release = true
+
+[dependency-groups]
+dev = [
+    "nuitka>=4.1.3",
+    "patchelf>=0.17.2.4",
+]
