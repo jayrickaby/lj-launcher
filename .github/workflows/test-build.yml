@@ -20,7 +20,9 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./build.sh
+        run: |
+          chmod +x build.sh
+          ./build.sh
 
       - name: Upload artifact (not release attach — just inspect)
         uses: actions/upload-artifact@v4
