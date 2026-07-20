@@ -1,0 +1,31 @@
+name: Test Build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v3
+      - run: uv sync --frozen
+
+      - name: Build
+        shell: bash
+        run: ./build.sh
+
+      - name: Upload artifact (not release attach — just inspect)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ runner.os }}-build
+          path: |
+            dist/lj-launcher
+            dist/lj-launcher.exe
