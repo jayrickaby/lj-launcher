@@ -11,6 +11,7 @@ uv run python -m nuitka src/lj-launcher/main.py \
   --include-package-data=minecraft_launcher_lib \
   --noinclude-dlls=*assetdownloader* \
   --include-qt-plugins=qml \
-  --noinclude-qt-translations
+  --noinclude-qt-translations \
+  --assume-yes-for-downloads
 
 rm -rf dist/main.build dist/main.dist dist/main.onefile-build
