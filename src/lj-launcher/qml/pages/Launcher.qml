@@ -11,6 +11,15 @@ import "./template"
 LauncherPage {
     id: control
 
+    Connections {
+        target: Authentication
+
+        function onAuthenticated() {
+            playButton.text = qsTr("Play");
+            playButton.enabled = true;
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
 
@@ -104,24 +113,26 @@ LauncherPage {
                             Layout.preferredWidth: 85
                             Layout.preferredHeight: 21
 
-                            text: "New Profile"
+                            text: qsTr("New Profile")
                         }
                         Button {
                             Layout.preferredWidth: 85
                             Layout.preferredHeight: 21
 
-                            text: "Edit Profile"
+                            text: qsTr("Edit Profile")
                         }
                     }
                 }
 
                 // Play
                 Button {
+                    id: playButton
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillHeight: true
                     Layout.preferredWidth: 290
 
-                    text: "Play"
+                    text: qsTr("Loading")
+                    enabled: false
                 }
 
                 // User
@@ -136,7 +147,7 @@ LauncherPage {
                         Layout.topMargin: -4
 
                         horizontalAlignment: Text.AlignHCenter
-                        text: "Welcome, guest! Please log in.\nReady to download & play Minecraft 26.2"
+                        text: qsTr("Welcome, guest! Please log in.\nReady to download & play Minecraft 26.2")
                     }
 
                     Button {
@@ -144,7 +155,7 @@ LauncherPage {
                         Layout.preferredWidth: 87
                         Layout.preferredHeight: 21
 
-                        text: "Switch User"
+                        text: qsTr("Switch User")
                     }
                 }
             }

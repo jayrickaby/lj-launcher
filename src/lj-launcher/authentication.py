@@ -1,6 +1,7 @@
+import threading
+
 import minecraft_launcher_lib
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot, QUrlQuery
-from PySide6.QtQml import QmlElement
 
 from settings import settings
 
@@ -13,7 +14,31 @@ class Authentication(QObject):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+
         self._url, self._state, self._verifier = self._get_login_data()
+
+    def _complete_auth(self, url):
+        try:
+            code = self._get_auth_code(url)
+
+        except AssertionError as e:
+            print(e)
+            print("Could not authenticate user!")
+            self.authenticated.emit(False)
+            return
+
+        try:
+            result = self._get_auth_result(code)
+
+        except Exception as e:
+            print(e)
+            print("Could not authenticate user!")
+            self.authenticated.emit(False)
+            return
+
+        self._save_auth_data(result)
+        print("User successfully authenticated")
+        self.authenticated.emit(True)
 
     def _get_auth_code(self, url):
         code = minecraft_launcher_lib.microsoft_account.parse_auth_code_url(
@@ -55,31 +80,33 @@ class Authentication(QObject):
         if "refresh_token" in result:
             settings.set_refresh_token(result["refresh_token"])
 
+    def _try_stored_refresh(self):
+        if settings.refresh_token is None:
+            print("Could not authenticate user!")
+            self.authenticated.emit(False)
+            return
+
+        try:
+            result = self._get_refresh()
+
+        except minecraft_launcher_lib.exceptions.InvalidRefreshToken:
+            settings.clear_refresh_token()
+            print("Could not authenticate user!")
+            self.authenticated.emit(False)
+            return
+
+        self._save_auth_data(result)
+        print("User successfully authenticated")
+        self.authenticated.emit(True)
+
     @Property(QUrl, constant=True)
     def login_url(self):
         return self._url
 
-    @Slot(QUrl, result=bool)
+    @Slot(QUrl)
     def complete_auth(self, url):
-        try:
-            code = self._get_auth_code(url)
-
-        except AssertionError:
-            print("Assertion Error!")
-            self.authenticated.emit(False)
-            return False
-
-        try:
-            result = self._get_auth_result(code)
-
-        except Exception as e:
-            print(e)
-            self.authenticated.emit(False)
-            return False
-
-        self._save_auth_data(result)
-        self.authenticated.emit(True)
-        return True
+        thread = threading.Thread(target=self._complete_auth, args=(url,))
+        thread.start()
 
     @Slot(QUrl, result=bool)
     def is_url_localhost(self, url):
@@ -96,23 +123,9 @@ class Authentication(QObject):
 
         return data
 
-    @Slot(result=bool)
+    @Slot()
     def try_stored_refresh(self):
-        if settings.refresh_token is None:
-            self.authenticated.emit(False)
-            return False
-
-        try:
-            result = self._get_refresh()
-
-        except minecraft_launcher_lib.exceptions.InvalidRefreshToken:
-            settings.clear_refresh_token()
-            self.authenticated.emit(False)
-            return False
-
-        self._save_auth_data(result)
-        self.authenticated.emit(True)
-        return True
-
+        thread = threading.Thread(target=self._try_stored_refresh)
+        thread.start()
 
 authentication = Authentication()

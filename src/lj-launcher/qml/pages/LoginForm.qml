@@ -11,6 +11,15 @@ import "./template"
 LauncherPage {
     id: control
 
+    Connections {
+        target: Authentication
+
+        function onAuthenticated() {
+            loginButton.text = qsTr("Log in via Microsoft");
+            loginButton.enabled = true;
+        }
+    }
+
     Rectangle {
         anchors.centerIn: parent
 
@@ -115,8 +124,8 @@ LauncherPage {
 
     function clearErrorMessage() {
         errorMessage.visible = false;
-        errorMessageFriendly.text = "";
-        errorMessageNerd.text = "";
+        errorMessageFriendly.text = qsTr("");
+        errorMessageNerd.text = qsTr("");
     }
 
     function handleNewUrl(url) {
@@ -138,6 +147,9 @@ LauncherPage {
             return;
         }
 
+        loginButton.enabled = false;
+        loginButton.text = qsTr("Loading");
+
         Authentication.complete_auth(url);
     }
 
@@ -149,25 +161,26 @@ LauncherPage {
         switch (nerdError) {
             // https://datatracker.ietf.org/doc/html/rfc6749
             case "access_denied":
-                message = "Sorry, but authentication was denied!\nPlease try again."
+                message = "Sorry, but authentication was denied!\nPlease try again.";
                 break;
             case "server_error":
             case "temporarily_unavailable":
-                message = "Sorry, but something broke on Microsoft's end!\nPlease try again."
+                message = "Sorry, but something broke on Microsoft's end!\nPlease try again.";
                 break;
 
             // Custom
             case "UnknownHostException":
-                message = "Sorry, but we couldn't connect to the servers.\nPlease make sure that you are online and that Minecraft is not blocked."
+                message = "Sorry, but we couldn't connect to the servers.\nPlease make sure that you are online and
+                 that Minecraft is not blocked.";
                 break;
 
             default:
-                message = "Sorry, but something with the backend went wrong!\nPlease contact Jay."
+                message = "Sorry, but something with the backend went wrong!\nPlease contact Jay.";
                 break;
         }
 
-        errorMessageFriendly.text = message;
-        errorMessageNerd.text = `( ${nerdError}: ${nerdDescription} )`;
+        errorMessageFriendly.text = qsTr(message);
+        errorMessageNerd.text = qsTr(`( ${nerdError}: ${nerdDescription} )`);
     }
 
     background: Image {
