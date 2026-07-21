@@ -10,6 +10,7 @@ uv run python -m nuitka src/lj-launcher/main.py \
   --include-data-dir=src/lj-launcher/qml=qml \
   --include-package-data=minecraft_launcher_lib \
   --noinclude-dlls=*assetdownloader* \
+  --noinclude-qt-plugins=multimedia,pdf,designer \
   --include-qt-plugins=qml \
   --noinclude-qt-translations \
   --assume-yes-for-downloads
