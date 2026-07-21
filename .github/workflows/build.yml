@@ -1,7 +1,8 @@
-name: Test Build
+name: Build
 
 on:
-  workflow_dispatch:
+  release:
+    types: [published]
 
 permissions:
   contents: write
@@ -15,20 +16,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
-
+        with:
+          ref: ${{ github.event.release.tag_name }}
       - uses: astral-sh/setup-uv@v3
       - run: uv sync --frozen
-
       - name: Build
         shell: bash
         run: |
           chmod +x build.sh
           ./build.sh
-
-      - name: Upload artifact (not release attach — just inspect)
-        uses: actions/upload-artifact@v4
+      - name: Attach to release
+        uses: softprops/action-gh-release@v2
         with:
-          name: ${{ runner.os }}-build
-          path: |
+          tag_name: ${{ github.event.release.tag_name }}
+          files: |
             dist/lj-launcher
             dist/lj-launcher.exe
