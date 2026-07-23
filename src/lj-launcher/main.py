@@ -7,6 +7,8 @@ from PySide6.QtWebEngineQuick import QtWebEngineQuick
 
 from application import application, ORG_NAME, ORG_DOMAIN, APP_NAME
 from authentication import authentication
+from downloader import downloader
+from launcher import launcher
 
 if __name__ == "__main__":
     QtWebEngineQuick.initialize()
@@ -30,6 +32,18 @@ if __name__ == "__main__":
         type(authentication), "jayrickaby.lj_launcher.authentication",
         1, 0,
         "Authentication", authentication
+    )
+
+    qmlRegisterSingletonInstance(
+        type(authentication), "jayrickaby.lj_launcher.downloader",
+        1, 0,
+        "Downloader", downloader
+    )
+
+    qmlRegisterSingletonInstance(
+        type(launcher), "jayrickaby.lj_launcher.launcher",
+        1, 0,
+        "Launcher", launcher
     )
 
     engine = QQmlApplicationEngine()

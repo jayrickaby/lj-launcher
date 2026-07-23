@@ -11,15 +11,6 @@ import "./template"
 LauncherPage {
     id: control
 
-    Connections {
-        target: Authentication
-
-        function onAuthenticated() {
-            loginButton.text = qsTr("Log in via Microsoft");
-            loginButton.enabled = true;
-        }
-    }
-
     Rectangle {
         anchors.centerIn: parent
 
@@ -80,7 +71,8 @@ LauncherPage {
                 Layout.preferredHeight: 21
                 Layout.fillWidth: true
 
-                text: "Log in via Microsoft"
+                text: Authentication.authenticated ? "Log in via Microsoft" : "Loading"
+                enabled: Authentication.authenticated
 
                 onClicked: {
                     clearErrorMessage();

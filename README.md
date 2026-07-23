@@ -9,9 +9,11 @@ I made this in order to understand the fundamentals of how a minecraft launcher 
 ## Features
 - Microsoft Authentication
 - A full recreation of the MCUpdate Tumblr Blog
+- Version Configurations, Downloading and Launching
+- ~~Profile Creation, Editing and Deletion~~ (TODO)
 - ~~A full recreation of all aspects of the original launcher~~ (TODO)
 - ~~Player Customisation~~ (TODO)
-- ~~Version Configurations, Downloading and Launching~~ (TODO)
 
 ## Gallery
 <img src="docs/assets/gallery/login.png" width=50% alt="login">
+<img src="docs/assets/gallery/launcher.png" width=50% alt="launcher">

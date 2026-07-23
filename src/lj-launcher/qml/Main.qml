@@ -16,24 +16,11 @@ ApplicationWindow {
 
     visible: true
 
-    Connections {
-        target: Authentication
-
-        function onAuthenticated(authenticated) {
-            if (authenticated) {
-                pageLoader.source = "./pages/Launcher.qml";
-                return;
-            }
-
-            pageLoader.source = "./pages/LoginForm.qml";
-        }
-    }
-
     Loader {
         id: pageLoader
         anchors.fill: parent
 
-        source: "./pages/Launcher.qml"
+        source: Authentication.authenticated || Authentication.has_stored_refresh ? "./pages/Launcher.qml" : "./pages/LoginForm.qml"
     }
 
     Component.onCompleted: {

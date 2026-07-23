@@ -5,24 +5,18 @@ import QtWebEngine
 
 import jayrickaby.lj_launcher.authentication 1.0
 import jayrickaby.lj_launcher.application 1.0
+import jayrickaby.lj_launcher.downloader 1.0
+import jayrickaby.lj_launcher.launcher 1.0
 
 import "./template"
 
 LauncherPage {
     id: control
 
-    Connections {
-        target: Authentication
-
-        function onAuthenticated() {
-            playButton.text = qsTr("Play");
-            playButton.enabled = true;
-        }
-    }
-
     ColumnLayout {
         anchors.fill: parent
 
+        // Tabs
         TabBar {
             id: bar
 
@@ -43,6 +37,7 @@ LauncherPage {
             }
         }
 
+        // Site
         StackLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -75,6 +70,27 @@ LauncherPage {
             }
         }
 
+        // Progress Bar
+        ProgressBar {
+            z: 0
+            Layout.fillWidth: true
+            Layout.preferredHeight: 16
+
+            visible: Downloader.downloading
+
+            value: Downloader.download_progress
+            to: Downloader.download_progress_max
+
+            Text {
+                z: 1
+                anchors.fill: parent
+                horizontalAlignment: Text.AlignHCenter
+
+                text: Downloader.download_status
+            }
+        }
+
+        // Command Bar
         Rectangle {
             Layout.fillWidth: true
             Layout.preferredHeight: 60
@@ -88,6 +104,7 @@ LauncherPage {
                 anchors.topMargin: 5
                 anchors.rightMargin: 4
                 anchors.bottomMargin: 5
+                uniformCellSizes: true
 
                 // Profile
                 ColumnLayout {
@@ -101,6 +118,12 @@ LauncherPage {
                        ComboBox {
                            Layout.preferredWidth: 137
                            Layout.preferredHeight: 20
+
+                           model: Launcher.profile_names
+
+                           onCurrentIndexChanged: {
+                               Launcher.current_profile = currentIndex;
+                           }
                        }
                     }
 
@@ -131,8 +154,29 @@ LauncherPage {
                     Layout.fillHeight: true
                     Layout.preferredWidth: 290
 
-                    text: qsTr("Loading")
-                    enabled: false
+                    font.bold: true
+
+                    property bool preparing: false
+
+                    text: {
+                        if (!Authentication.authenticated) return qsTr("Loading...");
+                        if (Downloader.downloading) return qsTr("Downloading...");
+                        if (preparing) return qsTr("Preparing...");
+
+                        return qsTr("Play");
+                    }
+
+                    enabled: {
+                        if (!Authentication.authenticated) return false;
+                        if (preparing) return false;
+
+                        return true;
+                    }
+
+                    onClicked: {
+                        preparing = true;
+                        Launcher.play();
+                    }
                 }
 
                 // User
@@ -147,7 +191,7 @@ LauncherPage {
                         Layout.topMargin: -4
 
                         horizontalAlignment: Text.AlignHCenter
-                        text: qsTr("Welcome, guest! Please log in.\nReady to download & play Minecraft 26.2")
+                        text: qsTr(Launcher.user_message)
                     }
 
                     Button {
