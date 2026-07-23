@@ -2,6 +2,17 @@
 
 <!-- version list -->
 
+## v0.4.0 (2026-07-23)
+
+### Features
+
+- **backend**: Add ability to launch minecraft
+  ([`a93f40a`](https://github.com/jayrickaby/lj-launcher/commit/a93f40a1d0ba2416602102699c84523f5249b71e))
+
+- **window**: Add threading, loading and adjust various ui things
+  ([`01e3f3b`](https://github.com/jayrickaby/lj-launcher/commit/01e3f3b3504612345abbb23d7216c1fb0d395ff9))
+
+
 ## v0.3.0 (2026-07-21)
 
 ### Bug Fixes
