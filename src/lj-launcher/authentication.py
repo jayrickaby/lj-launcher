@@ -1,5 +1,6 @@
 import threading
 
+import mc_launcher_utils as mc
 import minecraft_launcher_lib
 import requests
 from PySide6.QtCore import Property, QObject, QUrl, Signal, Slot, QUrlQuery
@@ -27,8 +28,7 @@ class Authentication(QObject):
             code = self._get_auth_code(url)
 
         except AssertionError as e:
-            print(e)
-            print("Could not authenticate user!")
+            print(f"Could not authenticate user!: {e}")
             self._set_authenticated(False)
             return
 
@@ -36,8 +36,7 @@ class Authentication(QObject):
             result = self._get_auth_result(code)
 
         except Exception as e:
-            print(e)
-            print("Could not authenticate user!")
+            print(f"Could not authenticate user!: {e}")
             self._set_authenticated(False)
             return
 
@@ -53,6 +52,10 @@ class Authentication(QObject):
         return code
 
     def _get_auth_result(self, code):
+        # mc.authentication.set_client_id(CLIENT_ID)
+        # mc.authentication.set_redirect_uri(REDIRECT_URI)
+        # mc.authentication.generate_login()
+
         result = minecraft_launcher_lib.microsoft_account.complete_login(
             client_id=CLIENT_ID,
             client_secret=None,
@@ -78,7 +81,7 @@ class Authentication(QObject):
                         client_id=CLIENT_ID,
                         client_secret=None,
                         redirect_uri=REDIRECT_URI,
-                        refresh_token=settings.refresh_token
+                        refresh_token=settings.get_refresh_token()
                 )
             except requests.exceptions.ConnectionError as e:
                 print(e)
@@ -110,17 +113,17 @@ class Authentication(QObject):
         self.authenticatedChanged.emit()
 
     def _try_stored_refresh(self):
-        if not self.has_stored_refresh:
-            print("Could not authenticate user!")
+        if not self.has_stored_refresh():
+            print("Could not authenticate user!: No stored refresh.")
             self._set_authenticated(False)
             return
 
         try:
             result = self._get_refresh()
 
-        except minecraft_launcher_lib.exceptions.InvalidRefreshToken:
+        except minecraft_launcher_lib.exceptions.InvalidRefreshToken as e:
             settings.clear_refresh_token()
-            print("Could not authenticate user!")
+            print(f"Could not authenticate user!: {e}. Invalid refresh token.")
             self._set_authenticated(False)
             return
 
@@ -185,6 +188,6 @@ class Authentication(QObject):
 
     @Slot(result=bool)
     def has_stored_refresh(self):
-       return settings.refresh_token is not None
+        return False if settings.get_refresh_token() is None else True
 
 authentication = Authentication()

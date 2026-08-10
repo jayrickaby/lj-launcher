@@ -9,6 +9,7 @@ from application import application, ORG_NAME, ORG_DOMAIN, APP_NAME
 from authentication import authentication
 from downloader import downloader
 from launcher import launcher
+from profiles import profiles
 
 if __name__ == "__main__":
     QtWebEngineQuick.initialize()
@@ -46,9 +47,14 @@ if __name__ == "__main__":
         "Launcher", launcher
     )
 
+    qmlRegisterSingletonInstance(
+        type(profiles), "jayrickaby.lj_launcher.profiles",
+        1, 0,
+        "Profiles", profiles
+    )
     engine = QQmlApplicationEngine()
     engine.addImportPath(application.parent_path.toLocalFile())
-    engine.loadFromModule("qml", "Main")
+    engine.loadFromModule("Launcher", "Main")
 
     if not engine.rootObjects():
         sys.exit(-1)

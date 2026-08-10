@@ -20,7 +20,7 @@ class Application(QObject):
 
     @Property(str, constant=True)
     def default_icon(self):
-        path = self._parent_path / "qml" / "assets" / "icons" / "icon.png"
+        path = self._parent_path / "Launcher" / "assets" / "icons" / "icon.png"
 
         return str(path)
 

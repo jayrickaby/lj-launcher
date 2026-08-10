@@ -7,11 +7,25 @@ import jayrickaby.lj_launcher.authentication 1.0
 import jayrickaby.lj_launcher.application 1.0
 import jayrickaby.lj_launcher.downloader 1.0
 import jayrickaby.lj_launcher.launcher 1.0
+import jayrickaby.lj_launcher.profiles 1.0
 
 import "./template"
 
 LauncherPage {
     id: control
+
+    Loader {
+        id: profileEditorLoader
+        source: "./ProfileEditor.qml"
+        active: false
+
+        onLoaded: {
+            item.show();
+            item.closing.connect(function() {
+                profileEditorLoader.active = false;
+            });
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -37,12 +51,13 @@ LauncherPage {
             }
         }
 
-        // Site
         StackLayout {
             Layout.fillWidth: true
             Layout.fillHeight: true
             currentIndex: bar.currentIndex
 
+
+            // Update Notes
             ScrollView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -53,20 +68,27 @@ LauncherPage {
 
                     url: Qt.resolvedUrl("https://jayrickaby.github.io/lj-launcher/")
 
+                    // TODO: Remove from main branch
                     onJavaScriptConsoleMessage: function(level, message, lineNumber, sourceID) {
                         console.log("[Web Console]: " + message);
                     }
                 }
             }
+
+            // Launcher Log
             Rectangle {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 color: "blue"
             }
-            Rectangle {
+
+            // Profile Editor
+            ProfileEditorPage {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                color: "green"
+
+                columnWidths: [0.5, 0.5]
+                model: Profiles.model
             }
         }
 
@@ -119,10 +141,25 @@ LauncherPage {
                            Layout.preferredWidth: 137
                            Layout.preferredHeight: 20
 
-                           model: Launcher.profile_names
+                           valueRole: "id"
+                           textRole: "name"
 
-                           onCurrentIndexChanged: {
-                               Launcher.current_profile = currentIndex;
+                           model: Authentication.authenticated ? Profiles.profile_list : [{ "name": "Loading
+                            profiles...", "id": "" }]
+                           enabled: Authentication.authenticated
+
+                           currentIndex: {
+                               if (!Authentication.authenticated) return 0;
+
+                               var list = Profiles.profile_list;
+                               for (var i = 0; i < list.length; i++) {
+                                   if (list[i].id === Profiles.current_id) return i;
+                               }
+                               return -1;
+                           }
+
+                           onActivated: {
+                               Profiles.current_profile = currentValue;
                            }
                        }
                     }
@@ -137,12 +174,22 @@ LauncherPage {
                             Layout.preferredHeight: 21
 
                             text: qsTr("New Profile")
+
+                            onClicked: {
+                                Profiles.set_mode("new");
+                                profileEditorLoader.active = true;
+                            }
                         }
                         Button {
                             Layout.preferredWidth: 85
                             Layout.preferredHeight: 21
 
                             text: qsTr("Edit Profile")
+
+                            onClicked: {
+                                Profiles.set_mode("edit");
+                                profileEditorLoader.active = true;
+                            }
                         }
                     }
                 }
@@ -204,5 +251,9 @@ LauncherPage {
                 }
             }
         }
+    }
+
+    ProfileEditor {
+        id: profileEditor
     }
 }

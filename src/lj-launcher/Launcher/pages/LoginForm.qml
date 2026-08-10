@@ -33,7 +33,7 @@ LauncherPage {
 
             Image {
                 Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-                source: Qt.resolvedUrl(Application.parent_path + "/qml/assets/minecraft_logo.png")
+                source: Qt.resolvedUrl(Application.parent_path + "/Launcher/assets/minecraft_logo.png")
             }
 
             ColumnLayout {
@@ -71,8 +71,8 @@ LauncherPage {
                 Layout.preferredHeight: 21
                 Layout.fillWidth: true
 
-                text: Authentication.authenticated ? "Log in via Microsoft" : "Loading"
-                enabled: Authentication.authenticated
+                text: Authentication.authenticated ?  "Loading" : "Log in via Microsoft"
+                enabled: !Authentication.authenticated
 
                 onClicked: {
                     clearErrorMessage();
@@ -182,6 +182,6 @@ LauncherPage {
         fillMode: Image.Tile
 
         // fillMode: Image.TileVertically
-        source: Qt.resolvedUrl(Application.parent_path + "/qml/assets/dirt.png")
+        source: Qt.resolvedUrl(Application.parent_path + "/Launcher/assets/dirt.png")
     }
 }

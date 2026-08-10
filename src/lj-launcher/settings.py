@@ -19,6 +19,9 @@ class Settings(QObject):
         )
         self._settings.endGroup()
 
+    def get_refresh_token(self):
+        return self._refreshToken
+
     @Property(str)
     def id(self):
         return self._id
@@ -29,7 +32,7 @@ class Settings(QObject):
 
     @Property(str)
     def refresh_token(self):
-        return self._refreshToken
+        return self.get_refresh_token()
 
     @Slot()
     def clear_refresh_token(self):

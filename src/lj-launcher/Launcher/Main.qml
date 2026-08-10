@@ -9,8 +9,8 @@ import "./pages"
 ApplicationWindow {
     id: root
 
-    width: 886
-    height: 544
+    width: 900
+    height: 580
 
     title: Application.default_title
 
@@ -20,7 +20,7 @@ ApplicationWindow {
         id: pageLoader
         anchors.fill: parent
 
-        source: Authentication.authenticated || Authentication.has_stored_refresh ? "./pages/Launcher.qml" : "./pages/LoginForm.qml"
+        source: Authentication.authenticated || Authentication.has_stored_refresh() ? "./pages/Launcher.qml" : "./pages/LoginForm.qml"
     }
 
     Component.onCompleted: {

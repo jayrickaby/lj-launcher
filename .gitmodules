@@ -1,0 +1,3 @@
+[submodule "mc_launcher_utils"]
+	path = mc_launcher_utils
+	url = git@github.com:jayrickaby/mc-launcher-utils.git

@@ -3,7 +3,9 @@ name = "lj-launcher"
 version = "0.4.0"
 requires-python = ">=3.14"
 dependencies = [
+    "mc-launcher-utils",
     "minecraft-launcher-lib>=8.0",
+    "numpy>=2.5.2",
     "pyside6>=6.11.1",
 ]
 [tool.semantic_release]
@@ -86,6 +88,14 @@ insecure = false
 [tool.semantic_release.publish]
 dist_glob_patterns = ["dist/*"]
 upload_to_vcs_release = true
+
+[tool.uv.workspace]
+members = [
+    "mc_launcher_utils",
+]
+
+[tool.uv.sources]
+mc-launcher-utils = { workspace = true, editable = true }
 
 [dependency-groups]
 dev = [
