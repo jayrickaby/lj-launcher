@@ -1,8 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 
-import jayrickaby.lj_launcher.application 1.0
-import jayrickaby.lj_launcher.authentication 1.0
+import jayrickaby.lj_launcher
 
 import "./pages"
 
@@ -12,7 +11,7 @@ ApplicationWindow {
     width: 900
     height: 580
 
-    title: Application.default_title
+    title: Application.defaultTitle
 
     visible: true
 

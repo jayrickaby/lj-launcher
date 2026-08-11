@@ -10,8 +10,8 @@ qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(lj_launcher
     src/main.cc
-    src/Application.cpp
-    src/Application.h
+        src/Application.cc
+        src/Application.h
 )
 
 qt_add_qml_module(lj_launcher
@@ -30,7 +30,9 @@ qt_add_qml_module(lj_launcher
         assets/icons/icon.png
 )
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
+target_include_directories(lj_launcher PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+        # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
 # explicit, fixed bundle identifier manually though.
 set_target_properties(lj_launcher PROPERTIES

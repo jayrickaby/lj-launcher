@@ -33,7 +33,7 @@ LauncherPage {
 
             Image {
                 Layout.alignment: Qt.AlignTop | Qt.AlignHCenter
-                source: Qt.resolvedUrl(Application.parent_path + "/Launcher/assets/minecraft_logo.png")
+                source: Qt.resolvedUrl(":/qt/qml/assets/minecraft_logo.png")
             }
 
             ColumnLayout {
@@ -182,6 +182,6 @@ LauncherPage {
         fillMode: Image.Tile
 
         // fillMode: Image.TileVertically
-        source: Qt.resolvedUrl(Application.parent_path + "/Launcher/assets/dirt.png")
+        source: Qt.resolvedUrl(":/qt/qml/assets/dirt.png")
     }
 }
