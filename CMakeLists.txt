@@ -10,6 +10,8 @@ qt_standard_project_setup(REQUIRES 6.10)
 
 qt_add_executable(lj_launcher
     src/main.cc
+    src/Application.cpp
+    src/Application.h
 )
 
 qt_add_qml_module(lj_launcher
@@ -23,9 +25,9 @@ qt_add_qml_module(lj_launcher
         qml/pages/template/ProfileCellDelegate.qml
         qml/pages/template/ProfileEditorPage.qml
     RESOURCES
-        qml/assets/dirt.png
-        qml/assets/minecraft_logo.png
-        qml/assets/icons/icon.png
+        assets/dirt.png
+        assets/minecraft_logo.png
+        assets/icons/icon.png
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
