@@ -10,7 +10,6 @@
 #include <QObject>
 #include <QRandomGenerator>
 #include <QtNetwork>
-
 #include <QUrlQuery>
 
 struct PkceData {
@@ -44,6 +43,7 @@ public:
 public slots:
   bool hasRefreshToken();
   bool isUrlLocalhost(const QUrl &url);
+  QVariantMap parseLocalhost(const QUrl &url);
 
 private:
   PkceData generatePkceData() const;
@@ -62,6 +62,7 @@ private:
   PkceData pkce_data_;
   LoginData login_data_;
   UserData user_data_;
+  QString auth_code_;
 
   inline static const QString kClientId{"478514ce-2d7e-4e71-9301-29eb2241e2d6"};
   inline static const QUrl kRedirectUri{"http://localhost"};

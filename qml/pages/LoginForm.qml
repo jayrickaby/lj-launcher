@@ -124,7 +124,7 @@ LauncherPage {
     function handleNewUrl(url) {
         if (!Authentication.isUrlLocalhost(url)) return;
 
-        let params = Authentication.parse_localhost_url(url);
+        let params = Authentication.parseLocalhost(url);
 
         authWindow.visible = false;
 
@@ -133,10 +133,6 @@ LauncherPage {
                 params.error,
                 params.error_description
             );
-            return;
-        }
-
-        if (params.code === undefined) {
             return;
         }
 

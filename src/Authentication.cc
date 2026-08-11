@@ -3,6 +3,9 @@
 //
 
 #include "Authentication.h"
+
+#include <iostream>
+
 #include "Settings.h"
 
 Authentication::Authentication(QObject* parent) :
@@ -101,5 +104,40 @@ QUrl Authentication::getCodeUrl(const QString& state) {
   url.setQuery(query);
 
   return url;
+}
+
+QVariantMap Authentication::parseLocalhost(const QUrl& url) {
+  if (!url.hasQuery()) {
+    throw std::invalid_argument("Localhost URL has no returned data!");
+  }
+
+  QUrlQuery const query {url.query()};
+
+  QVariantMap data;
+  for (const auto & [key, value] : query.queryItems()) {
+    data[key] = value;
+  }
+
+  // Early return to avoid unneccesary checks
+  if (data.contains("error")) {
+    return data;
+  }
+
+  if (!data.contains("code")
+    or data.value("code").typeName() != QString("QString")
+    or data.value("code").toString().isEmpty()) {
+    throw std::invalid_argument("Localhost URL returned invalid code!");
+  }
+  
+  if (!data.contains("state")
+    or data.value("state").typeName() != QString("QString")
+    or data.value("state").toString().isEmpty()) {
+    throw std::invalid_argument("Localhost URL has no returned state!");
+  }
+  if (query.queryItemValue("state") != login_data_.state) {
+    throw std::invalid_argument("Localhost URL state mismatch!");
+  }
+
+  return data;
 }
 
