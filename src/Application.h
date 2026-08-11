@@ -37,4 +37,4 @@ private:
 };
 
 
-#endif //LJ_LAUNCHER_APPLICATION_H
+#endif //LJ_LAUNCHER_APPLICATION_H_
