@@ -44,6 +44,7 @@ public slots:
   bool hasRefreshToken();
   bool isUrlLocalhost(const QUrl &url);
   QVariantMap parseLocalhost(const QUrl &url);
+  void completeAuth(const QString &code);
 
 private:
   PkceData generatePkceData() const;
@@ -54,11 +55,12 @@ private:
 
   void getUserData();
   QString requestRefreshToken(QString old_token);
-  QString requestToken();
+  void requestToken(const QString& code);
   QUrl getCodeUrl(const QString &state);
 
   bool authenticated_ {false};
 
+  QNetworkAccessManager network_manager_;
   PkceData pkce_data_;
   LoginData login_data_;
   UserData user_data_;
@@ -71,6 +73,8 @@ private:
   inline static const QUrl kTokenUrl{"https://login.microsoftonline.com/consumers/oauth2/v2.0/token"};
   inline static const QString kScope{"XboxLive.signin"};
 
+private slots:
+  void onTokenReceived(QNetworkReply *reply);
 };
 
 #endif  // LJ_LAUNCHER_AUTHENTICATION_H_

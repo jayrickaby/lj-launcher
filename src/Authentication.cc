@@ -11,8 +11,10 @@
 Authentication::Authentication(QObject* parent) :
 QObject(parent),
 pkce_data_(generatePkceData()),
-login_data_(getLoginData())
-{}
+login_data_(getLoginData()) {
+  connect(&network_manager_, &QNetworkAccessManager::finished,
+        this, &Authentication::onTokenReceived);
+}
 
 LoginData Authentication::getLoginData() {
   LoginData data;
@@ -82,12 +84,40 @@ QString Authentication::requestRefreshToken(QString old_token) {
   query.addQueryItem("scope", kScope);
   query.addQueryItem("refresh_token", old_token);
 }
-QString Authentication::requestToken() {
+void Authentication::requestToken(const QString& code) {
   QUrl url {kTokenUrl};
+  QNetworkRequest request{url};
+
+  request.setHeader(QNetworkRequest::ContentTypeHeader,
+    "application/x-www-form-urlencoded"
+    );
+
   QUrlQuery query;
   query.addQueryItem("client_id", kClientId);
-  query.addQueryItem("grant_type", "refresh_token");
   query.addQueryItem("scope", kScope);
+  query.addQueryItem("code", code);
+  query.addQueryItem("redirect_uri", kRedirectUri.toString());
+  query.addQueryItem("grant_type", "authorization_code");
+  query.addQueryItem("code_verifier", pkce_data_.code_verifier);
+
+  QByteArray data {query.toString(QUrl::FullyEncoded).toUtf8()};
+
+  network_manager_.post(request, data);
+}
+
+void Authentication::onTokenReceived(QNetworkReply* reply) {
+  reply->deleteLater();
+
+  if (reply->error()) {
+    throw std::runtime_error(reply->errorString().toStdString());
+    return;
+  }
+
+  QJsonDocument json_doc {QJsonDocument::fromJson(reply->readAll())};
+  QJsonObject json {json_doc.object()};
+
+  VariantMap response = json.toVariantMap();
+
 }
 
 QUrl Authentication::getCodeUrl(const QString& state) {
@@ -128,7 +158,7 @@ QVariantMap Authentication::parseLocalhost(const QUrl& url) {
     or data.value("code").toString().isEmpty()) {
     throw std::invalid_argument("Localhost URL returned invalid code!");
   }
-  
+
   if (!data.contains("state")
     or data.value("state").typeName() != QString("QString")
     or data.value("state").toString().isEmpty()) {
@@ -141,3 +171,6 @@ QVariantMap Authentication::parseLocalhost(const QUrl& url) {
   return data;
 }
 
+void Authentication::completeAuth(const QString& code) {
+  requestToken(code);
+}
