@@ -20,13 +20,13 @@ class Settings : public QObject {
 public:
   explicit Settings(QObject *parent = nullptr);
 
-  QString refreshToken() const;
-  static QVariant getRefreshToken();
+  [[nodiscard]] QString refreshToken() const;
+  [[nodiscard]] static QVariant getRefreshToken();
 
-  static void setInstance(QSettings* settings) {settings_ = settings;};
+  static void setInstance(QSettings* settings) {s_settings = settings;};
 
 private:
-  static QSettings* settings_;
+  static QSettings* s_settings;
 };
 
 #endif  // LJ_LAUNCHER_SETTINGS_H_

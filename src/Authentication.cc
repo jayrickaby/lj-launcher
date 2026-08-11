@@ -4,30 +4,29 @@
 
 #include "Authentication.h"
 
-#include <iostream>
-
 #include "Settings.h"
 
 Authentication::Authentication(QObject* parent) :
 QObject(parent),
-pkce_data_(generatePkceData()),
-login_data_(getLoginData()) {
-  connect(&network_manager_, &QNetworkAccessManager::finished,
+pkceData(generatePkceData()),
+loginData(getLoginData()) {
+  connect(&networkManager, &QNetworkAccessManager::finished,
         this, &Authentication::onTokenReceived);
 }
 
-LoginData Authentication::getLoginData() {
+LoginData Authentication::getLoginData() const{
   LoginData data;
 
-  QString state = generateSafeToken(16);
+  // There isn't a standard, but 64 is good enough.
+  QString const STATE = generateSafeToken(64);
 
-  data.url = getCodeUrl(state);
-  data.state = state;
+  data.url = getCodeUrl(STATE);
+  data.state = STATE;
 
   return data;
 }
 
-bool Authentication::hasRefreshToken() {
+bool Authentication::hasRefreshToken() const {
   if (Settings::getRefreshToken().canConvert<QString>()) {
     return true;
   }
@@ -39,70 +38,71 @@ bool Authentication::hasRefreshToken() {
 }
 
 QString Authentication::generateSafeToken(int length) const {
-  const QString allowed_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
+  const QString ALLOWED_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
   QString token;
   token.reserve(length);
 
-  int allowed_length { static_cast<int>(allowed_characters.length()) };
+  int const ALLOWED_LENGTH { static_cast<int>(ALLOWED_CHARACTERS.length()) };
 
   for (int i = 0; i < length; i++) {
-    const int index {QRandomGenerator::global()->bounded(allowed_length)};
-    token.append(allowed_characters[index]);
+    const int INDEX {QRandomGenerator::global()->bounded(ALLOWED_LENGTH)};
+    token.append(ALLOWED_CHARACTERS[INDEX]);
   }
 
   return token;
 }
 
 PkceData Authentication::generatePkceData() const {
-  PkceData pkce_data;
+  PkceData pkceData;
 
-  QString token {generateSafeToken(128)};
-  pkce_data.code_verifier = token;
+  QString const TOKEN {generateSafeToken(128)};
+  pkceData.codeVerifier = TOKEN;
 
-  QByteArray hash = QCryptographicHash::hash(
-    token.toLatin1(),
+  QByteArray const HASH = QCryptographicHash::hash(
+    TOKEN.toLatin1(),
     QCryptographicHash::Sha256
     );
 
-  pkce_data.code_challenge = hash.toBase64(
+  pkceData.codeChallenge = HASH.toBase64(
     QByteArray::Base64UrlEncoding
     | QByteArray::OmitTrailingEquals
     );
 
-  return pkce_data;
+  return pkceData;
 }
 
-bool Authentication::isUrlLocalhost(const QUrl& url) {
+bool Authentication::isUrlLocalhost(const QUrl& url) const {
   return url.host() == "localhost";
 }
 
-QString Authentication::requestRefreshToken(QString old_token) {
-  QUrl url {kTokenUrl};
+QString Authentication::requestRefreshToken(const QString& oldToken) {
+  QUrl url {TOKEN_URL};
   QUrlQuery query;
-  query.addQueryItem("client_id", kClientId);
+  query.addQueryItem("client_id", CLIENT_ID);
   query.addQueryItem("grant_type", "refresh_token");
-  query.addQueryItem("scope", kScope);
-  query.addQueryItem("refresh_token", old_token);
+  query.addQueryItem("scope", SCOPE);
+  query.addQueryItem("refresh_token", oldToken);
+  return "balls";
 }
 void Authentication::requestToken(const QString& code) {
-  QUrl url {kTokenUrl};
-  QNetworkRequest request{url};
+  const QUrl URL {TOKEN_URL};
+  QNetworkRequest request{URL};
 
   request.setHeader(QNetworkRequest::ContentTypeHeader,
     "application/x-www-form-urlencoded"
     );
 
   QUrlQuery query;
-  query.addQueryItem("client_id", kClientId);
-  query.addQueryItem("scope", kScope);
+  query.addQueryItem("client_id", CLIENT_ID);
+  query.addQueryItem("scope", SCOPE);
   query.addQueryItem("code", code);
-  query.addQueryItem("redirect_uri", kRedirectUri.toString());
+  query.addQueryItem("redirect_uri", REDIRECT_URI.toString());
   query.addQueryItem("grant_type", "authorization_code");
-  query.addQueryItem("code_verifier", pkce_data_.code_verifier);
+  query.addQueryItem("code_verifier", pkceData.codeVerifier);
 
-  QByteArray data {query.toString(QUrl::FullyEncoded).toUtf8()};
+  QByteArray const DATA {query.toString(QUrl::FullyEncoded).toUtf8()};
 
-  network_manager_.post(request, data);
+  networkManager.post(request, DATA);
 }
 
 void Authentication::onTokenReceived(QNetworkReply* reply) {
@@ -113,39 +113,43 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
     return;
   }
 
-  QJsonDocument json_doc {QJsonDocument::fromJson(reply->readAll())};
-  QJsonObject json {json_doc.object()};
+  QJsonDocument const JSON_DOC {QJsonDocument::fromJson(reply->readAll())};
+  QJsonObject const JSON {JSON_DOC.object()};
 
-  VariantMap response = json.toVariantMap();
+  QVariantMap const RESPONSE {JSON.toVariantMap()};
+
+  if ()
+  
+  Settings::setRefreshToken(RESPONSE.value("refresh_token").toString());
 
 }
 
-QUrl Authentication::getCodeUrl(const QString& state) {
-  QUrl url {kAuthUrl};
+QUrl Authentication::getCodeUrl(const QString& state) const {
+  QUrl url {AUTH_URL};
   QUrlQuery query;
-  query.addQueryItem("client_id", kClientId);
+  query.addQueryItem("client_id", CLIENT_ID);
   query.addQueryItem("response_type", "code");
-  query.addQueryItem("redirect_uri", kRedirectUri.toString());
-  query.addQueryItem("scope", kScope);
+  query.addQueryItem("redirect_uri", REDIRECT_URI.toString());
+  query.addQueryItem("scope", SCOPE);
   query.addQueryItem("response_mode", "query");
-  query.addQueryItem("code_challenge", pkce_data_.code_challenge);
-  query.addQueryItem("code_challenge_method", pkce_data_.code_challenge_method);
+  query.addQueryItem("code_challenge", pkceData.codeChallenge);
+  query.addQueryItem("code_challenge_method", pkceData.codeChallengeMethod);
   query.addQueryItem("state", state);
   url.setQuery(query);
 
   return url;
 }
 
-QVariantMap Authentication::parseLocalhost(const QUrl& url) {
+QVariantMap Authentication::parseLocalhost(const QUrl& url) const {
   if (!url.hasQuery()) {
     throw std::invalid_argument("Localhost URL has no returned data!");
   }
 
-  QUrlQuery const query {url.query()};
+  QUrlQuery const QUERY {url.query()};
 
   QVariantMap data;
-  for (const auto & [key, value] : query.queryItems()) {
-    data[key] = value;
+  for (const auto & [KEY, VALUE] : QUERY.queryItems()) {
+    data[KEY] = VALUE;
   }
 
   // Early return to avoid unneccesary checks
@@ -164,7 +168,7 @@ QVariantMap Authentication::parseLocalhost(const QUrl& url) {
     or data.value("state").toString().isEmpty()) {
     throw std::invalid_argument("Localhost URL has no returned state!");
   }
-  if (query.queryItemValue("state") != login_data_.state) {
+  if (QUERY.queryItemValue("state") != loginData.state) {
     throw std::invalid_argument("Localhost URL state mismatch!");
   }
 

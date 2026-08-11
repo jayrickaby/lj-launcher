@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
   QGuiApplication::setOrganizationDomain(Application::getOrganisationDomain());
   QGuiApplication::setOrganizationName(Application::getOrganisationName());
 
-  app.setWindowIcon(QIcon(Application::getDefaultIcon()));
+  QGuiApplication::setWindowIcon(QIcon(Application::getDefaultIcon()));
 
   QSettings settings;
   Settings::setInstance(&settings);

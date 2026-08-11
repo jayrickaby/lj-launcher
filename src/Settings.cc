@@ -4,7 +4,7 @@
 
 #include "Settings.h"
 
-QSettings* Settings::settings_ = nullptr;
+QSettings* Settings::s_settings = nullptr;
 
 Settings::Settings(QObject* parent)
 : QObject(parent)
@@ -15,5 +15,5 @@ QString Settings::refreshToken() const {
 }
 
 QVariant Settings::getRefreshToken() {
-  return settings_->value("Account/refreshToken");
+  return s_settings->value("Account/refreshToken");
 }

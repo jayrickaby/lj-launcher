@@ -9,13 +9,17 @@
 #include <QCryptographicHash>
 #include <QObject>
 #include <QRandomGenerator>
-#include <QtNetwork>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QUrlQuery>
 
 struct PkceData {
-  QString code_challenge;
-  QString code_challenge_method {"S256"};
-  QString code_verifier;
+  QString codeChallenge;
+  QString codeChallengeMethod {"S256"};
+  QString codeVerifier;
 };
 
 struct LoginData {
@@ -38,40 +42,37 @@ class Authentication : public QObject {
 public:
   explicit Authentication(QObject *parent = nullptr);
 
-  QUrl codeUrl() { return login_data_.url; }
+  [[nodiscard]] QUrl codeUrl() const { return loginData.url; }
 
 public slots:
-  bool hasRefreshToken();
-  bool isUrlLocalhost(const QUrl &url);
-  QVariantMap parseLocalhost(const QUrl &url);
+  [[nodiscard]] bool hasRefreshToken() const;
+  [[nodiscard]] bool isUrlLocalhost(const QUrl &url) const;
+  [[nodiscard]] QVariantMap parseLocalhost(const QUrl &url) const;
   void completeAuth(const QString &code);
 
 private:
-  PkceData generatePkceData() const;
-  QString generateSafeToken(int length) const;
+  [[nodiscard]] PkceData generatePkceData() const;
+  [[nodiscard]] QString generateSafeToken(int length) const;
 
-  LoginData getLoginData();
-  QUrl getLoginUrl() const;
+  [[nodiscard]] QUrl getCodeUrl(const QString &state) const;
+  [[nodiscard]] LoginData getLoginData() const;
 
-  void getUserData();
-  QString requestRefreshToken(QString old_token);
+  QString requestRefreshToken(const QString& oldToken);
   void requestToken(const QString& code);
-  QUrl getCodeUrl(const QString &state);
 
-  bool authenticated_ {false};
+  bool authenticated {false};
 
-  QNetworkAccessManager network_manager_;
-  PkceData pkce_data_;
-  LoginData login_data_;
-  UserData user_data_;
-  QString auth_code_;
+  QNetworkAccessManager networkManager;
+  PkceData pkceData;
+  LoginData loginData;
+  UserData userData;
 
-  inline static const QString kClientId{"478514ce-2d7e-4e71-9301-29eb2241e2d6"};
-  inline static const QUrl kRedirectUri{"http://localhost"};
+  inline static const QString CLIENT_ID{"478514ce-2d7e-4e71-9301-29eb2241e2d6"};
+  inline static const QUrl REDIRECT_URI{"http://localhost"};
 
-  inline static const QUrl kAuthUrl{"https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize"};
-  inline static const QUrl kTokenUrl{"https://login.microsoftonline.com/consumers/oauth2/v2.0/token"};
-  inline static const QString kScope{"XboxLive.signin"};
+  inline static const QUrl AUTH_URL{"https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize"};
+  inline static const QUrl TOKEN_URL{"https://login.microsoftonline.com/consumers/oauth2/v2.0/token"};
+  inline static const QString SCOPE{"XboxLive.signin"};
 
 private slots:
   void onTokenReceived(QNetworkReply *reply);

@@ -19,25 +19,25 @@ class Application : public QObject {
 public:
   explicit Application(QObject *parent = nullptr);
 
-  QString defaultIcon() { return kDefaultIcon; };
-  QString defaultTitle() { return kDefaultTitle; };
+  [[nodiscard]] QString defaultIcon() const { return DEFAULT_ICON; };
+  [[nodiscard]] QString defaultTitle() const { return DEFAULT_TITLE; };
 
-  static QString getDefaultIcon() { return kDefaultIcon; }
-  static QString getDefaultTitle() { return kDefaultTitle; }
+  [[nodiscard]] static QString getDefaultIcon() { return DEFAULT_ICON; }
+  [[nodiscard]] static QString getDefaultTitle() { return DEFAULT_TITLE; }
 
-  static QString getApplicationName() { return kApplicationName; };
-  static QString getApplicationVersion() { return kApplicationVersion; };
-  static QString getOrganisationDomain() { return kOrganisationDomain; };
-  static QString getOrganisationName() { return kOrganisationName; };
+  [[nodiscard]] static QString getApplicationName() { return APPLICATION_NAME; };
+  [[nodiscard]] static QString getApplicationVersion() { return APPLICATION_VERSION; };
+  [[nodiscard]] static QString getOrganisationDomain() { return ORGANISATION_DOMAIN; };
+  [[nodiscard]] static QString getOrganisationName() { return ORGANISATION_NAME; };
 
 private:
-  inline static const QString kDefaultIcon {":/jayrickaby/lj_launcher/assets/icons/icon.png"};
-  inline static const QString kDefaultTitle {"LJ Launcher"};
+  inline static const QString DEFAULT_ICON {":/jayrickaby/lj_launcher/assets/icons/icon.png"};
+  inline static const QString DEFAULT_TITLE {"LJ Launcher"};
 
-  inline static const QString kApplicationName {"LJ-Launcher"};
-  inline static const QString kApplicationVersion {"v0.5.0a"};
-  inline static const QString kOrganisationDomain {"jayrickaby.com"};
-  inline static const QString kOrganisationName {"JayRickaby"};
+  inline static const QString APPLICATION_NAME {"LJ-Launcher"};
+  inline static const QString APPLICATION_VERSION {"v0.5.0a"};
+  inline static const QString ORGANISATION_DOMAIN {"jayrickaby.com"};
+  inline static const QString ORGANISATION_NAME {"JayRickaby"};
 };
 
 
