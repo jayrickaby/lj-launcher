@@ -9,7 +9,6 @@
 #include <QObject>
 #include <QString>
 
-
 class Application : public QObject {
   Q_OBJECT
   Q_PROPERTY(QString defaultIcon READ defaultIcon CONSTANT)
@@ -27,6 +26,7 @@ public:
   static QString getDefaultTitle() { return kDefaultTitle; }
 
   static QString getApplicationName() { return kApplicationName; };
+  static QString getApplicationVersion() { return kApplicationVersion; };
   static QString getOrganisationDomain() { return kOrganisationDomain; };
   static QString getOrganisationName() { return kOrganisationName; };
 
@@ -35,6 +35,7 @@ private:
   inline static const QString kDefaultTitle {"LJ Launcher"};
 
   inline static const QString kApplicationName {"LJ-Launcher"};
+  inline static const QString kApplicationVersion {"v0.5.0a"};
   inline static const QString kOrganisationDomain {"jayrickaby.com"};
   inline static const QString kOrganisationName {"JayRickaby"};
 };
