@@ -5,6 +5,7 @@
 #include <QQmlApplicationEngine>
 
 #include "Application.h"
+#include "Settings.h"
 
 int main(int argc, char *argv[]) {
   QGuiApplication app(argc, argv);
@@ -12,6 +13,9 @@ int main(int argc, char *argv[]) {
   QGuiApplication::setApplicationName(Application::getApplicationName());
   QGuiApplication::setOrganizationDomain(Application::getOrganisationDomain());
   QGuiApplication::setOrganizationName(Application::getOrganisationName());
+
+  QSettings settings;
+  Settings::setInstance(&settings);
 
   QQmlApplicationEngine engine;
   QObject::connect(
