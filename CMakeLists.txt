@@ -12,6 +12,8 @@ qt_add_executable(lj_launcher
     src/main.cc
         src/Application.cc
         src/Application.h
+        src/Authentication.cc
+        src/Authentication.h
 )
 
 qt_add_qml_module(lj_launcher
