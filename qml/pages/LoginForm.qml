@@ -3,8 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtWebEngine
 
-import jayrickaby.lj_launcher.authentication 1.0
-import jayrickaby.lj_launcher.application 1.0
+import jayrickaby.lj_launcher
 
 import "./template"
 
@@ -77,7 +76,7 @@ LauncherPage {
                 onClicked: {
                     clearErrorMessage();
                     authWindow.visible = true;
-                    authWindow.setUrl(Authentication.login_url);
+                    authWindow.setUrl(Authentication.codeUrl);
                 }
             }
         }
@@ -100,7 +99,7 @@ LauncherPage {
             anchors.fill: parent
 
             onLoadingChanged: (loadingInfo) => {
-                if (Authentication.is_url_localhost(url)) return;
+                if (Authentication.isUrlLocalhost(url)) return;
 
                 if (loadingInfo.status === WebEngineView.LoadFailedStatus) {
                     authWindow.visible = false;
@@ -121,7 +120,7 @@ LauncherPage {
     }
 
     function handleNewUrl(url) {
-        if (!Authentication.is_url_localhost(url)) return;
+        if (!Authentication.isUrlLocalhost(url)) return;
 
         let params = Authentication.parse_localhost_url(url);
 

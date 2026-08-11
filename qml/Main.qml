@@ -23,6 +23,6 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
-        Authentication.try_stored_refresh();
+        // Authentication.try_stored_refresh();
     }
 }

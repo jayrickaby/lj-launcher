@@ -7,30 +7,17 @@
 
 Authentication::Authentication(QObject* parent) :
 QObject(parent),
+pkce_data_(generatePkceData()),
 login_data_(getLoginData())
 {}
 
-LoginData Authentication::getLoginData() const {
+LoginData Authentication::getLoginData() {
   LoginData data;
 
-  PkceData pkce {generatePkceData()};
-  data.code_verifier = pkce.code_verifier;
+  QString state = generateSafeToken(16);
 
-  data.state = generateToken(16);
-
-  QUrl url {kAuthUrl};
-  QUrlQuery query;
-  query.addQueryItem("client_id", kClientId);
-  query.addQueryItem("response_type", "code");
-  query.addQueryItem("redirect_uri", kRedirectUri.toString());
-  query.addQueryItem("response_mode", "query");
-  query.addQueryItem("scope", kScope);
-  query.addQueryItem("state", data.state);
-  query.addQueryItem("code_challenge", pkce.code_challenge);
-  query.addQueryItem("code_challenge_method", pkce.code_challenge_method);
-  url.setQuery(query);
-
-  data.url = url;
+  data.url = getCodeUrl(state);
+  data.state = state;
 
   return data;
 }
@@ -79,3 +66,40 @@ PkceData Authentication::generatePkceData() const {
 
   return pkce_data;
 }
+
+bool Authentication::isUrlLocalhost(const QUrl& url) {
+  return url.host() == "localhost";
+}
+
+QString Authentication::requestRefreshToken(QString old_token) {
+  QUrl url {kTokenUrl};
+  QUrlQuery query;
+  query.addQueryItem("client_id", kClientId);
+  query.addQueryItem("grant_type", "refresh_token");
+  query.addQueryItem("scope", kScope);
+  query.addQueryItem("refresh_token", old_token);
+}
+QString Authentication::requestToken() {
+  QUrl url {kTokenUrl};
+  QUrlQuery query;
+  query.addQueryItem("client_id", kClientId);
+  query.addQueryItem("grant_type", "refresh_token");
+  query.addQueryItem("scope", kScope);
+}
+
+QUrl Authentication::getCodeUrl(const QString& state) {
+  QUrl url {kAuthUrl};
+  QUrlQuery query;
+  query.addQueryItem("client_id", kClientId);
+  query.addQueryItem("response_type", "code");
+  query.addQueryItem("redirect_uri", kRedirectUri.toString());
+  query.addQueryItem("scope", kScope);
+  query.addQueryItem("response_mode", "query");
+  query.addQueryItem("code_challenge", pkce_data_.code_challenge);
+  query.addQueryItem("code_challenge_method", pkce_data_.code_challenge_method);
+  query.addQueryItem("state", state);
+  url.setQuery(query);
+
+  return url;
+}
+
