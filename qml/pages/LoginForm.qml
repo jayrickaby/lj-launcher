@@ -90,6 +90,8 @@ LauncherPage {
 
         title: loginButton.text
 
+        modality: Qt.WindowModal
+
         function setUrl(newUrl) {
             authWeb.url = newUrl;
         }
