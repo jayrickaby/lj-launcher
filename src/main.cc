@@ -2,6 +2,7 @@
 // Created by jay on 11/08/2026.
 //
 #include <QGuiApplication>
+#include <QIcon>
 #include <QQmlApplicationEngine>
 
 #include "Application.h"
@@ -13,6 +14,8 @@ int main(int argc, char *argv[]) {
   QGuiApplication::setApplicationName(Application::getApplicationName());
   QGuiApplication::setOrganizationDomain(Application::getOrganisationDomain());
   QGuiApplication::setOrganizationName(Application::getOrganisationName());
+
+  app.setWindowIcon(QIcon(Application::getDefaultIcon()));
 
   QSettings settings;
   Settings::setInstance(&settings);
