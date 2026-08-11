@@ -47,7 +47,7 @@ bool Authentication::hasRefreshToken() {
 }
 
 QString Authentication::generateToken(int length) const {
-  const QString allowed_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567890-._~";
+  const QString allowed_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
   QString token;
   token.reserve(length);
 
