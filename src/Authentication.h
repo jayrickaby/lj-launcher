@@ -41,7 +41,7 @@ public slots:
   bool hasRefreshToken();
 
 private:
-  LoginData getLoginData();
+  LoginData getLoginData() const;
   QUrl getLoginUrl() const;
   PkceData generatePkceData() const;
   QString generateToken(int length) const;

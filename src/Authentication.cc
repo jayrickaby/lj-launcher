@@ -10,7 +10,7 @@ QObject(parent),
 login_data_(getLoginData())
 {}
 
-LoginData Authentication::getLoginData() {
+LoginData Authentication::getLoginData() const {
   LoginData data;
 
   PkceData pkce {generatePkceData()};
