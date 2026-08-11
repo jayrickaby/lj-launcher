@@ -20,6 +20,7 @@ qt_add_executable(lj_launcher
 
 qt_add_qml_module(lj_launcher
     URI jayrickaby.lj_launcher
+    RESOURCE_PREFIX /
     QML_FILES
         qml/Main.qml
         qml/pages/Launcher.qml

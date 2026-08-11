@@ -31,7 +31,7 @@ public:
   static QString getOrganisationName() { return kOrganisationName; };
 
 private:
-  inline static const QString kDefaultIcon {":/qt/qml/assets/icons/icon.png"};
+  inline static const QString kDefaultIcon {":/jayrickaby/lj_launcher/assets/icons/icon.png"};
   inline static const QString kDefaultTitle {"LJ Launcher"};
 
   inline static const QString kApplicationName {"LJ-Launcher"};
