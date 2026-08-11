@@ -3,11 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import QtWebEngine
 
-import jayrickaby.lj_launcher.authentication 1.0
-import jayrickaby.lj_launcher.application 1.0
-import jayrickaby.lj_launcher.downloader 1.0
-import jayrickaby.lj_launcher.launcher 1.0
-import jayrickaby.lj_launcher.profiles 1.0
+import jayrickaby.lj_launcher
 
 import "./template"
 
