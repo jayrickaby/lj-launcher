@@ -3,6 +3,7 @@
 //
 
 #include "Authentication.h"
+#include "Settings.h"
 
 Authentication::Authentication(QObject* parent) :
 QObject(parent),
@@ -32,6 +33,17 @@ LoginData Authentication::getLoginData() {
   data.url = url;
 
   return data;
+}
+
+bool Authentication::hasRefreshToken() {
+  if (Settings::getRefreshToken().canConvert<QString>()) {
+    return true;
+  }
+  if (!Settings::getRefreshToken().toString().isEmpty()) {
+    return true;
+  }
+
+  return false;
 }
 
 QString Authentication::generateToken(int length) const {

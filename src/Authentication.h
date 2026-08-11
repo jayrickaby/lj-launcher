@@ -5,8 +5,6 @@
 #ifndef LJ_LAUNCHER_AUTHENTICATION_H_
 #define LJ_LAUNCHER_AUTHENTICATION_H_
 
-#include <iostream>
-
 #include <qqml.h>
 #include <QCryptographicHash>
 #include <QObject>
@@ -38,6 +36,9 @@ class Authentication : public QObject {
 
 public:
   explicit Authentication(QObject *parent = nullptr);
+
+public slots:
+  bool hasRefreshToken();
 
 private:
   LoginData getLoginData();
