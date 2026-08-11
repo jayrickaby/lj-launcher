@@ -12,16 +12,19 @@
 
 class Application : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString defaultIcon READ getDefaultIcon CONSTANT)
-  Q_PROPERTY(QString defaultTitle READ getDefaultTitle CONSTANT)
+  Q_PROPERTY(QString defaultIcon READ defaultIcon CONSTANT)
+  Q_PROPERTY(QString defaultTitle READ defaultTitle CONSTANT)
   QML_ELEMENT
   QML_SINGLETON
 
 public:
   explicit Application(QObject *parent = nullptr);
 
-  QString getDefaultIcon() { return kDefaultIcon; }
-  QString getDefaultTitle() { return kDefaultTitle; }
+  QString defaultIcon() { return kDefaultIcon; };
+  QString defaultTitle() { return kDefaultTitle; };
+
+  static QString getDefaultIcon() { return kDefaultIcon; }
+  static QString getDefaultTitle() { return kDefaultTitle; }
 
   static QString getApplicationName() { return kApplicationName; };
   static QString getOrganisationDomain() { return kOrganisationDomain; };
