@@ -46,7 +46,7 @@ bool Authentication::hasRefreshToken() {
   return false;
 }
 
-QString Authentication::generateToken(int length) const {
+QString Authentication::generateSafeToken(int length) const {
   const QString allowed_characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
   QString token;
   token.reserve(length);
@@ -64,7 +64,7 @@ QString Authentication::generateToken(int length) const {
 PkceData Authentication::generatePkceData() const {
   PkceData pkce_data;
 
-  QString token {generateToken(128)};
+  QString token {generateSafeToken(128)};
   pkce_data.code_verifier = token;
 
   QByteArray hash = QCryptographicHash::hash(

@@ -45,6 +45,8 @@ private:
   QUrl getLoginUrl() const;
   PkceData generatePkceData() const;
   QString generateToken(int length) const;
+  QString generateSafeToken(int length) const;
+
 
   inline static const QString kClientId{"478514ce-2d7e-4e71-9301-29eb2241e2d6"};
   inline static const QUrl kRedirectUri{"http://localhost"};
