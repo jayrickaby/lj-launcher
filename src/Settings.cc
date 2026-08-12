@@ -21,3 +21,7 @@ QVariant Settings::getRefreshToken() {
 void Settings::setRefreshToken(const QString& refreshToken) {
   s_settings->setValue("Account/refreshToken", refreshToken);
 }
+
+void Settings::clearRefreshToken() {
+  s_settings->remove("Account/refreshToken");
+}

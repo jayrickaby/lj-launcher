@@ -220,6 +220,9 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
     ErrorMessage message;
     message.errorTechnical = e.what();
     Launcher::sendError(message);
+
+    // Redundant to keep if potentially invalid
+    Settings::clearRefreshToken();
   }
 }
 
