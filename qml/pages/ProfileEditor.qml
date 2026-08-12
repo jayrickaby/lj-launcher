@@ -36,7 +36,6 @@ ApplicationWindow {
 
                 // Row 1
                 Text {
-                    // TODO: If (Default) change to username on auth.
                     text: qsTr("Profile Name:")
 
                     font.pointSize: 8

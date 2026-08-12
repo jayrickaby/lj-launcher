@@ -3,6 +3,8 @@
 //
 
 #include "Authentication.h"
+
+#include "Launcher.h"
 #include "Settings.h"
 
 Authentication::Authentication(QObject* parent) :
@@ -74,7 +76,6 @@ PkceData Authentication::generatePkceData() const {
 }
 
 bool Authentication::isUrlLocalhost(const QUrl& url) const {
-  qDebug() << "Checking if" << url.host().toString().toStdString() << "is localhost...";
   return url.host() == "localhost";
 }
 
@@ -178,7 +179,10 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
   reply->deleteLater();
 
   if (reply->error()) {
-    throw std::runtime_error(reply->errorString().toStdString());
+    setState(AuthState::UNAUTHENTICATED);
+    ErrorMessage message;
+    message.errorTechnical = reply->errorString();
+    Launcher::sendError(message);
     return;
   }
 
@@ -343,11 +347,13 @@ void Authentication::parseLocalhost(const QUrl& url) {
     or QUERY.queryItemValue("code").isEmpty()) {
     throw std::invalid_argument("Localhost URL returned invalid code!");
   }
-  qDebug("Found Code in URL");
+  qDebug("Found Code in URL. Beginning authentication");
 
+  setState(AuthState::AUTHENTICATING);
   requestMicrosoftAuth(QUERY.queryItemValue("code"));
 }
 
-void Authentication::completeAuth(const QString& accessToken) {
-  
+void Authentication::setState(const AuthState& state) {
+  m_authState = state;
+  emit authStateChanged();
 }

@@ -10,6 +10,14 @@ import "./template"
 LauncherPage {
     id: control
 
+    Connections {
+        target: Launcher
+
+        function onLauncherError(message) {
+            setErrorMessage(message.errorFriendly, message.errorTechnical)
+        }
+    }
+
     Rectangle {
         anchors.centerIn: parent
 
@@ -130,45 +138,13 @@ LauncherPage {
 
         loginButton.enabled = false;
         loginButton.text = qsTr("Loading");
-
-        // TODO: Readd with better system
-        // if (params.error !== undefined) {
-        //     setErrorMessage(
-        //         params.error,
-        //         params.error_description
-        //     );
-        //     return;
-        // }
     }
 
-    function setErrorMessage(nerdError, nerdDescription) {
+    function setErrorMessage(friendlyError, nerdError) {
         errorMessage.visible = true;
 
-        let message = "";
-
-        switch (nerdError) {
-            // https://datatracker.ietf.org/doc/html/rfc6749
-            case "access_denied":
-                message = "Sorry, but authentication was denied!\nPlease try again.";
-                break;
-            case "server_error":
-            case "temporarily_unavailable":
-                message = "Sorry, but something broke on Microsoft's end!\nPlease try again.";
-                break;
-
-            // Custom
-            case "UnknownHostException":
-                message = "Sorry, but we couldn't connect to the servers.\nPlease make sure that you are online and
-                 that Minecraft is not blocked.";
-                break;
-
-            default:
-                message = "Sorry, but something with the backend went wrong!\nPlease contact Jay.";
-                break;
-        }
-
-        errorMessageFriendly.text = qsTr(message);
-        errorMessageNerd.text = qsTr(`( ${nerdError}: ${nerdDescription} )`);
+        errorMessageFriendly.text = qsTr(friendlyError);
+        errorMessageNerd.text = qsTr(`( ${nerdError} )`);
     }
 
     background: Image {

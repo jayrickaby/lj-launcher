@@ -18,6 +18,19 @@
 #include <QJsonObject>
 #include <QUrlQuery>
 
+enum class AuthState {
+  UNAUTHENTICATED,
+  AUTHENTICATING,
+  AUTHENTICATING_REFRESH,
+  AUTHENTICATED
+};
+enum class AuthType {
+  MICROSOFT_TOKEN,
+  XBOX_LIVE_TOKEN,
+  XBOX_SERVICES_TOKEN,
+  MINECRAFT_TOKEN
+};
+
 struct PkceData {
   QString codeChallenge;
   QString codeChallengeMethod {"S256"};
@@ -42,7 +55,10 @@ struct UserData {
 
 class Authentication : public QObject {
   Q_OBJECT
+  Q_ENUM(AuthType)
+  Q_ENUM(AuthState)
   Q_PROPERTY(QUrl codeUrl READ codeUrl)
+  Q_PROPERTY(AuthState authState READ authState NOTIFY authStateChanged)
   QML_ELEMENT
   QML_SINGLETON
 
@@ -50,20 +66,16 @@ public:
   explicit Authentication(QObject *parent = nullptr);
 
   [[nodiscard]] QUrl codeUrl() const { return m_loginData.url; }
+  [[nodiscard]] AuthState authState() const { return m_authState; }
 
-  enum class AuthType {
-    MICROSOFT_TOKEN,
-    XBOX_LIVE_TOKEN,
-    XBOX_SERVICES_TOKEN,
-    MINECRAFT_TOKEN
-  };
-
-  Q_ENUM(AuthType)
+signals:
+  void authStateChanged();
 
 public slots:
   [[nodiscard]] bool hasRefreshToken() const;
   [[nodiscard]] bool isUrlLocalhost(const QUrl &url) const;
   void parseLocalhost(const QUrl &url);
+
 
 private:
   [[nodiscard]] PkceData generatePkceData() const;
@@ -73,7 +85,6 @@ private:
   [[nodiscard]] LoginData getLoginData() const;
 
   QString requestRefreshToken(const QString& oldToken);
-  void completeAuth(const QString &accessToken);
 
   void requestMicrosoftAuth(const QString& code);
   QString parseMicrosoftTokens(const QJsonObject& json);
@@ -87,12 +98,15 @@ private:
   void requestMinecraftAuth(const QString& token);
   QString parseMinecraftToken(const QJsonObject& json);
 
+  void setState(const AuthState& state);
 
   bool m_authenticated {false};
   QNetworkAccessManager m_networkManager;
   PkceData m_pkceData;
   LoginData m_loginData;
   UserData m_userData;
+
+  AuthState m_authState;
 
   inline static const QString CLIENT_ID{"478514ce-2d7e-4e71-9301-29eb2241e2d6"};
   inline static const QUrl REDIRECT_URI{"http://localhost"};
