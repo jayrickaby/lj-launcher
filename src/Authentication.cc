@@ -159,7 +159,7 @@ QVariantMap Authentication::parseLocalhost(const QUrl& url) const {
     data[KEY] = VALUE;
   }
 
-  // Early return to avoid unneccesary checks
+  // Early return to avoid unnecessary checks
   if (data.contains("error")) {
     return data;
   }
@@ -183,5 +183,5 @@ QVariantMap Authentication::parseLocalhost(const QUrl& url) const {
 }
 
 void Authentication::completeAuth(const QString& accessToken) {
-
+  
 }
