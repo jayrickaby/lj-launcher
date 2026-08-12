@@ -175,6 +175,36 @@ void Authentication::requestXboxServicesAuth(const QString& token) {
   qDebug("Requesting Xbox Services Auth Token");
 }
 
+void Authentication::requestMinecraftAuth(const XboxServicesData& data) {
+  const QUrl URL {MINECRAFT_URL};
+  QNetworkRequest request{URL};
+
+  request.setHeader(
+    QNetworkRequest::ContentTypeHeader,
+    "application/json"
+  );
+
+  request.setRawHeader(
+    "Accept",
+    "application/json"
+  );
+
+  QString const IDENTITY_TOKEN {
+    QString("XBL3.0 x=%1;%2")
+    .arg(data.userHash, data.token)
+  };
+
+  QJsonObject json {};
+  json.insert("identityToken", IDENTITY_TOKEN);
+
+  QJsonDocument const JSON_DOC {json};
+
+  QNetworkReply* reply = m_networkManager.post(request, JSON_DOC.toJson());
+  reply->setProperty("type", QVariant::fromValue(AuthType::MINECRAFT_TOKEN));
+
+  qDebug("Requesting Minecraft Services Access Token");
+}
+
 void Authentication::onTokenReceived(QNetworkReply* reply) {
   reply->deleteLater();
 
@@ -208,6 +238,12 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
       case AuthType::XBOX_SERVICES_TOKEN: {
         qDebug("Received Xbox Service Token");
         XboxServicesData const DATA {parseXboxServicesAuthData(JSON)};
+        requestMinecraftAuth(DATA);
+        break;
+      }
+      case AuthType::MINECRAFT_TOKEN: {
+        qDebug("Received Minecraft Token");
+        QString const TOKEN {parseMinecraftToken(JSON)};
         break;
       }
       default: {
@@ -226,8 +262,6 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
     Settings::clearRefreshToken();
   }
 }
-
-
 
 QString Authentication::parseMicrosoftTokens(const QJsonObject& json) {
   // Check before saving refresh incase its invalid
@@ -307,6 +341,17 @@ XboxServicesData Authentication::parseXboxServicesAuthData(const QJsonObject& js
   data.userHash = XUI["uhs"].toString();
 
   return data;
+}
+
+QString Authentication::parseMinecraftToken(const QJsonObject& json) {
+  if (!json.contains("access_token")
+    or !json["access_token"].isString()
+    or json["access_token"].toString().isEmpty()) {
+    throw std::runtime_error("No Minecraft access token returned!");
+    }
+
+  qDebug("Found Minecraft access token");
+  return json.value("access_token").toString();
 }
 
 QUrl Authentication::getCodeUrl(const QString& state) const {
