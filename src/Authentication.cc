@@ -118,8 +118,11 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
 
   QVariantMap const RESPONSE {JSON.toVariantMap()};
 
-  if ()
-  
+  if (!RESPONSE.contains("refresh_token")
+    or RESPONSE.value("refresh_token").toString().isEmpty()) {
+    throw std::runtime_error("No refresh token returned!");
+  }
+
   Settings::setRefreshToken(RESPONSE.value("refresh_token").toString());
 
 }

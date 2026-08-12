@@ -17,3 +17,7 @@ QString Settings::refreshToken() const {
 QVariant Settings::getRefreshToken() {
   return s_settings->value("Account/refreshToken");
 }
+
+void Settings::setRefreshToken(const QString& refreshToken) {
+  s_settings->setValue("Account/refreshToken", refreshToken);
+}

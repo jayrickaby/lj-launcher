@@ -72,7 +72,7 @@ private:
 
   inline static const QUrl AUTH_URL{"https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize"};
   inline static const QUrl TOKEN_URL{"https://login.microsoftonline.com/consumers/oauth2/v2.0/token"};
-  inline static const QString SCOPE{"XboxLive.signin"};
+  inline static const QString SCOPE{"XboxLive.signin offline_access"};
 
 private slots:
   void onTokenReceived(QNetworkReply *reply);

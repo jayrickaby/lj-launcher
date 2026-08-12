@@ -23,6 +23,7 @@ public:
   [[nodiscard]] QString refreshToken() const;
   [[nodiscard]] static QVariant getRefreshToken();
 
+  static void setRefreshToken(const QString& refreshToken);
   static void setInstance(QSettings* settings) {s_settings = settings;};
 
 private:
