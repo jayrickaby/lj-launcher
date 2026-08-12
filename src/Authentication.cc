@@ -63,11 +63,10 @@ PkceData Authentication::generatePkceData() const {
     QCryptographicHash::Sha256
     );
 
-
   pkceData.codeChallenge = HASH.toBase64(
     QByteArray::Base64UrlEncoding
     | QByteArray::OmitTrailingEquals    // RFC7636 states to omit trailing '='
-    );
+  );
 
   return pkceData;
 }
@@ -85,7 +84,7 @@ QString Authentication::requestRefreshToken(const QString& oldToken) {
   query.addQueryItem("refresh_token", oldToken);
   return "balls";
 }
-void Authentication::requestToken(const QString& code) {
+void Authentication::requestTokens(const QString& code) {
   const QUrl URL {TOKEN_URL};
   QNetworkRequest request{URL};
 
@@ -119,17 +118,19 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
 
   QVariantMap const RESPONSE {JSON.toVariantMap()};
 
+  // Check before saving refresh incase its invalid
+  if (!RESPONSE.contains("access_token")
+    or RESPONSE.value("access_token").toString().isEmpty()) {
+    throw std::runtime_error("No access token returned!");
+  }
+
   if (!RESPONSE.contains("refresh_token")
     or RESPONSE.value("refresh_token").toString().isEmpty()) {
     throw std::runtime_error("No refresh token returned!");
   }
 
+  // Save to avoid manual in next time
   Settings::setRefreshToken(RESPONSE.value("refresh_token").toString());
-
-  if (!RESPONSE.contains("access_token")
-    or RESPONSE.value("access_token").toString().isEmpty()) {
-    throw std::runtime_error("No access token returned!");
-    }
 }
 
 QUrl Authentication::getCodeUrl(const QString& state) const {
@@ -148,39 +149,40 @@ QUrl Authentication::getCodeUrl(const QString& state) const {
   return url;
 }
 
-QVariantMap Authentication::parseLocalhost(const QUrl& url) const {
+void Authentication::parseLocalhost(const QUrl& url) {
   if (!url.hasQuery()) {
     throw std::invalid_argument("Localhost URL has no returned data!");
   }
 
   QUrlQuery const QUERY {url.query()};
 
-  QVariantMap data;
-  for (const auto & [KEY, VALUE] : QUERY.queryItems()) {
-    data[KEY] = VALUE;
-  }
-
   // Early return to avoid unnecessary checks
-  if (data.contains("error")) {
-    return data;
+  if (QUERY.hasQueryItem("error")) {
+    throw std::runtime_error(
+      QUERY.queryItemValue("error").toString().toStdString()
+      + '\n'
+      +  QUERY.queryItemValue("error_description").toString().toStdString()
+      );
   }
 
-  if (!data.contains("code")
-    or data.value("code").typeName() != QString("QString")
-    or data.value("code").toString().isEmpty()) {
-    throw std::invalid_argument("Localhost URL returned invalid code!");
-  }
-
-  if (!data.contains("state")
-    or data.value("state").typeName() != QString("QString")
-    or data.value("state").toString().isEmpty()) {
+  // Check state before code incase of mismatch
+  if (!QUERY.hasQueryItem("state")
+    or QUERY.queryItemValue("state").typeName() != QString("QString")
+    or QUERY.queryItemValue("state").toString().isEmpty()) {
     throw std::invalid_argument("Localhost URL has no returned state!");
   }
+  // Mismatch means possible interception
   if (QUERY.queryItemValue("state") != m_loginData.state) {
     throw std::invalid_argument("Localhost URL state mismatch!");
   }
 
-  return data;
+  if (!QUERY.hasQueryItem("code")
+    or QUERY.queryItemValue("code").typeName() != QString("QString")
+    or QUERY.queryItemValue("code").toString().isEmpty()) {
+    throw std::invalid_argument("Localhost URL returned invalid code!");
+  }
+
+  requestTokens(QUERY.queryItemValue("code").toString());
 }
 
 void Authentication::completeAuth(const QString& accessToken) {

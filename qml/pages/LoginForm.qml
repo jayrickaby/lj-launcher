@@ -124,22 +124,21 @@ LauncherPage {
     function handleNewUrl(url) {
         if (!Authentication.isUrlLocalhost(url)) return;
 
-        let params = Authentication.parseLocalhost(url);
+        Authentication.parseLocalhost(url);
 
         authWindow.visible = false;
-
-        if (params.error !== undefined) {
-            setErrorMessage(
-                params.error,
-                params.error_description
-            );
-            return;
-        }
 
         loginButton.enabled = false;
         loginButton.text = qsTr("Loading");
 
-        Authentication.requestToken(params.code);
+        // TODO: Readd with better system
+        // if (params.error !== undefined) {
+        //     setErrorMessage(
+        //         params.error,
+        //         params.error_description
+        //     );
+        //     return;
+        // }
     }
 
     function setErrorMessage(nerdError, nerdDescription) {
