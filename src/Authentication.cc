@@ -325,40 +325,47 @@ QUrl Authentication::getCodeUrl(const QString& state) const {
 }
 
 void Authentication::parseLocalhost(const QUrl& url) {
-  if (!url.hasQuery()) {
-    throw std::invalid_argument("Localhost URL has no returned data!");
-  }
+  try {
+    if (!url.hasQuery()) {
+      throw std::invalid_argument("Localhost URL has no returned data!");
+    }
 
-  QUrlQuery const QUERY {url.query()};
+    QUrlQuery const QUERY {url.query()};
 
-  // Early return to avoid unnecessary checks
-  if (QUERY.hasQueryItem("error")) {
-    throw std::runtime_error(
-      QUERY.queryItemValue("error").toStdString()
-      + '\n'
-      +  QUERY.queryItemValue("error_description").toStdString()
-      );
-  }
+    // Early return to avoid unnecessary checks
+    if (QUERY.hasQueryItem("error")) {
+      QString error = QUERY.queryItemValue("error");
+      QString desc = QUERY.queryItemValue("error_description");
 
-  // Check state before code incase of mismatch
-  if (!QUERY.hasQueryItem("state")
-    or QUERY.queryItemValue("state").isEmpty()) {
-    throw std::invalid_argument("Localhost URL has no returned state!");
-  }
-  qDebug("Found State in URL");
-  // Mismatch means possible interception
-  if (QUERY.queryItemValue("state") != m_loginData.state) {
-    throw std::invalid_argument("Localhost URL state mismatch!");
-  }
+      throw std::runtime_error(QString(error + ": " + desc).toStdString());
+    }
 
-  if (!QUERY.hasQueryItem("code")
-    or QUERY.queryItemValue("code").isEmpty()) {
-    throw std::invalid_argument("Localhost URL returned invalid code!");
-  }
-  qDebug("Found Code in URL. Beginning authentication");
+    // Check state before code incase of mismatch
+    if (!QUERY.hasQueryItem("state")
+      or QUERY.queryItemValue("state").isEmpty()) {
+      throw std::invalid_argument("Localhost URL has no returned state!");
+      }
+    qDebug("Found State in URL");
+    // Mismatch means possible interception
+    if (QUERY.queryItemValue("state") != m_loginData.state) {
+      throw std::invalid_argument("Localhost URL state mismatch!");
+    }
 
-  setState(AuthState::AUTHENTICATING);
-  requestMicrosoftAuth(QUERY.queryItemValue("code"));
+    if (!QUERY.hasQueryItem("code")
+      or QUERY.queryItemValue("code").isEmpty()) {
+      throw std::invalid_argument("Localhost URL returned invalid code!");
+      }
+    qDebug("Found Code in URL. Beginning authentication");
+
+    setState(AuthState::AUTHENTICATING);
+    requestMicrosoftAuth(QUERY.queryItemValue("code"));
+  }
+  catch (std::exception const& e) {
+    ErrorMessage message;
+    message.errorTechnical = e.what();
+    Launcher::sendError(message);
+    return;
+  }
 }
 
 void Authentication::setState(const AuthState& state) {
