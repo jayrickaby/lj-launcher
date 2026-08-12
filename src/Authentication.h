@@ -42,7 +42,7 @@ class Authentication : public QObject {
 public:
   explicit Authentication(QObject *parent = nullptr);
 
-  [[nodiscard]] QUrl codeUrl() const { return loginData.url; }
+  [[nodiscard]] QUrl codeUrl() const { return m_loginData.url; }
 
 public slots:
   [[nodiscard]] bool hasRefreshToken() const;
@@ -57,14 +57,14 @@ private:
   [[nodiscard]] QUrl getCodeUrl(const QString &state) const;
   [[nodiscard]] LoginData getLoginData() const;
 
-  bool authenticated {false};
   QString requestRefreshToken(const QString& oldToken);
   void completeAuth(const QString &accessToken);
 
-  QNetworkAccessManager networkManager;
-  PkceData pkceData;
-  LoginData loginData;
-  UserData userData;
+  bool m_authenticated {false};
+  QNetworkAccessManager m_networkManager;
+  PkceData m_pkceData;
+  LoginData m_loginData;
+  UserData m_userData;
 
   inline static const QString CLIENT_ID{"478514ce-2d7e-4e71-9301-29eb2241e2d6"};
   inline static const QUrl REDIRECT_URI{"http://localhost"};

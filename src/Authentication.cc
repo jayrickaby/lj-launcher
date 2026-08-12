@@ -8,9 +8,9 @@
 
 Authentication::Authentication(QObject* parent) :
 QObject(parent),
-pkceData(generatePkceData()),
-loginData(getLoginData()) {
-  connect(&networkManager, &QNetworkAccessManager::finished,
+m_pkceData(generatePkceData()),
+m_loginData(getLoginData()) {
+  connect(&m_networkManager, &QNetworkAccessManager::finished,
         this, &Authentication::onTokenReceived);
 }
 
@@ -63,9 +63,10 @@ PkceData Authentication::generatePkceData() const {
     QCryptographicHash::Sha256
     );
 
+
   pkceData.codeChallenge = HASH.toBase64(
     QByteArray::Base64UrlEncoding
-    | QByteArray::OmitTrailingEquals
+    | QByteArray::OmitTrailingEquals    // RFC7636 states to omit trailing '='
     );
 
   return pkceData;
@@ -98,11 +99,11 @@ void Authentication::requestToken(const QString& code) {
   query.addQueryItem("code", code);
   query.addQueryItem("redirect_uri", REDIRECT_URI.toString());
   query.addQueryItem("grant_type", "authorization_code");
-  query.addQueryItem("code_verifier", pkceData.codeVerifier);
+  query.addQueryItem("code_verifier", m_pkceData.codeVerifier);
 
   QByteArray const DATA {query.toString(QUrl::FullyEncoded).toUtf8()};
 
-  networkManager.post(request, DATA);
+  m_networkManager.post(request, DATA);
 }
 
 void Authentication::onTokenReceived(QNetworkReply* reply) {
@@ -139,8 +140,8 @@ QUrl Authentication::getCodeUrl(const QString& state) const {
   query.addQueryItem("redirect_uri", REDIRECT_URI.toString());
   query.addQueryItem("scope", SCOPE);
   query.addQueryItem("response_mode", "query");
-  query.addQueryItem("code_challenge", pkceData.codeChallenge);
-  query.addQueryItem("code_challenge_method", pkceData.codeChallengeMethod);
+  query.addQueryItem("code_challenge", m_pkceData.codeChallenge);
+  query.addQueryItem("code_challenge_method", m_pkceData.codeChallengeMethod);
   query.addQueryItem("state", state);
   url.setQuery(query);
 
@@ -175,7 +176,7 @@ QVariantMap Authentication::parseLocalhost(const QUrl& url) const {
     or data.value("state").toString().isEmpty()) {
     throw std::invalid_argument("Localhost URL has no returned state!");
   }
-  if (QUERY.queryItemValue("state") != loginData.state) {
+  if (QUERY.queryItemValue("state") != m_loginData.state) {
     throw std::invalid_argument("Localhost URL state mismatch!");
   }
 
