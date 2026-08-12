@@ -344,7 +344,7 @@ void Authentication::parseLocalhost(const QUrl& url) {
     if (!QUERY.hasQueryItem("state")
       or QUERY.queryItemValue("state").isEmpty()) {
       throw std::invalid_argument("Localhost URL has no returned state!");
-      }
+    }
     qDebug("Found State in URL");
     // Mismatch means possible interception
     if (QUERY.queryItemValue("state") != m_loginData.state) {
@@ -361,10 +361,10 @@ void Authentication::parseLocalhost(const QUrl& url) {
     requestMicrosoftAuth(QUERY.queryItemValue("code"));
   }
   catch (std::exception const& e) {
+    setState(AuthState::UNAUTHENTICATED);
     ErrorMessage message;
     message.errorTechnical = e.what();
     Launcher::sendError(message);
-    return;
   }
 }
 

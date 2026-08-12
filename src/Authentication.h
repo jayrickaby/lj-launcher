@@ -99,7 +99,6 @@ private:
 
   void setState(const AuthState& state);
 
-  bool m_authenticated {false};
   QNetworkAccessManager m_networkManager;
   PkceData m_pkceData;
   LoginData m_loginData;

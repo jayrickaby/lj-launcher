@@ -137,9 +137,6 @@ LauncherPage {
         Authentication.parseLocalhost(url);
 
         authWindow.visible = false;
-
-        loginButton.enabled = false;
-        loginButton.text = qsTr("Loading");
     }
 
     function setErrorMessage(friendlyError, nerdError) {
