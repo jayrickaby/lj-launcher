@@ -178,43 +178,48 @@ void Authentication::requestXboxServicesAuth(const QString& token) {
 void Authentication::onTokenReceived(QNetworkReply* reply) {
   reply->deleteLater();
 
-  if (reply->error()) {
+  try {
+    if (reply->error()) {
+      throw std::runtime_error(reply->errorString().toStdString());
+    }
+
+    if (!reply->property("type").isValid()) {
+      qDebug() << reply->readAll();
+      throw std::runtime_error("Received reply of unknown type!");
+    }
+
+    QJsonDocument const JSON_DOC {QJsonDocument::fromJson(reply->readAll())};
+    QJsonObject const JSON {JSON_DOC.object()};
+
+    switch (auto authType = reply->property("type").value<AuthType>()) {
+      case AuthType::MICROSOFT_TOKEN: {
+        qDebug("Received Microsoft Auth Tokens");
+        QString const ACCESS_TOKEN {parseMicrosoftTokens(JSON)};
+        requestXboxLiveAuth(ACCESS_TOKEN);
+        break;
+      }
+      case AuthType::XBOX_LIVE_TOKEN: {
+        qDebug("Received Xbox Auth Token");
+        QString const TOKEN {parseXboxLiveAuth(JSON)};
+        requestXboxServicesAuth(TOKEN);
+        break;
+      }
+      case AuthType::XBOX_SERVICES_TOKEN: {
+        qDebug("Received Xbox Service Token");
+        XboxServicesData const DATA {parseXboxServicesAuthData(JSON)};
+        break;
+      }
+      default: {
+        throw std::runtime_error("Received token data of unknown type!");
+        break;
+      }
+    }
+  }
+  catch (std::exception const& e) {
     setState(AuthState::UNAUTHENTICATED);
     ErrorMessage message;
-    message.errorTechnical = reply->errorString();
+    message.errorTechnical = e.what();
     Launcher::sendError(message);
-    return;
-  }
-
-  if (!reply->property("type").isValid()) {
-    throw std::runtime_error("Received token data of unknown type!");
-  }
-
-  QJsonDocument const JSON_DOC {QJsonDocument::fromJson(reply->readAll())};
-  QJsonObject const JSON {JSON_DOC.object()};
-
-  switch (auto authType = reply->property("type").value<AuthType>()) {
-    case AuthType::MICROSOFT_TOKEN: {
-      qDebug("Received Microsoft Auth Tokens");
-      QString const ACCESS_TOKEN {parseMicrosoftTokens(JSON)};
-      requestXboxLiveAuth(ACCESS_TOKEN);
-      break;
-    }
-    case AuthType::XBOX_LIVE_TOKEN: {
-      qDebug("Received Xbox Auth Token");
-      QString const TOKEN {parseXboxLiveAuth(JSON)};
-      requestXboxServicesAuth(TOKEN);
-      break;
-    }
-    case AuthType::XBOX_SERVICES_TOKEN: {
-      qDebug("Received Xbox Service Token");
-      XboxServicesData const DATA {parseXboxServicesAuthData(JSON)};
-      break;
-    }
-    default: {
-      throw std::runtime_error("Received token data of unknown type!");
-      break;
-    }
   }
 }
 
