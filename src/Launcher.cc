@@ -16,7 +16,7 @@ void Launcher::sendError(ErrorMessage& message) {
     return;
   }
   if (message.errorFriendly.isEmpty()) {
-    message.errorFriendly = "Oops! An error has occurred!";
+    message.errorFriendly = "Oops, an error has occurred!";
   }
   emit s_instance->launcherError(message);
 }
