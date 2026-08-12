@@ -2,8 +2,8 @@
 // Created by jay on 11/08/2026.
 //
 
+#include <iostream>
 #include "Authentication.h"
-
 #include "Settings.h"
 
 Authentication::Authentication(QObject* parent) :
@@ -84,7 +84,7 @@ QString Authentication::requestRefreshToken(const QString& oldToken) {
   query.addQueryItem("refresh_token", oldToken);
   return "balls";
 }
-void Authentication::requestTokens(const QString& code) {
+void Authentication::requestMicrosoftTokens(const QString& code) {
   const QUrl URL {TOKEN_URL};
   QNetworkRequest request{URL};
 
@@ -102,7 +102,8 @@ void Authentication::requestTokens(const QString& code) {
 
   QByteArray const DATA {query.toString(QUrl::FullyEncoded).toUtf8()};
 
-  m_networkManager.post(request, DATA);
+  QNetworkReply* reply = m_networkManager.post(request, DATA);
+  reply->setProperty("type", QVariant::fromValue(AuthType::MICROSOFT_TOKEN));
 }
 
 void Authentication::onTokenReceived(QNetworkReply* reply) {
@@ -113,6 +114,21 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
     return;
   }
 
+  if (!reply->property("type").isValid()) {
+    throw std::runtime_error("Received token data of unknown type!");
+  }
+
+  switch (auto authType = reply->property("type").value<AuthType>()) {
+    case AuthType::MICROSOFT_TOKEN:
+      parseMicrosoftTokens(reply);
+      break;
+    default:
+      throw std::runtime_error("Received token data of unknown type!");
+      break;
+  }
+}
+
+void Authentication::parseMicrosoftTokens(QNetworkReply* reply) {
   QJsonDocument const JSON_DOC {QJsonDocument::fromJson(reply->readAll())};
   QJsonObject const JSON {JSON_DOC.object()};
 
@@ -122,12 +138,12 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
   if (!RESPONSE.contains("access_token")
     or RESPONSE.value("access_token").toString().isEmpty()) {
     throw std::runtime_error("No access token returned!");
-  }
+    }
 
   if (!RESPONSE.contains("refresh_token")
     or RESPONSE.value("refresh_token").toString().isEmpty()) {
     throw std::runtime_error("No refresh token returned!");
-  }
+    }
 
   // Save to avoid manual in next time
   Settings::setRefreshToken(RESPONSE.value("refresh_token").toString());
@@ -159,16 +175,15 @@ void Authentication::parseLocalhost(const QUrl& url) {
   // Early return to avoid unnecessary checks
   if (QUERY.hasQueryItem("error")) {
     throw std::runtime_error(
-      QUERY.queryItemValue("error").toString().toStdString()
+      QUERY.queryItemValue("error").toStdString()
       + '\n'
-      +  QUERY.queryItemValue("error_description").toString().toStdString()
+      +  QUERY.queryItemValue("error_description").toStdString()
       );
   }
 
   // Check state before code incase of mismatch
   if (!QUERY.hasQueryItem("state")
-    or QUERY.queryItemValue("state").typeName() != QString("QString")
-    or QUERY.queryItemValue("state").toString().isEmpty()) {
+    or QUERY.queryItemValue("state").isEmpty()) {
     throw std::invalid_argument("Localhost URL has no returned state!");
   }
   // Mismatch means possible interception
@@ -177,12 +192,11 @@ void Authentication::parseLocalhost(const QUrl& url) {
   }
 
   if (!QUERY.hasQueryItem("code")
-    or QUERY.queryItemValue("code").typeName() != QString("QString")
-    or QUERY.queryItemValue("code").toString().isEmpty()) {
+    or QUERY.queryItemValue("code").isEmpty()) {
     throw std::invalid_argument("Localhost URL returned invalid code!");
   }
 
-  requestTokens(QUERY.queryItemValue("code").toString());
+  requestMicrosoftTokens(QUERY.queryItemValue("code"));
 }
 
 void Authentication::completeAuth(const QString& accessToken) {

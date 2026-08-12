@@ -44,6 +44,14 @@ public:
 
   [[nodiscard]] QUrl codeUrl() const { return m_loginData.url; }
 
+  enum class AuthType {
+    MICROSOFT_TOKEN,
+    XBOX_LIVE_TOKEN,
+    MINECRAFT_TOKEN
+  };
+
+  Q_ENUM(AuthType)
+
 public slots:
   [[nodiscard]] bool hasRefreshToken() const;
   [[nodiscard]] bool isUrlLocalhost(const QUrl &url) const;
@@ -58,7 +66,8 @@ private:
 
   QString requestRefreshToken(const QString& oldToken);
   void completeAuth(const QString &accessToken);
-  void requestTokens(const QString& code);
+  void requestMicrosoftTokens(const QString& code);
+  void parseMicrosoftTokens(QNetworkReply *reply);
 
   bool m_authenticated {false};
   QNetworkAccessManager m_networkManager;
