@@ -139,7 +139,7 @@ LauncherPage {
         loginButton.enabled = false;
         loginButton.text = qsTr("Loading");
 
-        Authentication.completeAuth(params.code);
+        Authentication.requestToken(params.code);
     }
 
     function setErrorMessage(nerdError, nerdDescription) {

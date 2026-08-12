@@ -125,6 +125,10 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
 
   Settings::setRefreshToken(RESPONSE.value("refresh_token").toString());
 
+  if (!RESPONSE.contains("access_token")
+    or RESPONSE.value("access_token").toString().isEmpty()) {
+    throw std::runtime_error("No access token returned!");
+    }
 }
 
 QUrl Authentication::getCodeUrl(const QString& state) const {
@@ -178,6 +182,6 @@ QVariantMap Authentication::parseLocalhost(const QUrl& url) const {
   return data;
 }
 
-void Authentication::completeAuth(const QString& code) {
-  requestToken(code);
+void Authentication::completeAuth(const QString& accessToken) {
+
 }

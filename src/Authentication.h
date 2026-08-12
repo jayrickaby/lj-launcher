@@ -48,7 +48,7 @@ public slots:
   [[nodiscard]] bool hasRefreshToken() const;
   [[nodiscard]] bool isUrlLocalhost(const QUrl &url) const;
   [[nodiscard]] QVariantMap parseLocalhost(const QUrl &url) const;
-  void completeAuth(const QString &code);
+  void requestToken(const QString& code);
 
 private:
   [[nodiscard]] PkceData generatePkceData() const;
@@ -57,10 +57,9 @@ private:
   [[nodiscard]] QUrl getCodeUrl(const QString &state) const;
   [[nodiscard]] LoginData getLoginData() const;
 
-  QString requestRefreshToken(const QString& oldToken);
-  void requestToken(const QString& code);
-
   bool authenticated {false};
+  QString requestRefreshToken(const QString& oldToken);
+  void completeAuth(const QString &accessToken);
 
   QNetworkAccessManager networkManager;
   PkceData pkceData;
