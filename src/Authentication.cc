@@ -335,10 +335,10 @@ void Authentication::parseLocalhost(const QUrl& url) {
 
     // Early return to avoid unnecessary checks
     if (QUERY.hasQueryItem("error")) {
-      QString error = QUERY.queryItemValue("error");
-      QString desc = QUERY.queryItemValue("error_description");
+      QString const ERROR = QUERY.queryItemValue("error");
+      QString const DESC = QUERY.queryItemValue("error_description");
 
-      throw std::runtime_error(QString(error + ": " + desc).toStdString());
+      throw std::runtime_error(QString(ERROR + ": " + DESC).toStdString());
     }
 
     // Check state before code incase of mismatch
