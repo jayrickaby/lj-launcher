@@ -10,6 +10,8 @@ import "./template"
 LauncherPage {
     id: control
 
+    property int authState: Authentication.authState
+
     Connections {
         target: Launcher
 
@@ -78,8 +80,8 @@ LauncherPage {
                 Layout.preferredHeight: 21
                 Layout.fillWidth: true
 
-                text: Authentication.authenticated ?  "Loading" : "Log in via Microsoft"
-                enabled: !Authentication.authenticated
+                text: authState !== Authentication.AuthState.UNAUTHENTICATED ? "Loading" : "Log in via Microsoft"
+                enabled: authState === Authentication.AuthState.UNAUTHENTICATED
 
                 onClicked: {
                     clearErrorMessage();

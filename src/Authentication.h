@@ -18,19 +18,6 @@
 #include <QJsonObject>
 #include <QUrlQuery>
 
-enum class AuthState {
-  UNAUTHENTICATED,
-  AUTHENTICATING,
-  AUTHENTICATING_REFRESH,
-  AUTHENTICATED
-};
-enum class AuthType {
-  MICROSOFT_TOKEN,
-  XBOX_LIVE_TOKEN,
-  XBOX_SERVICES_TOKEN,
-  MINECRAFT_TOKEN
-};
-
 struct PkceData {
   QString codeChallenge;
   QString codeChallengeMethod {"S256"};
@@ -55,8 +42,6 @@ struct UserData {
 
 class Authentication : public QObject {
   Q_OBJECT
-  Q_ENUM(AuthType)
-  Q_ENUM(AuthState)
   Q_PROPERTY(QUrl codeUrl READ codeUrl)
   Q_PROPERTY(AuthState authState READ authState NOTIFY authStateChanged)
   QML_ELEMENT
@@ -64,6 +49,20 @@ class Authentication : public QObject {
 
 public:
   explicit Authentication(QObject *parent = nullptr);
+
+  enum class AuthState {
+    UNAUTHENTICATED,
+    AUTHENTICATING,
+    AUTHENTICATING_REFRESH,
+    AUTHENTICATED
+  };
+  Q_ENUM(AuthState)
+  enum class AuthType {
+    MICROSOFT_TOKEN,
+    XBOX_LIVE_TOKEN,
+    XBOX_SERVICES_TOKEN,
+    MINECRAFT_TOKEN
+  };
 
   [[nodiscard]] QUrl codeUrl() const { return m_loginData.url; }
   [[nodiscard]] AuthState authState() const { return m_authState; }
@@ -106,7 +105,7 @@ private:
   LoginData m_loginData;
   UserData m_userData;
 
-  AuthState m_authState;
+  AuthState m_authState {AuthState::UNAUTHENTICATED};
 
   inline static const QString CLIENT_ID{"478514ce-2d7e-4e71-9301-29eb2241e2d6"};
   inline static const QUrl REDIRECT_URI{"http://localhost"};
