@@ -23,7 +23,7 @@ qt_add_qml_module(lj_launcher
     RESOURCE_PREFIX /
     QML_FILES
         qml/Main.qml
-        qml/pages/Launcher.qml
+        qml/pages/LauncherPage.qml
         qml/pages/LoginForm.qml
         qml/pages/ProfileEditor.qml
         qml/pages/template/LauncherPage.qml

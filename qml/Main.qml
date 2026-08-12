@@ -19,7 +19,7 @@ ApplicationWindow {
         id: pageLoader
         anchors.fill: parent
 
-        source: Authentication.authenticated || Authentication.hasRefreshToken() ? "./pages/Launcher.qml" : "./pages/LoginForm.qml"
+        source: Authentication.authenticated || Authentication.hasRefreshToken() ? "./pages/LauncherPage.qml" : "./pages/LoginForm.qml"
     }
 
     Component.onCompleted: {
