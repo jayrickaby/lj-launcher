@@ -4,6 +4,7 @@
 #include <QGuiApplication>
 #include <QIcon>
 #include <QQmlApplicationEngine>
+#include <QLoggingCategory>
 
 #include "Application.h"
 #include "Settings.h"

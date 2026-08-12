@@ -7,11 +7,13 @@
 
 #include <qqml.h>
 #include <QCryptographicHash>
+#include <QDebug>
 #include <QObject>
 #include <QRandomGenerator>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QUrlQuery>
@@ -25,6 +27,11 @@ struct PkceData {
 struct LoginData {
   QString state;
   QUrl url;
+};
+
+struct XboxServicesData {
+  QString token;
+  QString userHash;
 };
 
 struct UserData {
@@ -47,6 +54,7 @@ public:
   enum class AuthType {
     MICROSOFT_TOKEN,
     XBOX_LIVE_TOKEN,
+    XBOX_SERVICES_TOKEN,
     MINECRAFT_TOKEN
   };
 
@@ -66,8 +74,19 @@ private:
 
   QString requestRefreshToken(const QString& oldToken);
   void completeAuth(const QString &accessToken);
-  void requestMicrosoftTokens(const QString& code);
-  void parseMicrosoftTokens(QNetworkReply *reply);
+
+  void requestMicrosoftAuth(const QString& code);
+  QString parseMicrosoftTokens(const QJsonObject& json);
+
+  void requestXboxLiveAuth(const QString& accessToken);
+  QString parseXboxLiveAuth(const QJsonObject& json);
+
+  void requestXboxServicesAuth(const QString& xblToken);
+  XboxServicesData parseXboxServicesAuthData(const QJsonObject& json);
+
+  void requestMinecraftAuth(const QString& token);
+  QString parseMinecraftToken(const QJsonObject& json);
+
 
   bool m_authenticated {false};
   QNetworkAccessManager m_networkManager;
@@ -80,6 +99,8 @@ private:
 
   inline static const QUrl AUTH_URL{"https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize"};
   inline static const QUrl TOKEN_URL{"https://login.microsoftonline.com/consumers/oauth2/v2.0/token"};
+  inline static const QUrl XBOX_LIVE_URL{"https://user.auth.xboxlive.com/user/authenticate"};
+  inline static const QUrl XBOX_SERVICES_URL{" https://xsts.auth.xboxlive.com/xsts/authorize"};
   inline static const QString SCOPE{"XboxLive.signin offline_access"};
 
 private slots:

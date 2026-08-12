@@ -2,7 +2,6 @@
 // Created by jay on 11/08/2026.
 //
 
-#include <iostream>
 #include "Authentication.h"
 #include "Settings.h"
 
@@ -23,17 +22,18 @@ LoginData Authentication::getLoginData() const{
   data.url = getCodeUrl(STATE);
   data.state = STATE;
 
+  qInfo("Generated login data.");
   return data;
 }
 
 bool Authentication::hasRefreshToken() const {
-  if (Settings::getRefreshToken().canConvert<QString>()) {
-    return true;
-  }
-  if (!Settings::getRefreshToken().toString().isEmpty()) {
+  if (Settings::getRefreshToken().canConvert<QString>()
+    and !Settings::getRefreshToken().toString().isEmpty()) {
+    qDebug("Stored refresh token found!");
     return true;
   }
 
+  qDebug("No stored refresh token found!");
   return false;
 }
 
@@ -49,6 +49,7 @@ QString Authentication::generateSafeToken(int length) const {
     token.append(ALLOWED_CHARACTERS[INDEX]);
   }
 
+  qDebug("Generated safe token of %i characters.", length);
   return token;
 }
 
@@ -68,10 +69,12 @@ PkceData Authentication::generatePkceData() const {
     | QByteArray::OmitTrailingEquals    // RFC7636 states to omit trailing '='
   );
 
+  qInfo("Generated PKCE data");
   return pkceData;
 }
 
 bool Authentication::isUrlLocalhost(const QUrl& url) const {
+  qDebug() << "Checking if" << url.host().toString().toStdString() << "is localhost...";
   return url.host() == "localhost";
 }
 
@@ -84,11 +87,12 @@ QString Authentication::requestRefreshToken(const QString& oldToken) {
   query.addQueryItem("refresh_token", oldToken);
   return "balls";
 }
-void Authentication::requestMicrosoftTokens(const QString& code) {
+void Authentication::requestMicrosoftAuth(const QString& code) {
   const QUrl URL {TOKEN_URL};
   QNetworkRequest request{URL};
 
-  request.setHeader(QNetworkRequest::ContentTypeHeader,
+  request.setHeader(
+    QNetworkRequest::ContentTypeHeader,
     "application/x-www-form-urlencoded"
     );
 
@@ -102,8 +106,72 @@ void Authentication::requestMicrosoftTokens(const QString& code) {
 
   QByteArray const DATA {query.toString(QUrl::FullyEncoded).toUtf8()};
 
+  qDebug("Requesting Microsoft Auth Tokens");
   QNetworkReply* reply = m_networkManager.post(request, DATA);
   reply->setProperty("type", QVariant::fromValue(AuthType::MICROSOFT_TOKEN));
+}
+
+void Authentication::requestXboxLiveAuth(const QString& accessToken) {
+  const QUrl URL {XBOX_LIVE_URL};
+  QNetworkRequest request{URL};
+
+  request.setHeader(
+    QNetworkRequest::ContentTypeHeader,
+    "application/json"
+  );
+
+  request.setRawHeader(
+    "Accept",
+    "application/json"
+  );
+
+  QJsonObject properties {};
+  properties.insert("AuthMethod", "RPS");
+  properties.insert("SiteName", "user.auth.xboxlive.com");
+  properties.insert("RpsTicket", "d=" + accessToken);
+
+  QJsonObject json {};
+  json.insert("Properties", properties);
+  json.insert("RelyingParty", "http://auth.xboxlive.com");
+  json.insert("TokenType", "JWT");
+
+  QJsonDocument const JSON_DOC {json};
+
+  QNetworkReply* reply = m_networkManager.post(request, JSON_DOC.toJson());
+  reply->setProperty("type", QVariant::fromValue(AuthType::XBOX_LIVE_TOKEN));
+
+  qDebug("Requesting Xbox Live Auth Token");
+}
+
+void Authentication::requestXboxServicesAuth(const QString& token) {
+  const QUrl URL {XBOX_LIVE_URL};
+  QNetworkRequest request{URL};
+
+  request.setHeader(
+    QNetworkRequest::ContentTypeHeader,
+    "application/json"
+  );
+
+  request.setRawHeader(
+    "Accept",
+    "application/json"
+  );
+
+  QJsonObject properties {};
+  properties.insert("SandboxId", "RETAIL");
+  properties.insert("UserTokens", QJsonArray{token});
+
+  QJsonObject json {};
+  json.insert("Properties", properties);
+  json.insert("RelyingParty", "rp://api.minecraftservices.com/");
+  json.insert("TokenType", "JWT");
+
+  QJsonDocument const JSON_DOC {json};
+
+  QNetworkReply* reply = m_networkManager.post(request, JSON_DOC.toJson());
+  reply->setProperty("type", QVariant::fromValue(AuthType::XBOX_SERVICES_TOKEN));
+
+  qDebug("Requesting Xbox Services Auth Token");
 }
 
 void Authentication::onTokenReceived(QNetworkReply* reply) {
@@ -118,35 +186,114 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
     throw std::runtime_error("Received token data of unknown type!");
   }
 
-  switch (auto authType = reply->property("type").value<AuthType>()) {
-    case AuthType::MICROSOFT_TOKEN:
-      parseMicrosoftTokens(reply);
-      break;
-    default:
-      throw std::runtime_error("Received token data of unknown type!");
-      break;
-  }
-}
-
-void Authentication::parseMicrosoftTokens(QNetworkReply* reply) {
   QJsonDocument const JSON_DOC {QJsonDocument::fromJson(reply->readAll())};
   QJsonObject const JSON {JSON_DOC.object()};
 
-  QVariantMap const RESPONSE {JSON.toVariantMap()};
+  switch (auto authType = reply->property("type").value<AuthType>()) {
+    case AuthType::MICROSOFT_TOKEN: {
+      qDebug("Received Microsoft Auth Tokens");
+      QString const ACCESS_TOKEN {parseMicrosoftTokens(JSON)};
+      requestXboxLiveAuth(ACCESS_TOKEN);
+      break;
+    }
+    case AuthType::XBOX_LIVE_TOKEN: {
+      qDebug("Received Xbox Auth Token");
+      QString const TOKEN {parseXboxLiveAuth(JSON)};
+      requestXboxServicesAuth(TOKEN);
+      break;
+    }
+    case AuthType::XBOX_SERVICES_TOKEN: {
+      qDebug("Received Xbox Service Token");
+      XboxServicesData const DATA {parseXboxServicesAuthData(JSON)};
+      break;
+    }
+    default: {
+      throw std::runtime_error("Received token data of unknown type!");
+      break;
+    }
+  }
+}
 
+
+
+QString Authentication::parseMicrosoftTokens(const QJsonObject& json) {
   // Check before saving refresh incase its invalid
-  if (!RESPONSE.contains("access_token")
-    or RESPONSE.value("access_token").toString().isEmpty()) {
+  if (!json.contains("access_token")
+    or !json["access_token"].isString()
+    or json["access_token"].toString().isEmpty()) {
     throw std::runtime_error("No access token returned!");
-    }
+  }
 
-  if (!RESPONSE.contains("refresh_token")
-    or RESPONSE.value("refresh_token").toString().isEmpty()) {
+  qDebug("Found requested Access Token");
+
+  if (!json.contains("refresh_token")
+    or !json["access_token"].isString()
+    or json["refresh_token"].toString().isEmpty()) {
     throw std::runtime_error("No refresh token returned!");
+  }
+
+  qDebug("Found requested Refresh Token");
+
+  // Save to avoid manual login next time
+  Settings::setRefreshToken(json["refresh_token"].toString());
+  return json["access_token"].toString();
+}
+
+QString Authentication::parseXboxLiveAuth(const QJsonObject& json) {
+  if (!json.contains("Token")
+    or !json["Token"].isString()
+    or json["Token"].toString().isEmpty()) {
+    throw std::runtime_error("No Xbox Live token returned!");
     }
 
-  // Save to avoid manual in next time
-  Settings::setRefreshToken(RESPONSE.value("refresh_token").toString());
+  qDebug("Found requested Xbox Live token");
+  return json.value("Token").toString();
+}
+
+XboxServicesData Authentication::parseXboxServicesAuthData(const QJsonObject& json) {
+  XboxServicesData data;
+
+  if (!json.contains("Token")
+    or !json["Token"].isString()
+    or json["Token"].toString().isEmpty()) {
+    throw std::runtime_error("No Xbox services token returned!");
+    }
+
+  qDebug("Found requested Xbox Services token");
+  data.token = json.value("Token").toString();
+
+  if (!json.contains("DisplayClaims")
+    or !json["DisplayClaims"].isObject()
+    or json["DisplayClaims"].toObject().isEmpty()) {
+    throw std::runtime_error("No display claims returned!");
+  }
+
+  QJsonObject const DISPLAY_CLAIMS {
+    json.value("DisplayClaims").toObject()
+  };
+
+  if (!DISPLAY_CLAIMS.contains("xui")
+    or !DISPLAY_CLAIMS["xui"].isArray()
+    or DISPLAY_CLAIMS["xui"].toArray().isEmpty()
+    or !DISPLAY_CLAIMS["xui"][0].isObject()
+    or DISPLAY_CLAIMS["xui"][0].toObject().isEmpty()) {
+    throw std::runtime_error("No xui returned!");
+  }
+
+  QJsonObject const XUI {
+    DISPLAY_CLAIMS.value("XUI").toArray()[0].toObject()
+  };
+
+  if (!XUI.contains("uhs")
+    or !XUI["uhs"].isString()
+    or XUI["uhs"].toString().isEmpty()) {
+    throw std::runtime_error("No user hash returned!");
+  }
+
+  qDebug("Found Requested Xbox user hash");
+  data.userHash = XUI["uhs"].toString();
+
+  return data;
 }
 
 QUrl Authentication::getCodeUrl(const QString& state) const {
@@ -186,6 +333,7 @@ void Authentication::parseLocalhost(const QUrl& url) {
     or QUERY.queryItemValue("state").isEmpty()) {
     throw std::invalid_argument("Localhost URL has no returned state!");
   }
+  qDebug("Found State in URL");
   // Mismatch means possible interception
   if (QUERY.queryItemValue("state") != m_loginData.state) {
     throw std::invalid_argument("Localhost URL state mismatch!");
@@ -195,8 +343,9 @@ void Authentication::parseLocalhost(const QUrl& url) {
     or QUERY.queryItemValue("code").isEmpty()) {
     throw std::invalid_argument("Localhost URL returned invalid code!");
   }
+  qDebug("Found Code in URL");
 
-  requestMicrosoftTokens(QUERY.queryItemValue("code"));
+  requestMicrosoftAuth(QUERY.queryItemValue("code"));
 }
 
 void Authentication::completeAuth(const QString& accessToken) {
