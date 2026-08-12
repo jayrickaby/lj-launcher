@@ -112,7 +112,7 @@ private:
   inline static const QUrl AUTH_URL{"https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize"};
   inline static const QUrl TOKEN_URL{"https://login.microsoftonline.com/consumers/oauth2/v2.0/token"};
   inline static const QUrl XBOX_LIVE_URL{"https://user.auth.xboxlive.com/user/authenticate"};
-  inline static const QUrl XBOX_SERVICES_URL{" https://xsts.auth.xboxlive.com/xsts/authorize"};
+  inline static const QUrl XBOX_SERVICES_URL{"https://xsts.auth.xboxlive.com/xsts/authorize"};
   inline static const QString SCOPE{"XboxLive.signin offline_access"};
 
 private slots:

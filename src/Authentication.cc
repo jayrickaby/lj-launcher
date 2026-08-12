@@ -145,7 +145,7 @@ void Authentication::requestXboxLiveAuth(const QString& accessToken) {
 }
 
 void Authentication::requestXboxServicesAuth(const QString& token) {
-  const QUrl URL {XBOX_LIVE_URL};
+  const QUrl URL {XBOX_SERVICES_URL};
   QNetworkRequest request{URL};
 
   request.setHeader(
@@ -188,7 +188,8 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
       throw std::runtime_error("Received reply of unknown type!");
     }
 
-    QJsonDocument const JSON_DOC {QJsonDocument::fromJson(reply->readAll())};
+    QByteArray const JSON_RAW {reply->readAll()};
+    QJsonDocument const JSON_DOC {QJsonDocument::fromJson(JSON_RAW)};
     QJsonObject const JSON {JSON_DOC.object()};
 
     switch (auto authType = reply->property("type").value<AuthType>()) {
@@ -293,7 +294,7 @@ XboxServicesData Authentication::parseXboxServicesAuthData(const QJsonObject& js
   }
 
   QJsonObject const XUI {
-    DISPLAY_CLAIMS.value("XUI").toArray()[0].toObject()
+    DISPLAY_CLAIMS.value("xui").toArray()[0].toObject()
   };
 
   if (!XUI.contains("uhs")
@@ -302,7 +303,7 @@ XboxServicesData Authentication::parseXboxServicesAuthData(const QJsonObject& js
     throw std::runtime_error("No user hash returned!");
   }
 
-  qDebug("Found Requested Xbox user hash");
+  qDebug("Found requested Xbox user hash");
   data.userHash = XUI["uhs"].toString();
 
   return data;
