@@ -18,6 +18,8 @@ qt_add_executable(lj_launcher
         src/Settings.h
         src/Launcher.cc
         src/Launcher.h
+        src/Profiles.cc
+        src/Profiles.h
 )
 
 qt_add_qml_module(lj_launcher
