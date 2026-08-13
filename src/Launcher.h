@@ -13,6 +13,8 @@
 #include <QStandardPaths>
 
 #include "Launcher.h"
+#include "Authentication.h"
+
 
 struct ErrorMessage {
   Q_GADGET
@@ -27,22 +29,34 @@ public:
 
 class Launcher : public QObject {
   Q_OBJECT
+  Q_PROPERTY(QString userMessage READ userMessage NOTIFY userMessageChanged)
   QML_ELEMENT
   QML_SINGLETON
 
 public:
   explicit Launcher(QObject *parent = nullptr);
 
+  QString userMessage();
+
   static void sendError(ErrorMessage &message);
   static QUrl getGameDirectory();
 
+  static QString getUsername();
+  static void setUsername(const QString &username);
+
+  static Launcher* getInstance() { return s_instance; };
+
 signals:
   void launcherError(const ErrorMessage &message);
+  void userMessageChanged();
+  void usernameChanged();
 
 private:
   static QUrl findGameDirectory();
 
+  static QString s_username;
   static QUrl s_gameDirectory;
+
   static Launcher* s_instance;
 };
 

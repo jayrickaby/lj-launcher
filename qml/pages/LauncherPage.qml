@@ -231,7 +231,7 @@ LauncherPage {
                         Layout.topMargin: -4
 
                         horizontalAlignment: Text.AlignHCenter
-                        text: qsTr(Launcher.user_message)
+                        text: qsTr(Launcher.userMessage)
                     }
 
                     Button {

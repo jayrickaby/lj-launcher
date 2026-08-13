@@ -4,13 +4,16 @@
 
 #include "Authentication.h"
 
-#include "Launcher.h"
 #include "Settings.h"
+
+Authentication* Authentication::s_instance {nullptr};
+Authentication::AuthState Authentication::s_authState {AuthState::UNAUTHENTICATED};
 
 Authentication::Authentication(QObject* parent) :
 QObject(parent),
 m_pkceData(generatePkceData()),
 m_loginData(getLoginData()) {
+  s_instance = this;
   connect(&m_networkManager, &QNetworkAccessManager::finished,
         this, &Authentication::onTokenReceived);
 }
@@ -311,6 +314,7 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
       case AuthType::PROFILE: {
         qDebug("Received Profile");
         m_userData = parseMinecraftProfile(JSON);
+        Launcher::setUsername(m_userData.name);
         setState(AuthState::AUTHENTICATED);
         break;
       }
@@ -541,6 +545,8 @@ void Authentication::parseLocalhost(const QUrl& url) {
 }
 
 void Authentication::setState(const AuthState& state) {
-  m_authState = state;
+  if (s_authState == state) { return; }
+
+  s_authState = state;
   emit authStateChanged();
 }

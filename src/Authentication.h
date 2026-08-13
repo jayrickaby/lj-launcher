@@ -19,6 +19,8 @@
 #include <QUrlQuery>
 #include <QVariantList>
 
+#include "Launcher.h"
+
 struct PkceData {
   QString codeChallenge;
   QString codeChallengeMethod {"S256"};
@@ -68,7 +70,10 @@ public:
   };
 
   [[nodiscard]] QUrl codeUrl() const { return m_loginData.url; }
-  [[nodiscard]] AuthState authState() const { return m_authState; }
+  [[nodiscard]] AuthState authState() const { return s_authState; }
+  [[nodiscard]] static AuthState getAuthState() { return s_instance->s_authState; }
+
+  static Authentication* getInstance() { return s_instance; };
 
 signals:
   void authStateChanged();
@@ -114,7 +119,7 @@ private:
   LoginData m_loginData;
   UserData m_userData;
 
-  AuthState m_authState {AuthState::UNAUTHENTICATED};
+  static AuthState s_authState;
 
   inline static const QString CLIENT_ID{"478514ce-2d7e-4e71-9301-29eb2241e2d6"};
   inline static const QUrl REDIRECT_URI{"http://localhost"};
@@ -125,6 +130,8 @@ private:
   inline static const QUrl XBOX_SERVICES_URL{"https://xsts.auth.xboxlive.com/xsts/authorize"};
   inline static const QUrl MINECRAFT_URL{"https://api.minecraftservices.com"};
   inline static const QString SCOPE{"XboxLive.signin offline_access"};
+
+  static Authentication* s_instance;
 
 private slots:
   void onTokenReceived(QNetworkReply *reply);

@@ -4,12 +4,50 @@
 
 #include "Launcher.h"
 
-Launcher* Launcher::s_instance = nullptr;
+Launcher* Launcher::s_instance {nullptr};
 QUrl Launcher::s_gameDirectory;
+QString Launcher::s_username;
 
 Launcher::Launcher(QObject *parent)
   : QObject(parent) {
   s_instance = this;
+
+  connect(this, &Launcher::usernameChanged,
+      this, &Launcher::userMessageChanged);
+
+  // This could break if Authentication doesn't have an instance in time
+  connect(Authentication::getInstance(), &Authentication::authStateChanged,
+    this, &Launcher::userMessageChanged);
+}
+
+QString Launcher::userMessage() {
+  qDebug() << "Updating user message...";
+  bool const AUTHENTICATED {Authentication::getAuthState() == Authentication::AuthState::AUTHENTICATED};
+  QString const USERNAME {getUsername()};
+
+  QString message {QString("Welcome, <b>%1</b>").arg(USERNAME)};
+
+  if (!AUTHENTICATED) {
+    message.append("! Please log in.");
+  }
+
+  message.append("<br>");
+
+  if (AUTHENTICATED) {
+
+    // TODO: Replace with if current profile version downloaded
+    QString const downloadMessage = true ? "download & " : "";
+
+    QString const readyMessage{"Ready to %1play Minecraft %2"};
+
+    // TODO: Replace with current profile version
+    message.append(readyMessage.arg(downloadMessage, "26.2"));
+  }
+  else {
+    message.append("Loading versions...");
+  }
+
+  return message;
 }
 
 void Launcher::sendError(ErrorMessage& message) {
@@ -49,4 +87,19 @@ QUrl Launcher::getGameDirectory() {
     s_gameDirectory = findGameDirectory();
   }
   return s_gameDirectory;
+}
+
+void Launcher::setUsername(const QString& username) {
+  if (s_username == username) { return; }
+  qDebug() << "Setting username to:" << username;
+  s_username = username;
+  emit s_instance->usernameChanged();
+}
+
+QString Launcher::getUsername() {
+  if (s_username.isEmpty() or s_username.isNull()) {
+    return "guest";
+  }
+
+  return s_username;
 }
