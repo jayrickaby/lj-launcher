@@ -28,6 +28,17 @@ Profiles::Profiles(QObject *parent)
   currentProfileId = getProfiles().keys().first();
 }
 
+QVariantList Profiles::profiles() {
+  QVariantList profilesList;
+  QJsonObject const PROFILES {getProfiles()};
+  for (auto const& id : PROFILES.keys()) {
+    auto const& profile = PROFILES[id];
+
+    profilesList.append(QVariantMap{{"id", id}, {"name", profile["name"]}});
+  }
+  return profilesList;
+}
+
 QUrl Profiles::findJsonPath() {
   QString const ROOT_PATH {Launcher::getGameDirectory().toLocalFile()};
   QString const FULL_PATH {QDir(ROOT_PATH).filePath("launcher_profiles.json")};

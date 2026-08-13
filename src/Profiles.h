@@ -17,17 +17,23 @@
 
 class Profiles : public QObject {
   Q_OBJECT
+  Q_PROPERTY(QVariantList profiles READ profiles NOTIFY profilesChanged)
   QML_ELEMENT
   QML_SINGLETON
 
 public:
   explicit Profiles(QObject *parent = nullptr);
 
+  QVariantList profiles();
+
   static QString createProfile(
     const QString& copyProfileId={},
     QJsonObject parameters={},
     bool defaultTime=false
   );
+
+signals:
+  void profilesChanged();
 
 private:
   static QJsonObject cleanProfile(const QJsonObject &profile, bool recursive=false);

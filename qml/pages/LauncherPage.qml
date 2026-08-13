@@ -137,14 +137,15 @@ LauncherPage {
                            valueRole: "id"
                            textRole: "name"
 
-                           model: Authentication.authenticated ? Profiles.profile_list : [{ "name": "Loading
-                            profiles...", "id": "" }]
-                           enabled: Authentication.authenticated
+                           model: Authentication.authState === Authentication.AuthState.AUTHENTICATED
+                               ? Profiles.profiles
+                               : [{ "name": "Loading profiles...", "id": "" }]
+                           enabled: Authentication.authState === Authentication.AuthState.AUTHENTICATED
 
                            currentIndex: {
                                if (!Authentication.authenticated) return 0;
 
-                               var list = Profiles.profile_list;
+                               var list = Profiles.profiles;
                                for (var i = 0; i < list.length; i++) {
                                    if (list[i].id === Profiles.current_id) return i;
                                }
