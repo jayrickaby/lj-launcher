@@ -65,10 +65,6 @@ LauncherPage {
 
                     url: Qt.resolvedUrl("https://jayrickaby.github.io/lj-launcher/")
 
-                    // TODO: Remove from main branch
-                    onJavaScriptConsoleMessage: function(level, message, lineNumber, sourceID) {
-                        console.log("[Web Console]: " + message);
-                    }
                 }
             }
 
