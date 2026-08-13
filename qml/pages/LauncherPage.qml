@@ -11,6 +11,9 @@ import "./template"
 LauncherPage {
     id: control
 
+    property int authState: Authentication.authState
+    property bool authenticated: authState === Authentication.AuthState.AUTHENTICATED
+
     Loader {
         id: profileEditorLoader
         source: "./ProfileEditor.qml"
@@ -137,13 +140,13 @@ LauncherPage {
                            valueRole: "id"
                            textRole: "name"
 
-                           model: Authentication.authState === Authentication.AuthState.AUTHENTICATED
-                               ? Profiles.profiles
-                               : [{ "name": "Loading profiles...", "id": "" }]
-                           enabled: Authentication.authState === Authentication.AuthState.AUTHENTICATED
+                           model: authenticated ? Profiles.profiles
+                                                : [{ "name": "Loading profiles...", "id": "" }]
+
+                           enabled: authenticated
 
                            currentIndex: {
-                               if (!Authentication.authenticated) return 0;
+                               if (!authenticated) return 0;
 
                                var list = Profiles.profiles;
                                for (var i = 0; i < list.length; i++) {
@@ -200,7 +203,7 @@ LauncherPage {
                     property bool preparing: false
 
                     text: {
-                        if (!Authentication.authenticated) return qsTr("Loading...");
+                        if (!authenticated) return qsTr("Loading...");
                         if (Downloader.downloading) return qsTr("Downloading...");
                         if (preparing) return qsTr("Preparing...");
 
@@ -208,7 +211,7 @@ LauncherPage {
                     }
 
                     enabled: {
-                        if (!Authentication.authenticated) return false;
+                        if (!authenticated) return false;
                         if (preparing) return false;
 
                         return true;
