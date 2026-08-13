@@ -4,6 +4,8 @@
 
 #include "Profiles.h"
 
+#include "System.h"
+
 Profiles::Profiles(QObject *parent)
   : QObject(parent)
 {}
@@ -24,15 +26,9 @@ QUrl Profiles::findJsonPath() {
     QFile::remove(FULL_PATH);
   }
 
-  QFile file(FULL_PATH);
-
-  if (!file.open(QIODevice::WriteOnly)) {
-    throw std::runtime_error("Failed to create profile file.");
-  }
-
-  // Close early as only creating the file
-  file.close();
-  qDebug() << "Created profile file.";
+  if (!System::touch(FULL_PATH, true)) {
+    throw std::runtime_error("Could not create profiles json!");
+  };
   qDebug() << "Found profiles file: " << FULL_PATH;
 
   QUrl const PROFILE_URL {QUrl::fromLocalFile(FULL_PATH)};
