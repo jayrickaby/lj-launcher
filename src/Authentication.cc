@@ -15,6 +15,16 @@ m_loginData(getLoginData()) {
         this, &Authentication::onTokenReceived);
 }
 
+void Authentication::tryStoredRefreshToken() {
+  qDebug("Trying to authenticate via stored refresh...");
+  if (!hasRefreshToken()) {
+    return;
+  }
+
+  QString const TOKEN {Settings::getRefreshToken().toString()};
+  requestMicrosoftAuthViaRefresh(TOKEN);
+}
+
 LoginData Authentication::getLoginData() const{
   LoginData data;
 
@@ -79,14 +89,27 @@ bool Authentication::isUrlLocalhost(const QUrl& url) const {
   return url.host() == "localhost";
 }
 
-QString Authentication::requestRefreshToken(const QString& oldToken) {
-  QUrl url {TOKEN_URL};
+void Authentication::requestMicrosoftAuthViaRefresh(const QString& oldToken) {
+  QUrl const URL {TOKEN_URL};
+
+  QNetworkRequest request{URL};
+  request.setHeader(
+    QNetworkRequest::ContentTypeHeader,
+    "application/x-www-form-urlencoded"
+    );
+
   QUrlQuery query;
   query.addQueryItem("client_id", CLIENT_ID);
-  query.addQueryItem("grant_type", "refresh_token");
   query.addQueryItem("scope", SCOPE);
   query.addQueryItem("refresh_token", oldToken);
-  return "balls";
+  query.addQueryItem("grant_type", "refresh_token");
+
+  QByteArray const DATA {query.toString(QUrl::FullyEncoded).toUtf8()};
+
+  qDebug("Requesting Microsoft Auth Tokens via Stored Refresh");
+  QNetworkReply* reply = m_networkManager.post(request, DATA);
+  reply->setProperty("type", QVariant::fromValue(AuthType::MICROSOFT_TOKEN));
+  setState(AuthState::AUTHENTICATING_REFRESH);
 }
 void Authentication::requestMicrosoftAuth(const QString& code) {
   const QUrl URL {TOKEN_URL};

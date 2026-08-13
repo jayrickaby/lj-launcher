@@ -22,10 +22,11 @@ ApplicationWindow {
         anchors.fill: parent
 
         source: authState === Authentication.AuthState.AUTHENTICATED
-            || authState === Authentication.AuthState.AUTHENTICATING_REFRESH ? "./pages/LauncherPage.qml" : "./pages/LoginForm.qml"
+            || authState === Authentication.AuthState.AUTHENTICATING_REFRESH
+            ? "./pages/LauncherPage.qml" : "./pages/LoginForm.qml"
     }
 
     Component.onCompleted: {
-        // Authentication.try_stored_refresh();
+        Authentication.tryStoredRefreshToken();
     }
 }

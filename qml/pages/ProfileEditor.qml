@@ -2,8 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
-import jayrickaby.lj_launcher.launcher 1.0
-import jayrickaby.lj_launcher.profiles 1.0
+import jayrickaby.lj_launcher
 import "./template"
 
 ApplicationWindow {

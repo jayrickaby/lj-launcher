@@ -75,6 +75,7 @@ public slots:
   [[nodiscard]] bool hasRefreshToken() const;
   [[nodiscard]] bool isUrlLocalhost(const QUrl &url) const;
   void parseLocalhost(const QUrl &url);
+  void tryStoredRefreshToken();
 
 
 private:
@@ -84,7 +85,7 @@ private:
   [[nodiscard]] QUrl getCodeUrl(const QString &state) const;
   [[nodiscard]] LoginData getLoginData() const;
 
-  QString requestRefreshToken(const QString& oldToken);
+  void requestMicrosoftAuthViaRefresh(const QString& oldToken);
 
   void requestMicrosoftAuth(const QString& code);
   QString parseMicrosoftTokens(const QJsonObject& json);
