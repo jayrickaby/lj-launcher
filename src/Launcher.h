@@ -39,9 +39,11 @@ public:
   QString userMessage();
 
   static void sendError(ErrorMessage &message);
-  static QUrl getGameDirectory();
 
+  static QUrl getGameDirectory();
   static QString getUsername();
+  static QString getTime(bool def = false);
+
   static void setUsername(const QString &username);
 
   static Launcher* getInstance() { return s_instance; };
