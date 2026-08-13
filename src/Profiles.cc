@@ -7,8 +7,21 @@
 #include "System.h"
 
 Profiles::Profiles(QObject *parent)
-  : QObject(parent)
-{}
+  : QObject(parent) {
+
+  QFile const FILE {JSON_PATH.toLocalFile()};
+
+  if (FILE.size() == 0) { dumpJson(getJsonFormat()); }
+  if (getProfiles().isEmpty()) {
+    try {
+      createProfile({}, {}, true);
+    }
+    catch (std::runtime_error& e) {
+      qDebug() << e.what();
+      throw std::runtime_error("Failed to write default values to profiles json!");
+    }
+  }
+}
 
 QUrl Profiles::findJsonPath() {
   QString const ROOT_PATH {Launcher::getGameDirectory().toLocalFile()};
@@ -29,25 +42,196 @@ QUrl Profiles::findJsonPath() {
 
   if (!System::touch(FULL_PATH, true)) {
     throw std::runtime_error("Could not create profiles json!");
-  };
-
-  QFile const FILE {FULL_PATH};
-  QByteArray const RAW_JSON {QJsonDocument(getDefaultJson()).toJson()};
-  if (FILE.size() == 0 and !System::write(FULL_PATH, RAW_JSON)) {
-    throw std::runtime_error("Failed to write default values to profiles json!");
   }
 
+  QFile const FILE {FULL_PATH};
   qDebug() << "Found profiles file: " << FULL_PATH;
 
   QUrl const PROFILE_URL {QUrl::fromLocalFile(FULL_PATH)};
   return PROFILE_URL;
 }
 
-QJsonObject Profiles::getDefaultJson() {
-  const QJsonObject DEFAULT_JSON {
+QJsonObject Profiles::getJsonFormat() {
+  const QJsonObject JSON {
     {"profiles", QJsonObject{}},
     {"settings", QJsonObject{}},
     {"version", 6}
   };
-  return DEFAULT_JSON;
+  return JSON;
+}
+
+QString Profiles::createProfile(const QString& copyProfileId,
+                                QJsonObject parameters,
+                                bool defaultTime) {
+
+  QJsonObject const NEW_PROFILE {getDefaultProfile()};
+  QJsonObject const CLEANED_PROFILE {cleanProfile(NEW_PROFILE, true)};
+
+  QJsonObject profiles {getProfiles()};
+  QString const NEW_UUID {generateUuid()};
+  profiles[NEW_UUID] = CLEANED_PROFILE;
+
+  saveProfiles(profiles);
+
+  if (!copyProfileId.isNull() or !copyProfileId.isEmpty()) {
+    QJsonObject originalProfile{getProfile(copyProfileId)};
+    editProfile(NEW_UUID, originalProfile);
+  }
+
+  if (!parameters.isEmpty()) {
+    editProfile(NEW_UUID, parameters);
+  }
+
+  if (!defaultTime) {
+    QJsonObject timeParam;
+    timeParam["created"] = Launcher::getTime();
+
+    editProfile(NEW_UUID, timeParam);
+  }
+
+  return NEW_UUID;
+}
+
+void Profiles::editProfile(const QString& profileId, QJsonObject& newParameters) {
+  QJsonObject target = getProfile(profileId);
+
+  for (auto const& key : newParameters.keys()) {
+    auto value {newParameters[key]};
+
+    if (getProfileFormat().contains(key)) {
+      target[key] = value;
+      continue;
+    }
+    const QString MSG {"Key \"%1\" is not a valid profile parameter! Skipping..."};
+    qDebug() << MSG.arg(key);
+  }
+
+  QStringList const LATEST_VERSIONS{"latest-release", "latest-snapshot"};
+
+  if (LATEST_VERSIONS.contains(target["lastVersionId"])) {
+    target["type"] = target["lastVersionId"];
+  }
+  else {
+    target["type"] = "custom";
+  }
+
+  target = cleanProfile(target, true);
+
+  QJsonObject profiles {getProfiles()};
+  profiles[profileId] = target;
+  saveProfiles(profiles);
+}
+
+QJsonObject Profiles::getProfile(const QString& profileId) {
+  const QJsonObject PROFILES = getProfiles();
+
+  if (!isProfile(profileId)) {
+    const QString MSG ("Could not find profile %1");
+    throw std::runtime_error(MSG.arg(profileId).toStdString());
+  }
+
+  return PROFILES[profileId].toObject();
+}
+
+bool Profiles::isProfile(const QString& profileId) {
+  QJsonObject const PROFILES = getProfiles();
+
+  return PROFILES.contains(profileId) and PROFILES[profileId].isObject();
+}
+
+void Profiles::saveProfiles(const QJsonObject& profiles) {
+  QJsonObject json {getJsonData()};
+  json["profiles"] = profiles;
+  dumpJson(json);
+}
+
+void Profiles::dumpJson(const QJsonObject& data) {
+  for (auto const key : data.keys()) {
+    if (!getJsonFormat().contains(key)) {
+      qDebug() << "Invalid key: " << key;
+      throw std::runtime_error("Json being dumped is of incorrect format!");
+    }
+  }
+  QJsonDocument const DOC {data};
+  QString const RAW {DOC.toJson()};
+
+  if (!System::write(JSON_PATH.toLocalFile(), RAW)) {
+    throw std::runtime_error("Failed to write to JSON file!");
+  }
+}
+
+QJsonObject Profiles::getProfiles() {
+  const QJsonObject JSON {getJsonData()};
+
+  if (JSON["profiles"].isObject()) {
+    return JSON["profiles"].toObject();
+  }
+
+  return {};
+}
+
+QJsonObject Profiles::getJsonData() {
+  const QString DATA{System::read(JSON_PATH.toLocalFile())};
+  QJsonObject const JSON {QJsonDocument::fromJson(DATA.toUtf8()).object()};
+  return JSON;
+}
+
+QJsonObject Profiles::cleanProfile(const QJsonObject &profile, bool recursive) {
+  QJsonObject cleanedProfile;
+
+  for (auto key : profile.keys()) {
+    auto value {profile[key]};
+
+    if (value.isString()) {
+      value = QJsonValue(value.toString().simplified());
+    }
+
+    if (value.isObject() and recursive) {
+      value = QJsonValue(cleanProfile(value.toObject(), true));
+    }
+
+    if (value.isNull()) { continue; }
+
+    cleanedProfile[key] = value;
+  }
+
+  return cleanedProfile;
+}
+
+QString Profiles::generateUuid() {
+  return QUuid::createUuid().toString(QUuid::Id128);
+}
+
+QJsonObject Profiles::getDefaultProfile() {
+  QJsonObject defaultProfile {getProfileFormat()};
+
+  defaultProfile["name"] = "(Default)";
+  defaultProfile["created"] = Launcher::getTime(true);
+  defaultProfile["lastUsed"] = Launcher::getTime(true);
+  defaultProfile["icon"] = "grass";
+  defaultProfile["lastVersionId"] = "latest-release";
+  defaultProfile["type"] = "latest-release";
+
+  return defaultProfile;
+}
+
+QJsonObject Profiles::getProfileFormat() {
+  const QJsonObject JSON {
+  {"created", ""},
+  {"icon", ""},
+  {"gameDir", QJsonValue::Null},
+  {"lastUsed", ""},
+  {"lastVersionId", ""},
+  {"name", ""},
+  {"javaDir", QJsonValue::Null},
+  {"javaArgs", QJsonValue::Null},
+  {
+      "resolution", QJsonObject{
+      {"width", 0},
+      {"height", 0}
+      }
+    },
+    {"type", ""}
+  };
+  return JSON;
 }
