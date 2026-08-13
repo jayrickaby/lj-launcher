@@ -8,6 +8,7 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QJsonObject>
 #include <QObject>
 
 #include "Launcher.h"
@@ -24,6 +25,7 @@ public:
 
 private:
   static QUrl findJsonPath();
+  static QJsonObject getDefaultJson();
 
   static inline const QUrl JSON_PATH {findJsonPath()};
 };

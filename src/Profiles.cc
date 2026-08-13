@@ -16,6 +16,7 @@ QUrl Profiles::findJsonPath() {
 
   QFileInfo const FILE_INFO {FULL_PATH};
 
+  // Swap same-name directory for a file
   if (FILE_INFO.exists() and FILE_INFO.isDir()) {
     qDebug() << "Removing directory " << FULL_PATH;
     QDir dir{FULL_PATH};
@@ -29,8 +30,24 @@ QUrl Profiles::findJsonPath() {
   if (!System::touch(FULL_PATH, true)) {
     throw std::runtime_error("Could not create profiles json!");
   };
+
+  QFile file {FULL_PATH};
+  QByteArray const RAW_JSON {QJsonDocument(getDefaultJson()).toJson()};
+  if (file.size() == 0 and !System::write(FULL_PATH, RAW_JSON)) {
+    throw std::runtime_error("Failed to write default values to profiles json!");
+  }
+
   qDebug() << "Found profiles file: " << FULL_PATH;
 
   QUrl const PROFILE_URL {QUrl::fromLocalFile(FULL_PATH)};
   return PROFILE_URL;
+}
+
+QJsonObject Profiles::getDefaultJson() {
+  const QJsonObject DEFAULT_JSON {
+    {"profiles", QJsonObject{}},
+    {"settings", QJsonObject{}},
+    {"version", 6}
+  };
+  return DEFAULT_JSON;
 }
