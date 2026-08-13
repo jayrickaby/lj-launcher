@@ -67,7 +67,6 @@ QString System::read(const QString& path) {
     return {};
   }
 
-
   QTextStream stream {&file};
   QString contents {stream.readAll()};
   file.close();

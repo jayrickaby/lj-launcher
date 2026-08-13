@@ -31,9 +31,9 @@ QUrl Profiles::findJsonPath() {
     throw std::runtime_error("Could not create profiles json!");
   };
 
-  QFile file {FULL_PATH};
+  QFile const FILE {FULL_PATH};
   QByteArray const RAW_JSON {QJsonDocument(getDefaultJson()).toJson()};
-  if (file.size() == 0 and !System::write(FULL_PATH, RAW_JSON)) {
+  if (FILE.size() == 0 and !System::write(FULL_PATH, RAW_JSON)) {
     throw std::runtime_error("Failed to write default values to profiles json!");
   }
 
