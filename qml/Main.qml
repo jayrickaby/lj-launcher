@@ -15,11 +15,14 @@ ApplicationWindow {
 
     visible: true
 
+    property int authState: Authentication.authState
+
     Loader {
         id: pageLoader
         anchors.fill: parent
 
-        source: Authentication.authenticated || Authentication.hasRefreshToken() ? "./pages/LauncherPage.qml" : "./pages/LoginForm.qml"
+        source: authState === Authentication.AuthState.AUTHENTICATED
+            || authState === Authentication.AuthState.AUTHENTICATING_REFRESH ? "./pages/LauncherPage.qml" : "./pages/LoginForm.qml"
     }
 
     Component.onCompleted: {

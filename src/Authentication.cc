@@ -265,6 +265,9 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
       case AuthType::GAME_OWNERSHIP: {
         qDebug("Received Game Ownership");
         bool const SUCCESS {parseGameOwnership(JSON)};
+        if (SUCCESS) {
+          setState(AuthState::AUTHENTICATED);
+        }
         break;
       }
       default: {
