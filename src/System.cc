@@ -31,8 +31,8 @@ bool System::touch(const QString& path, bool existsOk) {
 bool System::write(const QString& path, const QString& content) {
   QFileInfo const FILE_INFO {path};
   if (!FILE_INFO.exists()) {
-    QString const MSG {"The file %1 does not exist!"};
-    qDebug() << MSG.arg(path);
+    QString const MSG {"The file %1 does not exist! Attempted to write: %2"};
+    qDebug() << MSG.arg(path, content);
     return false;
   }
 
