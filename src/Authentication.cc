@@ -243,6 +243,22 @@ void Authentication::requestGameOwnership(const QString& accessToken) {
   qDebug("Requesting Minecraft Game Ownership");
 }
 
+void Authentication::requestMinecraftProfile(const QString& accessToken) {
+  const QUrl URL {MINECRAFT_URL.toString() + "/minecraft/profile"};
+  QNetworkRequest request{URL};
+
+  request.setRawHeader(
+    "Authorization",
+    QString("Bearer %1").arg(accessToken).toUtf8()
+  );
+
+  QNetworkReply* reply = m_networkManager.get(request);
+  reply->setProperty("type", QVariant::fromValue(AuthType::PROFILE));
+
+  qDebug("Requesting Minecraft Profile");
+}
+
+
 void Authentication::onTokenReceived(QNetworkReply* reply) {
   reply->deleteLater();
 
@@ -281,16 +297,21 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
       }
       case AuthType::MINECRAFT_TOKEN: {
         qDebug("Received Minecraft Token");
-        QString const TOKEN {parseMinecraftToken(JSON)};
-        requestGameOwnership(TOKEN);
+        m_userData.accessToken = parseMinecraftToken(JSON);
+        requestGameOwnership(m_userData.accessToken);
         break;
       }
       case AuthType::GAME_OWNERSHIP: {
         qDebug("Received Game Ownership");
-        bool const SUCCESS {parseGameOwnership(JSON)};
-        if (SUCCESS) {
-          setState(AuthState::AUTHENTICATED);
+        if (parseGameOwnership(JSON)) {
+          requestMinecraftProfile(m_userData.accessToken);
         }
+        break;
+      }
+      case AuthType::PROFILE: {
+        qDebug("Received Profile");
+        m_userData = parseMinecraftProfile(JSON);
+        setState(AuthState::AUTHENTICATED);
         break;
       }
       default: {
@@ -395,10 +416,36 @@ QString Authentication::parseMinecraftToken(const QJsonObject& json) {
     or !json["access_token"].isString()
     or json["access_token"].toString().isEmpty()) {
     throw std::runtime_error("No Minecraft access token returned!");
-    }
+  }
 
   qDebug("Found Minecraft access token");
   return json.value("access_token").toString();
+}
+
+UserData Authentication::parseMinecraftProfile(const QJsonObject& json) {
+  // FIXME: This is bad. Find some way to pass on MC Access Token elsewhere
+  UserData data {m_userData};
+
+  if (!json.contains("id")
+    or !json["id"].isString()
+    or json["id"].toString().isEmpty()) {
+    throw std::runtime_error("No Minecraft Profile UUID returned!");
+  }
+
+  data.id = json["id"].toString();
+
+  if (!json.contains("name")
+    or !json["name"].isString()
+    or json["name"].toString().isEmpty()) {
+    throw std::runtime_error("No Minecraft Profile UUID returned!");
+  }
+
+  data.name = json["name"].toString();
+
+  qDebug("Found Minecraft Profile");
+  qInfo() << "Hello," << data.name;
+  qDebug() << "*He knows my name, my occupation. He can find out about my family. My family...*";
+  return data;
 }
 
 QUrl Authentication::getCodeUrl(const QString& state) const {

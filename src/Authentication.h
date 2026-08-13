@@ -17,6 +17,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QUrlQuery>
+#include <QVariantList>
 
 struct PkceData {
   QString codeChallenge;
@@ -35,9 +36,9 @@ struct XboxServicesData {
 };
 
 struct UserData {
-  QString username;
-  QString uuid;
-  QString token;
+  QString id;
+  QString name;
+  QString accessToken;
 };
 
 class Authentication : public QObject {
@@ -62,7 +63,8 @@ public:
     XBOX_LIVE_TOKEN,
     XBOX_SERVICES_TOKEN,
     MINECRAFT_TOKEN,
-    GAME_OWNERSHIP
+    GAME_OWNERSHIP,
+    PROFILE
   };
 
   [[nodiscard]] QUrl codeUrl() const { return m_loginData.url; }
@@ -101,6 +103,9 @@ private:
 
   void requestGameOwnership(const QString& accessToken);
   bool parseGameOwnership(const QJsonObject& json);
+
+  void requestMinecraftProfile(const QString& accessToken);
+  UserData parseMinecraftProfile(const QJsonObject& json);
 
   void setState(const AuthState& state);
 
