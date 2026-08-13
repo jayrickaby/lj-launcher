@@ -61,7 +61,8 @@ public:
     MICROSOFT_TOKEN,
     XBOX_LIVE_TOKEN,
     XBOX_SERVICES_TOKEN,
-    MINECRAFT_TOKEN
+    MINECRAFT_TOKEN,
+    GAME_OWNERSHIP
   };
 
   [[nodiscard]] QUrl codeUrl() const { return m_loginData.url; }
@@ -97,6 +98,9 @@ private:
   void requestMinecraftAuth(const XboxServicesData& data);
   QString parseMinecraftToken(const QJsonObject& json);
 
+  void requestGameOwnership(const QString& accessToken);
+  bool parseGameOwnership(const QJsonObject& json);
+
   void setState(const AuthState& state);
 
   QNetworkAccessManager m_networkManager;
@@ -113,7 +117,7 @@ private:
   inline static const QUrl TOKEN_URL{"https://login.microsoftonline.com/consumers/oauth2/v2.0/token"};
   inline static const QUrl XBOX_LIVE_URL{"https://user.auth.xboxlive.com/user/authenticate"};
   inline static const QUrl XBOX_SERVICES_URL{"https://xsts.auth.xboxlive.com/xsts/authorize"};
-  inline static const QUrl MINECRAFT_URL{"https://api.minecraftservices.com/authentication/login_with_xbox"};
+  inline static const QUrl MINECRAFT_URL{"https://api.minecraftservices.com"};
   inline static const QString SCOPE{"XboxLive.signin offline_access"};
 
 private slots:

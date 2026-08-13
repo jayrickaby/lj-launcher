@@ -176,7 +176,7 @@ void Authentication::requestXboxServicesAuth(const QString& token) {
 }
 
 void Authentication::requestMinecraftAuth(const XboxServicesData& data) {
-  const QUrl URL {MINECRAFT_URL};
+  const QUrl URL {MINECRAFT_URL.toString() + "/authentication/login_with_xbox"};
   QNetworkRequest request{URL};
 
   request.setHeader(
@@ -203,6 +203,21 @@ void Authentication::requestMinecraftAuth(const XboxServicesData& data) {
   reply->setProperty("type", QVariant::fromValue(AuthType::MINECRAFT_TOKEN));
 
   qDebug("Requesting Minecraft Services Access Token");
+}
+
+void Authentication::requestGameOwnership(const QString& accessToken) {
+  const QUrl URL {MINECRAFT_URL.toString() + "/entitlements/mcstore"};
+  QNetworkRequest request{URL};
+
+  request.setRawHeader(
+    "Authorization",
+    QString("Bearer %1").arg(accessToken).toUtf8()
+  );
+
+  QNetworkReply* reply = m_networkManager.get(request);
+  reply->setProperty("type", QVariant::fromValue(AuthType::GAME_OWNERSHIP));
+
+  qDebug("Requesting Minecraft Game Ownership");
 }
 
 void Authentication::onTokenReceived(QNetworkReply* reply) {
@@ -244,6 +259,12 @@ void Authentication::onTokenReceived(QNetworkReply* reply) {
       case AuthType::MINECRAFT_TOKEN: {
         qDebug("Received Minecraft Token");
         QString const TOKEN {parseMinecraftToken(JSON)};
+        requestGameOwnership(TOKEN);
+        break;
+      }
+      case AuthType::GAME_OWNERSHIP: {
+        qDebug("Received Game Ownership");
+        bool const SUCCESS {parseGameOwnership(JSON)};
         break;
       }
       default: {
@@ -368,6 +389,38 @@ QUrl Authentication::getCodeUrl(const QString& state) const {
   url.setQuery(query);
 
   return url;
+}
+
+bool Authentication::parseGameOwnership(const QJsonObject& json) {
+  if (!json.contains("items")
+    or !json["items"].isArray()
+    or json["items"].toArray().isEmpty()) {
+    throw std::runtime_error("Cannot verify game ownership!");
+  }
+
+  QJsonArray const ITEMS (json["items"].toArray());
+
+  for (auto const ITEM : ITEMS) {
+    QJsonObject const OBJ {ITEM.toObject()};
+
+    if (!OBJ.contains("name")
+      or !OBJ["name"].isString()
+      or OBJ["name"].toString().isEmpty()) continue;
+
+    QString const NAME {OBJ["name"].toString()};
+
+    if (NAME == "product_minecraft"
+      or NAME == "game_minecraft"
+      or NAME == "product_game_pass_pc"
+      or NAME == "product_game_pass_ultimate") {
+
+      qDebug("Verified game ownership!");
+      return true;
+    }
+  throw std::runtime_error("Game is not registered under account!");
+  }
+
+  throw std::runtime_error("Cannot verify game ownership!");
 }
 
 void Authentication::parseLocalhost(const QUrl& url) {
