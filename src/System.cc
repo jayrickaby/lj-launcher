@@ -45,8 +45,34 @@ bool System::write(const QString& path, const QString& content) {
 
   QTextStream stream {&file};
   stream << content;
+  file.close();
 
   QString const MSG {"Successfully wrote to %1!"};
   qDebug() << MSG.arg(path);
   return true;
+}
+
+QString System::read(const QString& path) {
+  QFileInfo const FILE_INFO {path};
+  if (!FILE_INFO.exists()) {
+    QString const MSG {"The file %1 does not exists!"};
+    qDebug() << MSG.arg(path);
+    return {};
+  }
+
+  QFile file {path};
+  if (!file.open(QIODevice::ReadOnly)) {
+    QString const MSG {"Failed to read from %1!"};
+    qDebug() << MSG.arg(path);
+    return {};
+  }
+
+
+  QTextStream stream {&file};
+  QString contents {stream.readAll()};
+  file.close();
+
+  QString const MSG {"Successfully read from %1!"};
+  qDebug() << MSG.arg(path);
+  return contents;
 }

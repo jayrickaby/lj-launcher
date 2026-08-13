@@ -22,7 +22,6 @@ public:
   explicit Profiles(QObject *parent = nullptr);
 
 
-
 private:
   static QUrl findJsonPath();
   static QJsonObject getDefaultJson();
