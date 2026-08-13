@@ -46,6 +46,7 @@ private:
 
   static QString generateUuid();
 
+  static QString currentProfileId;
   static inline const QUrl JSON_PATH {findJsonPath()};
 };
 

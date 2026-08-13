@@ -4,7 +4,7 @@
 
 #include "Profiles.h"
 
-#include "System.h"
+QString Profiles::currentProfileId;
 
 Profiles::Profiles(QObject *parent)
   : QObject(parent) {
