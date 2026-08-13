@@ -6,7 +6,13 @@
 #define LJ_LAUNCHER_LAUNCHER_H_
 
 #include <qqml.h>
+#include <QDir>
+#include <QUrl>
+#include <QString>
 #include <QObject>
+#include <QStandardPaths>
+
+#include "Launcher.h"
 
 struct ErrorMessage {
   Q_GADGET
@@ -28,11 +34,15 @@ public:
   explicit Launcher(QObject *parent = nullptr);
 
   static void sendError(ErrorMessage &message);
+  static QUrl getGameDirectory();
 
 signals:
   void launcherError(const ErrorMessage &message);
 
 private:
+  static QUrl findGameDirectory();
+
+  static QUrl s_gameDirectory;
   static Launcher* s_instance;
 };
 
