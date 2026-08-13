@@ -12,6 +12,8 @@ Profiles::Profiles(QObject *parent)
   QFile const FILE {JSON_PATH.toLocalFile()};
 
   if (FILE.size() == 0) { dumpJson(getJsonFormat()); }
+
+  // Needs to be atleast one profile on startup
   if (getProfiles().isEmpty()) {
     try {
       createProfile({}, {}, true);
@@ -21,6 +23,9 @@ Profiles::Profiles(QObject *parent)
       throw std::runtime_error("Failed to write default values to profiles json!");
     }
   }
+
+  // Current profile on startup should be first
+  currentProfileId = getProfiles().keys().first();
 }
 
 QUrl Profiles::findJsonPath() {

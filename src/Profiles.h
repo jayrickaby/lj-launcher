@@ -13,6 +13,7 @@
 #include <QObject>
 
 #include "Launcher.h"
+#include "System.h"
 
 class Profiles : public QObject {
   Q_OBJECT
@@ -29,24 +30,19 @@ public:
   );
 
 private:
-  static QUrl findJsonPath();
-
   static QJsonObject cleanProfile(const QJsonObject &profile, bool recursive=false);
-
-  static void dumpJson(const QJsonObject& data);
-
   static void editProfile(const QString& profileId, QJsonObject& newParameters);
+  static QJsonObject getDefaultProfile();
   static QJsonObject getProfile(const QString& profileId);
   static QJsonObject getProfileFormat();
   static QJsonObject getProfiles();
   static bool isProfile(const QString& profileId);
+  static void saveProfiles(const QJsonObject& profiles);
 
-  static QJsonObject getDefaultProfile();
-
+  static void dumpJson(const QJsonObject& data);
+  static QUrl findJsonPath();
   static QJsonObject getJsonData();
   static QJsonObject getJsonFormat();
-
-  static void saveProfiles(const QJsonObject& profiles);
 
   static QString generateUuid();
 
