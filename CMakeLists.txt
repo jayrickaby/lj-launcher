@@ -20,6 +20,8 @@ qt_add_executable(lj_launcher
         src/Profiles.h
         src/System.cc
         src/System.h
+        src/Network/Versions.cc
+        src/Network/Versions.h
         src/Network/Authentication.cc
         src/Network/Authentication.h
         src/Network/Network.cc
