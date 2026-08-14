@@ -89,9 +89,7 @@ bool Authentication::isUrlLocalhost(const QUrl& url) const {
 }
 
 void Authentication::requestMicrosoftAuthViaRefresh(const QString& oldToken) {
-  QUrl const URL {TOKEN_URL};
-
-  QNetworkRequest request{URL};
+  QNetworkRequest request{TOKEN_URL};
   request.setHeader(
     QNetworkRequest::ContentTypeHeader,
     "application/x-www-form-urlencoded"
@@ -111,8 +109,7 @@ void Authentication::requestMicrosoftAuthViaRefresh(const QString& oldToken) {
   setState(AuthState::AUTHENTICATING_REFRESH);
 }
 void Authentication::requestMicrosoftAuth(const QString& code) {
-  const QUrl URL {TOKEN_URL};
-  QNetworkRequest request{URL};
+  QNetworkRequest request{TOKEN_URL};
 
   request.setHeader(
     QNetworkRequest::ContentTypeHeader,
@@ -135,8 +132,7 @@ void Authentication::requestMicrosoftAuth(const QString& code) {
 }
 
 void Authentication::requestXboxLiveAuth(const QString& accessToken) {
-  const QUrl URL {XBOX_LIVE_URL};
-  QNetworkRequest request{URL};
+  QNetworkRequest request{XBOX_LIVE_URL};
 
   request.setHeader(
     QNetworkRequest::ContentTypeHeader,
@@ -167,8 +163,7 @@ void Authentication::requestXboxLiveAuth(const QString& accessToken) {
 }
 
 void Authentication::requestXboxServicesAuth(const QString& token) {
-  const QUrl URL {XBOX_SERVICES_URL};
-  QNetworkRequest request{URL};
+  QNetworkRequest request{XBOX_SERVICES_URL};
 
   request.setHeader(
     QNetworkRequest::ContentTypeHeader,
