@@ -6,15 +6,15 @@
 #define LJ_LAUNCHER_LAUNCHER_H_
 
 #include <qqml.h>
+
 #include <QDir>
-#include <QUrl>
-#include <QString>
 #include <QObject>
 #include <QStandardPaths>
+#include <QString>
+#include <QUrl>
 
 #include "Launcher.h"
-#include "Authentication.h"
-
+#include "Network/Authentication.h"
 
 struct ErrorMessage {
   Q_GADGET

@@ -6,20 +6,24 @@
 #define LJ_LAUNCHER_AUTHENTICATION_H_
 
 #include <qqml.h>
+
 #include <QCryptographicHash>
 #include <QDebug>
-#include <QObject>
-#include <QRandomGenerator>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
-#include <QNetworkRequest>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QObject>
+#include <QRandomGenerator>
 #include <QUrlQuery>
 #include <QVariantList>
 
-#include "Launcher.h"
+#include "../Launcher.h"
+#include "../Settings.h"
+#include "Network.h"
+#include "NetworkRequester.h"
 
 struct PkceData {
   QString codeChallenge;
@@ -43,7 +47,7 @@ struct UserData {
   QString accessToken;
 };
 
-class Authentication : public QObject {
+class Authentication : public NetworkRequester {
   Q_OBJECT
   Q_PROPERTY(QUrl codeUrl READ codeUrl)
   Q_PROPERTY(AuthState authState READ authState NOTIFY authStateChanged)
@@ -74,6 +78,8 @@ public:
   [[nodiscard]] static AuthState getAuthState() { return s_instance->s_authState; }
 
   static Authentication* getInstance() { return s_instance; };
+
+  void onNetworkReply(QNetworkReply* reply) override;
 
 signals:
   void authStateChanged();
@@ -114,7 +120,6 @@ private:
 
   void setState(const AuthState& state);
 
-  QNetworkAccessManager m_networkManager;
   PkceData m_pkceData;
   LoginData m_loginData;
   UserData m_userData;
@@ -132,9 +137,6 @@ private:
   inline static const QString SCOPE{"XboxLive.signin offline_access"};
 
   static Authentication* s_instance;
-
-private slots:
-  void onTokenReceived(QNetworkReply *reply);
 };
 
 #endif  // LJ_LAUNCHER_AUTHENTICATION_H_

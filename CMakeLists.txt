@@ -12,8 +12,6 @@ qt_add_executable(lj_launcher
     src/main.cc
         src/Application.cc
         src/Application.h
-        src/Authentication.cc
-        src/Authentication.h
         src/Settings.cc
         src/Settings.h
         src/Launcher.cc
@@ -22,6 +20,12 @@ qt_add_executable(lj_launcher
         src/Profiles.h
         src/System.cc
         src/System.h
+        src/Network/Authentication.cc
+        src/Network/Authentication.h
+        src/Network/Network.cc
+        src/Network/Network.h
+        src/Network/NetworkRequester.cc
+        src/Network/NetworkRequester.h
 )
 
 qt_add_qml_module(lj_launcher
