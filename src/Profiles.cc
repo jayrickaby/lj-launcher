@@ -4,7 +4,9 @@
 
 #include "Profiles.h"
 
-QString Profiles::currentProfileId;
+#include "Network/Versions.h"
+
+QString Profiles::s_currentProfileId;
 
 Profiles::Profiles(QObject *parent)
   : QObject(parent) {
@@ -25,7 +27,7 @@ Profiles::Profiles(QObject *parent)
   }
 
   // Current profile on startup should be first
-  currentProfileId = getProfiles().keys().first();
+  s_currentProfileId = getProfiles().keys().first();
 }
 
 QVariantList Profiles::profiles() {
@@ -93,6 +95,29 @@ QString Profiles::createProfile(const QString& copyProfileId,
   }
 
   return NEW_UUID;
+}
+
+QString Profiles::getCurrentProfileVersion() {
+  return getProfileVersion(getCurrentProfileId());
+}
+
+QString Profiles::getCurrentProfileId() {
+  return s_currentProfileId;
+}
+
+QString Profiles::getProfileVersion(const QString& profileId, bool raw) {
+  const QJsonObject PROFILE {getProfile(profileId)};
+
+  if (raw) {
+    return PROFILE["lastVersionId"].toString();
+  }
+  if (PROFILE["type"] == "latest-release") {
+    return Versions::getLatest();
+  }
+  if (PROFILE["type"] == "latest-snapshot") {
+    return Versions::getLatest(true);
+  }
+  return PROFILE["lastVersionId"].toString();
 }
 
 void Profiles::editProfile(const QString& profileId, QJsonObject& newParameters) {

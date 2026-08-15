@@ -18,11 +18,15 @@ Launcher::Launcher(QObject *parent)
   // This could break if Authentication doesn't have an instance in time
   connect(Authentication::getInstance(), &Authentication::authStateChanged,
     this, &Launcher::userMessageChanged);
+
+  connect(Versions::getInstance(), &Versions::stateChanged,
+  this, &Launcher::userMessageChanged);
 }
 
 QString Launcher::userMessage() {
   qDebug() << "Updating user message...";
   bool const AUTHENTICATED {Authentication::getAuthState() == Authentication::AuthState::AUTHENTICATED};
+  bool const MANIFEST_DOWNLOADED {Versions::getState() == Versions::ManifestState::PRESENT};
   QString const USERNAME {getUsername()};
 
   QString message {QString("Welcome, <b>%1</b>").arg(USERNAME)};
@@ -33,15 +37,15 @@ QString Launcher::userMessage() {
 
   message.append("<br>");
 
-  if (AUTHENTICATED) {
+  if (MANIFEST_DOWNLOADED) {
 
     // TODO: Replace with if current profile version downloaded
-    QString const downloadMessage = true ? "download & " : "";
+    const QString DOWNLOAD_MESSAGE = true ? "download & " : "";
 
-    QString const readyMessage{"Ready to %1play Minecraft %2"};
+    const QString READY_MESSAGE{"Ready to %1play Minecraft %2"};
 
-    // TODO: Replace with current profile version
-    message.append(readyMessage.arg(downloadMessage, "26.2"));
+    const QString CURRENT_VERSION{Profiles::getCurrentProfileVersion()};
+    message.append(READY_MESSAGE.arg(DOWNLOAD_MESSAGE, CURRENT_VERSION));
   }
   else {
     message.append("Loading versions...");

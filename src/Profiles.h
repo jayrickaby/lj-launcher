@@ -24,7 +24,16 @@ class Profiles : public QObject {
 public:
   explicit Profiles(QObject *parent = nullptr);
 
+
   QVariantList profiles();
+
+  static void editProfile(const QString& profileId, QJsonObject& newParameters);
+  static bool isProfile(const QString& profileId);
+  static QString getCurrentProfileId();
+  static QString getCurrentProfileVersion();
+  static QJsonObject getProfile(const QString& profileId);
+  static QJsonObject getProfiles();
+  static QString getProfileVersion(const QString& profileId, bool raw=false);
 
   static QString createProfile(
     const QString& copyProfileId={},
@@ -37,12 +46,8 @@ signals:
 
 private:
   static QJsonObject cleanProfile(const QJsonObject &profile, bool recursive=false);
-  static void editProfile(const QString& profileId, QJsonObject& newParameters);
   static QJsonObject getDefaultProfile();
-  static QJsonObject getProfile(const QString& profileId);
   static QJsonObject getProfileFormat();
-  static QJsonObject getProfiles();
-  static bool isProfile(const QString& profileId);
   static void saveProfiles(const QJsonObject& profiles);
 
   static void dumpJson(const QJsonObject& data);
@@ -52,7 +57,7 @@ private:
 
   static QString generateUuid();
 
-  static QString currentProfileId;
+  static QString s_currentProfileId;
   static inline const QUrl JSON_PATH {findJsonPath()};
 };
 

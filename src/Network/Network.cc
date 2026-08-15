@@ -15,6 +15,7 @@ Network::Network(QObject* parent)
 }
 
 QNetworkReply* Network::get(const NetworkRequester* requester, const QNetworkRequest& request) {
+  qDebug() << "Requesting GET from:" << request.url();
   auto* reply {getInstance()->QNetworkAccessManager::get(request)};
 
   reply->setProperty("requester", QVariant::fromValue(requester));
@@ -23,6 +24,7 @@ QNetworkReply* Network::get(const NetworkRequester* requester, const QNetworkReq
 }
 
 QNetworkReply* Network::post(const NetworkRequester* requester, const QNetworkRequest& request, const QByteArray& data) {
+  qDebug() << "Requesting POST from:" << request.url();
   auto* reply {getInstance()->QNetworkAccessManager::post(request,data)};
 
   reply->setProperty("requester", QVariant::fromValue(requester));

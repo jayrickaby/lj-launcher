@@ -4,6 +4,8 @@
 
 #include "Authentication.h"
 
+#include "Versions.h"
+
 Authentication* Authentication::s_instance {nullptr};
 Authentication::AuthState Authentication::s_authState {AuthState::UNAUTHENTICATED};
 
