@@ -10,8 +10,6 @@ QString Launcher::s_username;
 
 Launcher::Launcher(QObject *parent)
   : QObject(parent) {
-  s_instance = this;
-
   connect(this, &Launcher::usernameChanged,
       this, &Launcher::userMessageChanged);
 
@@ -21,6 +19,10 @@ Launcher::Launcher(QObject *parent)
 
   connect(Versions::getInstance(), &Versions::stateChanged,
   this, &Launcher::userMessageChanged);
+
+  if (!s_instance) {
+    s_instance = this;
+  }
 }
 
 QString Launcher::userMessage() {
@@ -113,4 +115,11 @@ QString Launcher::getTime(bool def) {
 
   QDateTime const DATE_TIME = QDateTime::currentDateTimeUtc();
   return DATE_TIME.toString(Qt::ISODateWithMs);
+}
+
+Launcher* Launcher::getInstance() {
+  if (!s_instance) {
+    s_instance = new Launcher();
+  }
+  return s_instance;
 }

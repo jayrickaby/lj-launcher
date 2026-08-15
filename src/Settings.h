@@ -12,8 +12,6 @@
 
 class Settings : public QObject {
   Q_OBJECT
-  QML_ELEMENT
-  QML_SINGLETON
 
   Q_PROPERTY(QString refreshToken READ refreshToken)
 
@@ -25,10 +23,11 @@ public:
 
   static void clearRefreshToken();
   static void setRefreshToken(const QString& refreshToken);
-  static void setInstance(QSettings* settings) {s_settings = settings;};
+  static Settings* getInstance();
 
 private:
   static QSettings* s_settings;
+  static Settings* s_instance;
 };
 
 #endif  // LJ_LAUNCHER_SETTINGS_H_

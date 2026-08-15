@@ -18,12 +18,9 @@
 class Profiles : public QObject {
   Q_OBJECT
   Q_PROPERTY(QVariantList profiles READ profiles NOTIFY profilesChanged)
-  QML_ELEMENT
-  QML_SINGLETON
 
 public:
   explicit Profiles(QObject *parent = nullptr);
-
 
   QVariantList profiles();
   QString currentProfileId();
@@ -35,6 +32,8 @@ public:
   static QJsonObject getProfile(const QString& profileId);
   static QJsonObject getProfiles();
   static QString getProfileVersion(const QString& profileId, bool raw=false);
+
+  static Profiles* getInstance();
 
   static QString createProfile(
     const QString& copyProfileId={},
@@ -60,6 +59,8 @@ private:
 
   static QString s_currentProfileId;
   static inline const QUrl JSON_PATH {findJsonPath()};
+
+  static Profiles* s_instance;
 };
 
 #endif  // LJ_LAUNCHER_PROFILES_H_

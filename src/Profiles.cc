@@ -7,9 +7,14 @@
 #include "Network/Versions.h"
 
 QString Profiles::s_currentProfileId;
+Profiles* Profiles::s_instance {nullptr};
 
 Profiles::Profiles(QObject *parent)
   : QObject(parent) {
+
+  if (!s_instance) {
+    s_instance = this;
+  }
 
   QFile const FILE {JSON_PATH.toLocalFile()};
 
@@ -266,4 +271,11 @@ QJsonObject Profiles::getProfileFormat() {
     {"type", ""}
   };
   return JSON;
+}
+
+Profiles* Profiles::getInstance() {
+  if (!s_instance) {
+    s_instance = new Profiles;
+  }
+  return s_instance;
 }

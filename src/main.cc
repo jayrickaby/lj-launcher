@@ -3,10 +3,11 @@
 //
 #include <QGuiApplication>
 #include <QIcon>
-#include <QQmlApplicationEngine>
 #include <QLoggingCategory>
+#include <QQmlApplicationEngine>
 
 #include "Application.h"
+#include "Profiles.h"
 #include "Settings.h"
 
 int main(int argc, char *argv[]) {
@@ -18,8 +19,12 @@ int main(int argc, char *argv[]) {
 
   QGuiApplication::setWindowIcon(QIcon(Application::getDefaultIcon()));
 
-  QSettings settings;
-  Settings::setInstance(&settings);
+  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Application", Application::getInstance());
+  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Authentication", Authentication::getInstance());
+  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Launcher", Launcher::getInstance());
+  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Profiles", Profiles::getInstance());
+  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Settings", Settings::getInstance());
+  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Versions", Versions::getInstance());
 
   QQmlApplicationEngine engine;
   QObject::connect(

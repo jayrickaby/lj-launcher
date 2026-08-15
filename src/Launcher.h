@@ -32,8 +32,6 @@ public:
 class Launcher : public QObject {
   Q_OBJECT
   Q_PROPERTY(QString userMessage READ userMessage NOTIFY userMessageChanged)
-  QML_ELEMENT
-  QML_SINGLETON
 
 public:
   explicit Launcher(QObject *parent = nullptr);
@@ -48,7 +46,7 @@ public:
 
   static void setUsername(const QString &username);
 
-  static Launcher* getInstance() { return s_instance; };
+  static Launcher* getInstance();
 
 signals:
   void launcherError(const ErrorMessage &message);

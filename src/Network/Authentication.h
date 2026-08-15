@@ -77,7 +77,7 @@ public:
   [[nodiscard]] AuthState authState() const { return s_authState; }
   [[nodiscard]] static AuthState getAuthState() { return s_authState; }
 
-  static Authentication* getInstance() { return s_instance; };
+  static Authentication* getInstance();
 
   void onNetworkReply(QNetworkReply* reply) override;
 

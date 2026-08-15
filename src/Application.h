@@ -13,8 +13,6 @@ class Application : public QObject {
   Q_OBJECT
   Q_PROPERTY(QString defaultIcon READ defaultIcon CONSTANT)
   Q_PROPERTY(QString defaultTitle READ defaultTitle CONSTANT)
-  QML_ELEMENT
-  QML_SINGLETON
 
 public:
   explicit Application(QObject *parent = nullptr);
@@ -30,6 +28,8 @@ public:
   [[nodiscard]] static QString getOrganisationDomain() { return ORGANISATION_DOMAIN; };
   [[nodiscard]] static QString getOrganisationName() { return ORGANISATION_NAME; };
 
+  static Application* getInstance();
+
 private:
   inline static const QString DEFAULT_ICON {":/jayrickaby/lj_launcher/assets/icons/icon.png"};
   inline static const QString DEFAULT_TITLE {"LJ Launcher"};
@@ -38,6 +38,8 @@ private:
   inline static const QString APPLICATION_VERSION {"v0.5.0a"};
   inline static const QString ORGANISATION_DOMAIN {"jayrickaby.com"};
   inline static const QString ORGANISATION_NAME {"JayRickaby"};
+
+  static Application* s_instance;
 };
 
 

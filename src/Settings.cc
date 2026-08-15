@@ -4,11 +4,16 @@
 
 #include "Settings.h"
 
-QSettings* Settings::s_settings = nullptr;
+QSettings* Settings::s_settings{new QSettings(Application::getOrganisationName(), Application::getApplicationName())};
+Settings* Settings::s_instance{nullptr};
 
 Settings::Settings(QObject* parent)
 : QObject(parent)
-{}
+{
+  if (!s_instance) {
+  s_instance = this;
+}
+}
 
 QString Settings::refreshToken() const {
   return getRefreshToken().toString();
@@ -24,4 +29,11 @@ void Settings::setRefreshToken(const QString& refreshToken) {
 
 void Settings::clearRefreshToken() {
   s_settings->remove("Account/refreshToken");
+}
+
+Settings* Settings::getInstance() {
+  if (!s_instance) {
+    s_instance = new Settings();
+  }
+  return s_instance;
 }

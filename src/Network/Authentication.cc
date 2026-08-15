@@ -13,7 +13,9 @@ Authentication::Authentication(QObject* parent) :
 NetworkRequester(parent),
 m_pkceData(generatePkceData()),
 m_loginData(getLoginData()) {
-  s_instance = this;
+  if (!s_instance) {
+    s_instance = this;
+  }
 }
 
 void Authentication::tryStoredRefreshToken() {
@@ -542,4 +544,11 @@ void Authentication::setState(const AuthState& state) {
 
   s_authState = state;
   emit authStateChanged();
+}
+
+Authentication* Authentication::getInstance() {
+  if (!s_instance) {
+    s_instance = new Authentication();
+  }
+  return s_instance;
 }
