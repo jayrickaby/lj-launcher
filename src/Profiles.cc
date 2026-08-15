@@ -97,6 +97,10 @@ QString Profiles::createProfile(const QString& copyProfileId,
   return NEW_UUID;
 }
 
+QString Profiles::currentProfileId() {
+  return s_currentProfileId;
+}
+
 QString Profiles::getCurrentProfileVersion() {
   return getProfileVersion(getCurrentProfileId());
 }

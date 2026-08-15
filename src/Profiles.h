@@ -26,6 +26,7 @@ public:
 
 
   QVariantList profiles();
+  QString currentProfileId();
 
   static void editProfile(const QString& profileId, QJsonObject& newParameters);
   static bool isProfile(const QString& profileId);
