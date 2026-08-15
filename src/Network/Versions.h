@@ -16,6 +16,9 @@
 
 class Versions : public NetworkRequester {
   Q_OBJECT
+  Q_PROPERTY(ManifestState manifestState READ manifestState NOTIFY stateChanged)
+  QML_ELEMENT
+  QML_SINGLETON
 
 public:
   enum class ManifestState {
@@ -23,9 +26,12 @@ public:
     DOWNLOADING,  // Requested
     PRESENT       // Successfully Downloaded
   };
-
+  Q_ENUM(ManifestState)
 
   explicit Versions(QObject *parent = nullptr);
+
+  ManifestState manifestState();
+
   void onNetworkReply(QNetworkReply* reply) override;
 
   static QString getLatest(bool snapshot=false);

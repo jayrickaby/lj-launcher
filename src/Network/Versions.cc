@@ -89,5 +89,11 @@ void Versions::setState(const ManifestState& state) {
   if (s_state == state) { return; }
 
   s_state = state;
+  qDebug() << "Manifest state changed to:" << s_state;
   emit getInstance()->stateChanged();
+}
+
+Versions::ManifestState Versions::manifestState() {
+  qDebug() << "QML is requesting manifest state:" << s_state;
+  return s_state;
 }

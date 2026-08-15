@@ -14,6 +14,9 @@ LauncherPage {
     property int authState: Authentication.authState
     property bool authenticated: authState === Authentication.AuthState.AUTHENTICATED
 
+    property int versionManifestState: Versions.manifestState
+    property bool versionsGotten: versionManifestState === Versions.ManifestState.PRESENT
+
     Loader {
         id: profileEditorLoader
         source: "./ProfileEditor.qml"
@@ -140,17 +143,17 @@ LauncherPage {
                            valueRole: "id"
                            textRole: "name"
 
-                           model: authenticated ? Profiles.profiles
+                           model: versionsGotten ? Profiles.profiles
                                                 : [{ "name": "Loading profiles...", "id": "" }]
 
-                           enabled: authenticated
+                           enabled: versionsGotten
 
                            currentIndex: {
-                               if (!authenticated) return 0;
+                               if (!versionsGotten) return 0;
 
                                var list = Profiles.profiles;
                                for (var i = 0; i < list.length; i++) {
-                                   if (list[i].id === Profiles.current_id) return i;
+                                   if (list[i].id === Profiles.currentProfileId) return i;
                                }
                                return -1;
                            }
@@ -203,7 +206,7 @@ LauncherPage {
                     property bool preparing: false
 
                     text: {
-                        if (!authenticated) return qsTr("Loading...");
+                        if (!authenticated || !versionsGotten) return qsTr("Loading...");
                         if (Downloader.downloading) return qsTr("Downloading...");
                         if (preparing) return qsTr("Preparing...");
 
@@ -211,7 +214,7 @@ LauncherPage {
                     }
 
                     enabled: {
-                        if (!authenticated) return false;
+                        if (!authenticated || !versionsGotten) return false;
                         if (preparing) return false;
 
                         return true;
