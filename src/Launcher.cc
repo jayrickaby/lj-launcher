@@ -13,8 +13,10 @@ Launcher::Launcher(QObject *parent)
   connect(this, &Launcher::usernameChanged,
       this, &Launcher::userMessageChanged);
 
-  // This could break if Authentication doesn't have an instance in time
   connect(Authentication::getInstance(), &Authentication::authStateChanged,
+    this, &Launcher::userMessageChanged);
+
+  connect(Profiles::getInstance(), &Profiles::currentProfileIdChanged,
     this, &Launcher::userMessageChanged);
 
   connect(Versions::getInstance(), &Versions::stateChanged,

@@ -32,7 +32,21 @@ Profiles::Profiles(QObject *parent)
   }
 
   // Current profile on startup should be first
-  s_currentProfileId = getProfiles().keys().first();
+  setCurrentProfileId(getProfiles().keys().first());
+}
+
+void Profiles::setCurrentProfileId(const QString& profileId) {
+  qDebug() << "Setting current profile to:" << profileId;
+  if (!isProfile(profileId)) {
+    qDebug() << "Tried to set current profile to one that doesn't exist!";
+    return;
+  }
+  if (s_currentProfileId == profileId) {
+    return;
+  }
+
+  s_currentProfileId = profileId;
+  emit currentProfileIdChanged();
 }
 
 QVariantList Profiles::profiles() {

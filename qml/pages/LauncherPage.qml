@@ -159,7 +159,7 @@ LauncherPage {
                            }
 
                            onActivated: {
-                               Profiles.current_profile = currentValue;
+                               Profiles.currentProfileId = currentValue;
                            }
                        }
                     }

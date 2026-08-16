@@ -18,12 +18,18 @@
 class Profiles : public QObject {
   Q_OBJECT
   Q_PROPERTY(QVariantList profiles READ profiles NOTIFY profilesChanged)
+  Q_PROPERTY(QString currentProfileId READ currentProfileId WRITE setCurrentProfileId NOTIFY currentProfileIdChanged)
+
+signals:
+  void profilesChanged();
+  void currentProfileIdChanged();
 
 public:
   explicit Profiles(QObject *parent = nullptr);
 
   QVariantList profiles();
   QString currentProfileId();
+  void setCurrentProfileId(const QString& profileId);
 
   static void editProfile(const QString& profileId, QJsonObject& newParameters);
   static bool isProfile(const QString& profileId);
@@ -40,9 +46,6 @@ public:
     QJsonObject parameters={},
     bool defaultTime=false
   );
-
-signals:
-  void profilesChanged();
 
 private:
   static QJsonObject cleanProfile(const QJsonObject &profile, bool recursive=false);
