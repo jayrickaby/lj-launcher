@@ -256,7 +256,7 @@ ApplicationWindow {
                     Layout.preferredHeight: 21
 
                     text: {
-                        var args = currentProfile.javaArgs || Profiles.default_java_args;
+                        var args = currentProfile.javaArgs || Profiles.defaultJavaArgs;
                         return qsTr(args);
                     }
 

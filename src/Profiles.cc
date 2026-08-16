@@ -35,6 +35,10 @@ Profiles::Profiles(QObject *parent)
   setCurrentProfileId(getProfiles().keys().first());
 }
 
+QJsonObject Profiles::currentProfile() {
+  return Profiles::getProfile(getCurrentProfileId());
+}
+
 void Profiles::setCurrentProfileId(const QString& profileId) {
   qDebug() << "Setting current profile to:" << profileId;
   if (!isProfile(profileId)) {
@@ -118,6 +122,10 @@ QString Profiles::createProfile(const QString& copyProfileId,
 
 QString Profiles::currentProfileId() {
   return s_currentProfileId;
+}
+
+QString Profiles::defaultJavaArgs() {
+  return DEFAULT_JAVA_ARGS;
 }
 
 QString Profiles::getCurrentProfileVersion() {
