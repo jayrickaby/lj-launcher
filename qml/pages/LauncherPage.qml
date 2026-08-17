@@ -143,10 +143,10 @@ LauncherPage {
                            valueRole: "id"
                            textRole: "name"
 
-                           model: versionsGotten ? Profiles.profiles
+                           model: authenticated && versionsGotten ? Profiles.profiles
                                                 : [{ "name": "Loading profiles...", "id": "" }]
 
-                           enabled: versionsGotten
+                           enabled: authenticated && versionsGotten
 
                            currentIndex: {
                                if (!versionsGotten) return 0;
@@ -175,6 +175,8 @@ LauncherPage {
 
                             text: qsTr("New Profile")
 
+                            enabled: authenticated && versionsGotten
+
                             onClicked: {
                                 profileEditorLoader.active = true;
                                 let profile = Profiles.currentProfile;
@@ -187,6 +189,8 @@ LauncherPage {
                             Layout.preferredHeight: 21
 
                             text: qsTr("Edit Profile")
+
+                            enabled: authenticated && versionsGotten
 
                             onClicked: {
                                 profileEditorLoader.active = true;
@@ -251,6 +255,8 @@ LauncherPage {
                         Layout.preferredHeight: 21
 
                         text: qsTr("Switch User")
+
+                        enabled: authenticated
                     }
                 }
             }

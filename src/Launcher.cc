@@ -41,7 +41,7 @@ QString Launcher::userMessage() {
 
   message.append("<br>");
 
-  if (MANIFEST_DOWNLOADED) {
+  if (MANIFEST_DOWNLOADED and AUTHENTICATED) {
 
     // TODO: Replace with if current profile version downloaded
     const QString DOWNLOAD_MESSAGE = true ? "download & " : "";
