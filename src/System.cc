@@ -6,6 +6,8 @@
 
 #include <qfile.h>
 
+#include <QStandardPaths>
+
 bool System::touch(const QString& path, bool existsOk) {
   QFileInfo const FILE_INFO {path};
   if (FILE_INFO.exists()) {
@@ -74,4 +76,18 @@ QString System::read(const QString& path) {
   QString const MSG {"Successfully read from %1!"};
   qDebug() << MSG.arg(path);
   return contents;
+}
+
+QString System::which(const QString& path) {
+  QString foundPath {QStandardPaths::findExecutable(path)};
+
+  if (foundPath.isEmpty()) {
+    const QString MSG {"The executable \"%1\" could not be found!"};
+    qDebug() << MSG.arg(path);
+    return {};
+  }
+  const QString MSG {"Found %1 at %2"};
+  qDebug() << MSG.arg(path, foundPath);
+
+  return foundPath;
 }
