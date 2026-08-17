@@ -89,7 +89,7 @@ ApplicationWindow {
                         Layout.preferredHeight: 21
 
                         text: {
-                            var res = currentProfile.resolution || Profiles.default_resolution;
+                            var res = currentProfile.resolution || Profiles.defaultResolution;
                             return res.width;
                         }
 
@@ -105,7 +105,7 @@ ApplicationWindow {
                         Layout.preferredHeight: 21
 
                         text: {
-                            var res = currentProfile.resolution || Profiles.default_resolution;
+                            var res = currentProfile.resolution || Profiles.defaultResolution;
                             return res.height;
                         }
 

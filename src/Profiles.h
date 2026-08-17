@@ -21,6 +21,7 @@ class Profiles : public QObject {
   Q_PROPERTY(QString currentProfileId READ currentProfileId WRITE setCurrentProfileId NOTIFY currentProfileIdChanged)
   Q_PROPERTY(QJsonObject currentProfile READ currentProfile NOTIFY currentProfileIdChanged)
   Q_PROPERTY(QString defaultJavaArgs READ defaultJavaArgs CONSTANT)
+  Q_PROPERTY(QJsonObject defaultResolution READ defaultResolution CONSTANT)
 
 signals:
   void profilesChanged();
@@ -33,6 +34,7 @@ public:
   QJsonObject currentProfile();
   QString currentProfileId();
   QString defaultJavaArgs();
+  QJsonObject defaultResolution() {return DEFAULT_RESOLUTION;};
 
   static void editProfile(const QString& profileId, QJsonObject& newParameters);
   static bool isProfile(const QString& profileId);
@@ -79,6 +81,10 @@ private:
   static inline const QUrl JSON_PATH {findJsonPath()};
 
   static inline const QString DEFAULT_JAVA_ARGS {"-Xmx1G -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn128M"};
+  static inline const QJsonObject DEFAULT_RESOLUTION {
+      {"width", 854},
+      {"height", 480},
+    };
 
   static Profiles* s_instance;
 };
