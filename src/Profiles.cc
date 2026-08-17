@@ -252,13 +252,13 @@ QJsonObject Profiles::cleanProfile(const QJsonObject &profile, bool recursive) {
   for (auto key : profile.keys()) {
     auto value {profile[key]};
 
-    if (value.isDouble() and value.toDouble() == 0.0) {
-      continue;
-    }
+    if (value.isDouble() and value.toDouble() == 0.0) { continue; }
 
     if (value.isString()) {
       value = QJsonValue(value.toString().simplified());
     }
+
+    if (value.isString() and value.toString().isEmpty()) { continue; }
 
     if (value.isObject() and recursive) {
       value = QJsonValue(cleanProfile(value.toObject(), true));
