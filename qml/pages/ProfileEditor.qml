@@ -65,7 +65,7 @@ ApplicationWindow {
                     Layout.preferredHeight: 21
 
                     text: {
-                        var dir = currentProfile.gameDir || Launcher.game_directory;
+                        var dir = currentProfile.gameDir || Launcher.gameDirectory;
                         return qsTr(dir.toString());
                     }
 
@@ -241,7 +241,7 @@ ApplicationWindow {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 21
 
-                    text: currentProfile.javaDir || Launcher.java_executable
+                    text: currentProfile.javaDir || Launcher.javaExecutable
 
                     enabled: checkJavaExecutable.checked
                 }

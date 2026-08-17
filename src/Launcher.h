@@ -31,16 +31,21 @@ public:
 
 class Launcher : public QObject {
   Q_OBJECT
+  Q_PROPERTY(QString gameDirectory READ gameDirectory CONSTANT)
+  Q_PROPERTY(QString javaExecutable READ javaExecutable CONSTANT)
   Q_PROPERTY(QString userMessage READ userMessage NOTIFY userMessageChanged)
 
 public:
   explicit Launcher(QObject *parent = nullptr);
 
+  QString gameDirectory() { return getGameDirectory().toString(); };
+  QString javaExecutable() { return getJavaExecutable().toString(); };
   QString userMessage();
 
   static void sendError(ErrorMessage &message);
 
   static QUrl getGameDirectory();
+  static QUrl getJavaExecutable();
   static QString getUsername();
   static QString getTime(bool def = false);
 
@@ -58,6 +63,7 @@ private:
 
   static QString s_username;
   static QUrl s_gameDirectory;
+  static QUrl s_javaExecutable;
 
   static Launcher* s_instance;
 };

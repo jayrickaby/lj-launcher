@@ -6,6 +6,7 @@
 
 Launcher* Launcher::s_instance {nullptr};
 QUrl Launcher::s_gameDirectory;
+QUrl Launcher::s_javaExecutable {System::which("java")};
 QString Launcher::s_username;
 
 Launcher::Launcher(QObject *parent)
@@ -25,6 +26,14 @@ Launcher::Launcher(QObject *parent)
   if (!s_instance) {
     s_instance = this;
   }
+}
+
+QUrl Launcher::getJavaExecutable() {
+  if (s_javaExecutable.isEmpty() or !s_javaExecutable.isValid()) {
+    throw std::runtime_error("Java path could not be found. Are you sure Java is installed?");
+  }
+
+  return s_javaExecutable;
 }
 
 QString Launcher::userMessage() {
