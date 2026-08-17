@@ -176,8 +176,10 @@ LauncherPage {
                             text: qsTr("New Profile")
 
                             onClicked: {
-                                Profiles.set_mode("new");
                                 profileEditorLoader.active = true;
+                                let profile = Profiles.currentProfile;
+                                profile["name"] = `Copy of ${profile["name"]}`;
+                                profileEditorLoader.item.setProfile(profile, null);
                             }
                         }
                         Button {
@@ -187,8 +189,10 @@ LauncherPage {
                             text: qsTr("Edit Profile")
 
                             onClicked: {
-                                Profiles.set_mode("edit");
                                 profileEditorLoader.active = true;
+                                let profile = Profiles.currentProfile;
+                                let profileId = Profiles.currentProfileId;
+                                profileEditorLoader.item.setProfile(profile, profileId);
                             }
                         }
                     }

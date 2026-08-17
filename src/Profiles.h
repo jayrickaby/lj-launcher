@@ -34,8 +34,6 @@ public:
   QString currentProfileId();
   QString defaultJavaArgs();
 
-  void setCurrentProfileId(const QString& profileId);
-
   static void editProfile(const QString& profileId, QJsonObject& newParameters);
   static bool isProfile(const QString& profileId);
   static QString getCurrentProfileId();
@@ -51,6 +49,18 @@ public:
     QJsonObject parameters={},
     bool defaultTime=false
   );
+
+public slots:
+  void addNewProfile(QJsonObject parameters={}) {
+    const QString NEW_PROFILE_ID {createProfile(QString(), parameters, false)};
+    setCurrentProfileId(NEW_PROFILE_ID);
+    emit profilesChanged();
+  };
+  void editCurrentProfile(QJsonObject parameters={}) {
+    editProfile(getCurrentProfileId(), parameters);
+    emit profilesChanged();
+  };
+  void setCurrentProfileId(const QString& profileId);
 
 private:
   static QJsonObject cleanProfile(const QJsonObject &profile, bool recursive=false);

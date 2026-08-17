@@ -13,7 +13,9 @@ ApplicationWindow {
 
     title: qsTr("Profile Editor")
 
-    property var currentProfile: Profiles.current_profile
+    property var currentProfile: null
+    property var currentProfileId: null
+
 
     leftPadding: 8; topPadding: 8; rightPadding: 8; bottomPadding: 8;
 
@@ -282,7 +284,13 @@ ApplicationWindow {
                 text: "Save Profile"
 
                 onClicked: {
-                    Profiles.save(constructProfileJson());
+                    let profile = constructProfileJson();
+                    if (currentProfileId == null) {
+                        Profiles.addNewProfile(profile);
+                    }
+                    else {
+                        Profiles.editCurrentProfile(profile);
+                    }
                     control.close();
                 }
             }
@@ -300,5 +308,20 @@ ApplicationWindow {
         checkJavaArguments.checked ? json["javaArgs"] = javaArguments.text : json["javaArgs"] = "";
 
         return json;
+    }
+
+    function setProfile(profile, id) {
+        if (id == null) {
+            console.log("Assuming creating a new profile.");
+        }
+        else {
+            console.log("Assume editing an existing profile.");
+        }
+        currentProfileId = id;
+
+        if (profile == null) {
+            throw new Error("Profile data cannot be empty");
+        }
+        currentProfile = profile;
     }
 }
