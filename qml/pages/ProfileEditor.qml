@@ -271,17 +271,17 @@ ApplicationWindow {
         // Buttons
         RowLayout {
             Button {
-                text: "Cancel"
+                text: qsTr("Cancel")
 
                 onClicked: control.close()
             }
             Button {
-                text: "Open Game Dir"
+                text: qsTr("Open Game Dir")
 
                 onClicked: Qt.openUrlExternally(Launcher.game_directory)
             }
             Button {
-                text: "Save Profile"
+                text: qsTr("Save Profile")
 
                 onClicked: {
                     let profile = constructProfileJson();
