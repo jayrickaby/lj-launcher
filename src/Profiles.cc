@@ -4,6 +4,8 @@
 
 #include "Profiles.h"
 
+#include <algorithm>
+
 #include "Network/Versions.h"
 
 QString Profiles::s_currentProfileId;
@@ -61,6 +63,15 @@ QVariantList Profiles::profiles() {
 
     profilesList.append(QVariantMap{{"id", id}, {"name", profile["name"]}});
   }
+
+  // Sort by creation date, not alphabetically
+  std::ranges::sort(profilesList, [](const QVariant& a, const QVariant& b) {
+    const QJsonObject PROFILE_A {getProfile(a.toMap()["id"].toString())};
+    const QJsonObject PROFILE_B {getProfile(b.toMap()["id"].toString())};
+
+    return PROFILE_A["created"].toString() < PROFILE_B["created"].toString();
+  });
+
   return profilesList;
 }
 
