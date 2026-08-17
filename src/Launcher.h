@@ -38,8 +38,8 @@ class Launcher : public QObject {
 public:
   explicit Launcher(QObject *parent = nullptr);
 
-  QString gameDirectory() { return getGameDirectory().toString(); };
-  QString javaExecutable() { return getJavaExecutable().toString(); };
+  QString gameDirectory() { return getGameDirectory().toLocalFile(); };
+  QString javaExecutable() { return getJavaExecutable().toLocalFile(); };
   QString userMessage();
 
   static void sendError(ErrorMessage &message);
