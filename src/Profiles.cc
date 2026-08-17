@@ -101,7 +101,7 @@ QString Profiles::createProfile(const QString& copyProfileId,
 
   saveProfiles(profiles);
 
-  if (!copyProfileId.isNull() or !copyProfileId.isEmpty()) {
+  if (!copyProfileId.isEmpty()) {
     QJsonObject originalProfile{getProfile(copyProfileId)};
     editProfile(NEW_UUID, originalProfile);
   }
