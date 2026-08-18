@@ -17,15 +17,22 @@ Versions::Versions(QObject *parent)
   requestManifest();
 }
 
-QUrl Versions::findJsonPath() {
+QUrl Versions::findVersionsPath() {
   QString const ROOT_PATH {Launcher::getGameDirectory().toLocalFile() + "/versions"};
-  QDir const ROOT_DIR {ROOT_PATH};
-  QString const FULL_PATH {ROOT_DIR.filePath("version_manifest_v2.json")};
 
+  QDir ROOT_DIR {ROOT_PATH};
   if (!ROOT_DIR.exists()) {
     ROOT_DIR.mkpath(".");
     qDebug() << "Created versions directory.";
   }
+
+  qDebug() << "Found versions directory:" << ROOT_PATH;
+  return {ROOT_PATH};
+}
+
+QUrl Versions::findJsonPath() {
+  QDir const ROOT_DIR {VERSIONS_PATH.toString()};
+  QString const FULL_PATH {ROOT_DIR.filePath("version_manifest_v2.json")};
 
   if (!System::touch(FULL_PATH, true)) {
     throw std::runtime_error("Could not create versions json!");

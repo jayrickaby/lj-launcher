@@ -44,10 +44,12 @@ signals:
   void stateChanged();
 
 private:
+  static QUrl findVersionsPath();
   static QUrl findJsonPath();
   static void requestManifest();
   static void setState(const ManifestState& state);
 
+  static inline const QUrl VERSIONS_PATH {findVersionsPath()};
   static inline const QUrl JSON_PATH {findJsonPath()};
   static inline const QUrl MANIFEST_URL {"https://launchermeta.mojang.com/mc/game/version_manifest_v2.json"};
 
