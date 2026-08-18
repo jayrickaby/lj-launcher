@@ -80,7 +80,7 @@ private:
   static QString s_currentProfileId;
   static inline const QUrl JSON_PATH {findJsonPath()};
 
-  static inline const QString DEFAULT_JAVA_ARGS {"-Xmx1G -XX:+UseConcMarkSweepGC -XX:+CMSIncrementalMode -XX:-UseAdaptiveSizePolicy -Xmn128M"};
+  static inline const QString DEFAULT_JAVA_ARGS {'"-Xms2G", "-Xmx4G", "-XX:+UseCompactObjectHeaders", "-XX:+AlwaysPreTouch", "-XX:+UseStringDeduplication"'};
   static inline const QJsonObject DEFAULT_RESOLUTION {
       {"width", 854},
       {"height", 480},
