@@ -38,8 +38,10 @@ QUrl Launcher::getJavaExecutable() {
 
 QString Launcher::userMessage() {
   qDebug() << "Updating user message...";
-  bool const AUTHENTICATED {Authentication::getAuthState() == Authentication::AuthState::AUTHENTICATED};
-  bool const MANIFEST_DOWNLOADED {Versions::getState() == Versions::ManifestState::PRESENT};
+  const bool AUTHENTICATED {Authentication::getAuthState() == Authentication::AuthState::AUTHENTICATED};
+  const bool MANIFEST_DOWNLOADED {Versions::getState() == Versions::ManifestState::PRESENT};
+  const QString CURRENT_VERSION{Profiles::getCurrentProfileVersion()};
+
   QString const USERNAME {getUsername()};
 
   QString message {QString("Welcome, <b>%1</b>").arg(USERNAME)};
@@ -51,13 +53,10 @@ QString Launcher::userMessage() {
   message.append("<br>");
 
   if (MANIFEST_DOWNLOADED and AUTHENTICATED) {
+    const QString DOWNLOAD_MESSAGE {Versions::isDownloaded(CURRENT_VERSION) ? "" : "download & "};
 
-    // TODO: Replace with if current profile version downloaded
-    const QString DOWNLOAD_MESSAGE = true ? "download & " : "";
+    const QString READY_MESSAGE {"Ready to %1play Minecraft %2"};
 
-    const QString READY_MESSAGE{"Ready to %1play Minecraft %2"};
-
-    const QString CURRENT_VERSION{Profiles::getCurrentProfileVersion()};
     message.append(READY_MESSAGE.arg(DOWNLOAD_MESSAGE, CURRENT_VERSION));
   }
   else {

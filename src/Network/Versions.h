@@ -5,6 +5,7 @@
 #ifndef LJ_LAUNCHER_VERSIONS_H_
 #define LJ_LAUNCHER_VERSIONS_H_
 
+#include <QDirIterator>
 #include <QNetworkRequest>
 #include <QString>
 #include <QUrl>
@@ -34,11 +35,13 @@ public:
 
   void onNetworkReply(QNetworkReply* reply) override;
 
-  static QString getLatest(bool snapshot=false);
+  static QString getLatestVersion(bool snapshot=false);
+  static QJsonObject getAvailableVersions(bool snapshot=false, bool historical=false);
+  static QStringList getDownloadedVersions();
   static ManifestState getState();
+  static bool isDownloaded(const QString& version);
 
   static Versions* getInstance();
-
 
 signals:
   void stateChanged();
@@ -46,6 +49,7 @@ signals:
 private:
   static QUrl findVersionsPath();
   static QUrl findJsonPath();
+  static QJsonObject getManifest();
   static void requestManifest();
   static void setState(const ManifestState& state);
 

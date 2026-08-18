@@ -154,10 +154,10 @@ QString Profiles::getProfileVersion(const QString& profileId, bool raw) {
     return PROFILE["lastVersionId"].toString();
   }
   if (PROFILE["type"] == "latest-release") {
-    return Versions::getLatest();
+    return Versions::getLatestVersion();
   }
   if (PROFILE["type"] == "latest-snapshot") {
-    return Versions::getLatest(true);
+    return Versions::getLatestVersion(true);
   }
   return PROFILE["lastVersionId"].toString();
 }

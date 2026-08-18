@@ -45,6 +45,75 @@ QUrl Versions::findJsonPath() {
   return URL;
 }
 
+QJsonObject Versions::getManifest() {
+  const QByteArray JSON_RAW{System::read(JSON_PATH.toLocalFile()).toUtf8()};
+  const QJsonDocument JSON_DOC {QJsonDocument::fromJson(JSON_RAW)};
+  return {JSON_DOC.object()};
+}
+
+QJsonObject Versions::getAvailableVersions(bool snapshot, bool historical) {
+  const QJsonObject JSON {getManifest()};
+
+  if (!JSON.contains("versions")
+    or !JSON["versions"].isArray()
+    or JSON["versions"].toArray().isEmpty()) {
+    throw std::runtime_error("Couldn't get any versions.");
+    }
+
+  const QJsonArray ENTRIES {JSON["versions"].toArray()};
+
+  QJsonArray chosenTypes{"release"};
+
+  if (snapshot) {chosenTypes.append("snapshot");}
+
+  if (historical) {
+    chosenTypes.append("old_alpha");
+    chosenTypes.append("old_beta");
+  }
+
+  QJsonObject versions;
+
+  for (auto const ENTRY : ENTRIES) {
+    QJsonObject version {ENTRY.toObject()};
+    const QString TYPE {version["type"].toString()};
+
+    if (chosenTypes.contains(TYPE)) {
+      const QString PROFILE_ID {version["id"].toString()};
+      version.remove("id");
+      versions[PROFILE_ID] = version;
+    }
+  }
+
+  return versions;
+}
+
+bool Versions::isDownloaded(const QString& version) {
+  const QStringList VERSIONS {getDownloadedVersions()};
+
+  return VERSIONS.contains(version);
+}
+
+QStringList Versions::getDownloadedVersions() {
+  QDirIterator iterator(VERSIONS_PATH.toString(),
+    QDir::Dirs | QDir::NoDotAndDotDot);
+
+  QStringList versions;
+  while (iterator.hasNext()) {
+    const QString ITEM {iterator.next()};
+    const QDir DIR {ITEM};
+    if (DIR.exists()) {
+      qDebug() << "Found version:" << ITEM;
+      versions.emplace_back(DIR.dirName());
+    }
+  }
+
+  if (versions.empty()) {
+    qDebug() << "No versions found.";
+  }
+
+  return versions;
+}
+
 void Versions::requestManifest() {
   QNetworkRequest const REQUEST {MANIFEST_URL};
 
@@ -72,10 +141,8 @@ Versions* Versions::getInstance() {
   return s_instance;
 }
 
-QString Versions::getLatest(bool snapshot) {
-  const QByteArray JSON_RAW{System::read(JSON_PATH.toLocalFile()).toUtf8()};
-  const QJsonDocument JSON_DOC {QJsonDocument::fromJson(JSON_RAW)};
-  const QJsonObject JSON {JSON_DOC.object()};
+QString Versions::getLatestVersion(bool snapshot) {
+  const QJsonObject JSON {getManifest()};
 
   if (!JSON.contains("latest")
     or !JSON["latest"].isObject()
