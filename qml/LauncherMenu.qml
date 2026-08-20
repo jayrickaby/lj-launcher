@@ -17,7 +17,7 @@ Item {
     property bool versionsGotten: versionManifestState === Versions.ManifestState.PRESENT
 
     property int donwloadState: Downloader.downloadState
-    property bool downloaded: downloading === Downloader.DownloadState.DOWNLOADING
+    property bool downloading: donwloadState === Downloader.DownloadState.DOWNLOADING
 
     Loader {
         id: profileEditorLoader
