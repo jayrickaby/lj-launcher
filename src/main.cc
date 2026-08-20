@@ -9,6 +9,8 @@
 #include "Application.h"
 #include "Profiles.h"
 #include "Settings.h"
+#include "Network/Authentication.h"
+#include "Network/Versions.h"
 
 int main(int argc, char *argv[]) {
   QGuiApplication app(argc, argv);
