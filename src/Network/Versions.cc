@@ -17,6 +17,29 @@ Versions::Versions(QObject *parent)
   requestManifest();
 }
 
+QVariantList Versions::versionsList() {
+  const auto AVAILABLE_VERSIONS {getAvailableVersions()};
+  // const QJsonObject DOWNLOADED_VERSIONS {getDownloadedVersions()};
+
+  QVariantList versions {};
+
+  for (const auto& version : AVAILABLE_VERSIONS) {
+    const QString TYPE {version.value("type").toString()};
+    const QString VERSION_ID {version.value("id").toString()};
+    const QString VERSION_NAME {
+      QString("%1 %2").arg(TYPE, VERSION_ID)
+    };
+
+    versions.append(
+    QVariantMap {
+      {"id", VERSION_ID},
+      {"name", VERSION_NAME}
+      }
+    );
+  }
+  return versions;
+}
+
 QUrl Versions::findVersionsPath() {
   QString const ROOT_PATH {Launcher::getGameDirectory().toLocalFile() + "/versions"};
 
@@ -45,24 +68,20 @@ QUrl Versions::findJsonPath() {
   return URL;
 }
 
-QJsonObject Versions::getManifest() {
+QVariantMap Versions::getManifest() {
   const QByteArray JSON_RAW{System::read(JSON_PATH.toLocalFile()).toUtf8()};
   const QJsonDocument JSON_DOC {QJsonDocument::fromJson(JSON_RAW)};
-  return {JSON_DOC.object()};
+  return JSON_DOC.object().toVariantMap();
 }
 
-QJsonObject Versions::getAvailableVersions(bool snapshot, bool historical) {
-  const QJsonObject JSON {getManifest()};
+QList<QVariantMap> Versions::getAvailableVersions(bool snapshot, bool historical) {
+  const QVariantMap JSON {getManifest()};
 
-  if (!JSON.contains("versions")
-    or !JSON["versions"].isArray()
-    or JSON["versions"].toArray().isEmpty()) {
+  if (JSON.value("versions").toList().isEmpty()) {
     throw std::runtime_error("Couldn't get any versions.");
-    }
+  }
 
-  const QJsonArray ENTRIES {JSON["versions"].toArray()};
-
-  QJsonArray chosenTypes{"release"};
+  QStringList chosenTypes{"release"};
 
   if (snapshot) {chosenTypes.append("snapshot");}
 
@@ -71,39 +90,58 @@ QJsonObject Versions::getAvailableVersions(bool snapshot, bool historical) {
     chosenTypes.append("old_beta");
   }
 
-  QJsonObject versions;
+  QList<QVariantMap> versions;
+  const auto ENTRIES (JSON.value("versions").toList());
 
-  for (auto const ENTRY : ENTRIES) {
-    QJsonObject version {ENTRY.toObject()};
-    const QString TYPE {version["type"].toString()};
+  for (const auto& entry : ENTRIES) {
+    const QVariantMap map {entry.toMap()};
 
-    if (chosenTypes.contains(TYPE)) {
-      const QString PROFILE_ID {version["id"].toString()};
-      version.remove("id");
-      versions[PROFILE_ID] = version;
+    if (chosenTypes.contains(map.value("type").toString())) {
+      versions.emplace_back(map);
     }
   }
 
   return versions;
 }
 
-bool Versions::isDownloaded(const QString& version) {
-  const QStringList VERSIONS {getDownloadedVersions()};
-
-  return VERSIONS.contains(version);
+QVariantMap Versions::getDownloadedVersion(const QString& versionId) {
+  for (const QVariantMap& entry : getDownloadedVersions()) {
+    if (entry.value("id") == versionId) {
+      return entry;
+    }
+  }
+  return {};
 }
 
-QStringList Versions::getDownloadedVersions() {
+bool Versions::isDownloaded(const QString& versionId) {
+  return std::ranges::any_of(getDownloadedVersions(), [&versionId](const auto& entry) {
+    return entry.value("id").toString() == versionId;
+  });
+}
+
+QList<QVariantMap> Versions::getDownloadedVersions() {
   QDirIterator iterator(VERSIONS_PATH.toString(),
     QDir::Dirs | QDir::NoDotAndDotDot);
 
-  QStringList versions;
+  QList<QVariantMap> versions;
   while (iterator.hasNext()) {
-    const QString ITEM {iterator.next()};
-    const QDir DIR {ITEM};
-    if (DIR.exists()) {
-      qDebug() << "Found version:" << ITEM;
-      versions.emplace_back(DIR.dirName());
+    const QString FOLDER {iterator.next()};
+    const QDir FOLDER_DIR {FOLDER};
+    const QString VERSION {FOLDER_DIR.dirName()};
+    const QString JSON_PATH {
+      FOLDER_DIR.filePath(
+        QString("%1.json")
+        .arg(VERSION)
+      )
+    };
+
+    if (QDir(JSON_PATH).exists()) {
+      qDebug() << "Found version:" << VERSION;
+      versions.append (
+          QJsonDocument::fromJson(System::read(JSON_PATH).toUtf8())
+          .object()
+          .toVariantMap()
+      );
     }
   }
 
@@ -142,18 +180,15 @@ Versions* Versions::getInstance() {
 }
 
 QString Versions::getLatestVersion(bool snapshot) {
-  const QJsonObject JSON {getManifest()};
+  const auto JSON {getManifest()};
 
-  if (!JSON.contains("latest")
-    or !JSON["latest"].isObject()
-    or JSON["latest"].toObject().isEmpty()) {
+  if (!JSON.value("latest").toMap().isEmpty()) {
     throw std::runtime_error("Couldn't get latest versions.");
   }
 
-  const QJsonObject LATEST {JSON["latest"].toObject()};
+  const QVariantMap LATEST {JSON.value("latest").toMap()};
 
-
-  return snapshot ? LATEST["snapshot"].toString() : LATEST["release"].toString();
+  return snapshot ? LATEST.value("snapshot").toString() : LATEST.value("release").toString();
 }
 
 Versions::ManifestState Versions::getState() {

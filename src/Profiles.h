@@ -18,8 +18,11 @@
 class Profiles : public QObject {
   Q_OBJECT
   Q_PROPERTY(QVariantList profiles READ profiles NOTIFY profilesChanged)
+
   Q_PROPERTY(QString currentProfileId READ currentProfileId WRITE setCurrentProfileId NOTIFY currentProfileIdChanged)
   Q_PROPERTY(QJsonObject currentProfile READ currentProfile NOTIFY currentProfileIdChanged)
+  Q_PROPERTY(QString currentProfileVersion READ currentProfileVersion NOTIFY currentProfileIdChanged)
+
   Q_PROPERTY(QString defaultJavaArgs READ defaultJavaArgs CONSTANT)
   Q_PROPERTY(QJsonObject defaultResolution READ defaultResolution CONSTANT)
 
@@ -33,6 +36,7 @@ public:
   QVariantList profiles();
   QJsonObject currentProfile();
   QString currentProfileId();
+  QString currentProfileVersion() {return getCurrentProfileVersion();};
   QString defaultJavaArgs();
   QJsonObject defaultResolution() {return DEFAULT_RESOLUTION;};
 

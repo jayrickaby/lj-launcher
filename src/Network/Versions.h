@@ -7,6 +7,8 @@
 
 #include <QDirIterator>
 #include <QNetworkRequest>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QString>
 #include <QUrl>
 
@@ -18,8 +20,13 @@
 class Versions : public NetworkRequester {
   Q_OBJECT
   Q_PROPERTY(ManifestState manifestState READ manifestState NOTIFY stateChanged)
+  Q_PROPERTY(QVariantList versionsList READ versionsList NOTIFY versionsListChanged);
   QML_ELEMENT
   QML_SINGLETON
+
+signals:
+  void stateChanged();
+  void versionsListChanged();
 
 public:
   enum class ManifestState {
@@ -32,24 +39,23 @@ public:
   explicit Versions(QObject *parent = nullptr);
 
   ManifestState manifestState();
+  QVariantList versionsList();
 
   void onNetworkReply(QNetworkReply* reply) override;
 
   static QString getLatestVersion(bool snapshot=false);
-  static QJsonObject getAvailableVersions(bool snapshot=false, bool historical=false);
-  static QStringList getDownloadedVersions();
+  static QList<QVariantMap> getAvailableVersions(bool snapshot=false, bool historical=false);
+  static QList<QVariantMap> getDownloadedVersions();
+  static QVariantMap getDownloadedVersion(const QString& versionId);
   static ManifestState getState();
-  static bool isDownloaded(const QString& version);
+  static bool isDownloaded(const QString& versionId);
 
   static Versions* getInstance();
-
-signals:
-  void stateChanged();
 
 private:
   static QUrl findVersionsPath();
   static QUrl findJsonPath();
-  static QJsonObject getManifest();
+  static QVariantMap getManifest();
   static void requestManifest();
   static void setState(const ManifestState& state);
 

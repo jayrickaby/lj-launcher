@@ -15,8 +15,7 @@ ApplicationWindow {
 
     property var currentProfile: null
     property var currentProfileId: null
-
-
+    
     leftPadding: 8; topPadding: 8; rightPadding: 8; bottomPadding: 8;
 
     ColumnLayout {
@@ -212,8 +211,16 @@ ApplicationWindow {
                     valueRole: "id"
                     textRole: "name"
 
-                    model: Launcher.online_versions
-                    currentValue: Profiles.current_version
+                    model: Versions.versionsList
+                    currentValue: Profiles.currentProfileVersion
+
+                    onActivated: (index) => {
+                        let selectedItem = model[index]
+
+                        if (selectedItem) {
+                            console.log("Current ID changed to:", selectedItem.id);
+                        }
+                    }
                 }
             }
         }
