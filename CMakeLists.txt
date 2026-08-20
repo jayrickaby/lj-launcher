@@ -38,7 +38,6 @@ qt_add_qml_module(lj_launcher
         qml/pages/LauncherPage.qml
         qml/pages/LoginForm.qml
         qml/pages/ProfileEditor.qml
-        qml/pages/template/LauncherPage.qml
         qml/pages/template/ProfileCellDelegate.qml
         qml/pages/template/ProfileEditorPage.qml
     RESOURCES

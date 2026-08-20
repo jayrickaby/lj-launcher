@@ -8,7 +8,7 @@ import jayrickaby.lj_launcher
 
 import "./template"
 
-LauncherPage {
+Item {
     id: control
 
     property int authState: Authentication.authState
@@ -147,7 +147,7 @@ LauncherPage {
         errorMessageNerd.text = qsTr(`( ${nerdError} )`);
     }
 
-    background: Image {
+    property Item background: Image {
         sourceSize.width: 64
         sourceSize.height: 64
 
@@ -155,5 +155,13 @@ LauncherPage {
 
         // fillMode: Image.TileVertically
         source: "qrc:/jayrickaby/lj_launcher/assets/dirt.png"
+    }
+
+    Component.onCompleted: {
+        if (background) {
+            background.parent = control
+            background.z = -1
+            background.anchors.fill = control
+        }
     }
 }

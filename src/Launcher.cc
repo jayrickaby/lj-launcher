@@ -20,6 +20,9 @@ Launcher::Launcher(QObject *parent)
   connect(Profiles::getInstance(), &Profiles::currentProfileIdChanged,
     this, &Launcher::userMessageChanged);
 
+  connect(Profiles::getInstance(), &Profiles::profilesChanged,
+    this, &Launcher::userMessageChanged);
+
   connect(Versions::getInstance(), &Versions::stateChanged,
   this, &Launcher::userMessageChanged);
 

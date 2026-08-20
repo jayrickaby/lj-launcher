@@ -8,7 +8,7 @@ import jayrickaby.lj_launcher
 
 import "./template"
 
-LauncherPage {
+Item {
     id: control
 
     property int authState: Authentication.authState

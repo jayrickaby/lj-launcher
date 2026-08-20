@@ -213,6 +213,8 @@ void Profiles::saveProfiles(const QJsonObject& profiles) {
   QJsonObject json {getJsonData()};
   json["profiles"] = profiles;
   dumpJson(json);
+
+  emit getInstance()->profilesChanged();
 }
 
 void Profiles::dumpJson(const QJsonObject& data) {
