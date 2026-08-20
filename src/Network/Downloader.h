@@ -13,8 +13,7 @@
 
 class Downloader : public NetworkRequester {
   Q_OBJECT
-  QML_ELEMENT
-  QML_SINGLETON
+  Q_PROPERTY(DownloadState downloadState READ downloadState NOTIFY downloadStateChanged)
 
 signals:
   void downloadStateChanged();
@@ -24,15 +23,17 @@ public:
 
   enum class DownloadState {
     IDLE,
-    DOWNLOADED,
+    DOWNLOADING,
     FINISHED
   };
   Q_ENUM(DownloadState);
 
+  DownloadState downloadState() {return s_downloadState; };
+
   void downloadFromClientJson(const QString& jsonUrl);
   static Downloader* getInstance();
 
-  void onNetworkReply(QNetworkReply *reply) override;
+  // void onNetworkReply(QNetworkReply* reply) override;
 
 private:
   void setState(const DownloadState& state);

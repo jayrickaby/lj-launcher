@@ -29,14 +29,14 @@ signals:
   void versionsListChanged();
 
 public:
+  explicit Versions(QObject *parent = nullptr);
+
   enum class ManifestState {
     MISSING,      // Not Requested
     DOWNLOADING,  // Requested
     PRESENT       // Successfully Downloaded
   };
   Q_ENUM(ManifestState)
-
-  explicit Versions(QObject *parent = nullptr);
 
   ManifestState manifestState();
   QVariantList versionsList();

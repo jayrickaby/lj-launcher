@@ -7,10 +7,11 @@
 #include <QQmlApplicationEngine>
 
 #include "Application.h"
+#include "Network/Authentication.h"
+#include "Network/Downloader.h"
+#include "Network/Versions.h"
 #include "Profiles.h"
 #include "Settings.h"
-#include "Network/Authentication.h"
-#include "Network/Versions.h"
 
 int main(int argc, char *argv[]) {
   QGuiApplication app(argc, argv);
@@ -23,6 +24,7 @@ int main(int argc, char *argv[]) {
 
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Application", Application::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Authentication", Authentication::getInstance());
+  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Downloader", Downloader::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Launcher", Launcher::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Profiles", Profiles::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Settings", Settings::getInstance());

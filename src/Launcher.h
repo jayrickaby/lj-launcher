@@ -35,14 +35,17 @@ class Launcher : public QObject {
   Q_PROPERTY(QString javaExecutable READ javaExecutable CONSTANT)
   Q_PROPERTY(QString userMessage READ userMessage NOTIFY userMessageChanged)
 
+signals:
+  void launcherError(const ErrorMessage &message);
+  void userMessageChanged();
+  void usernameChanged();
+
 public:
   explicit Launcher(QObject *parent = nullptr);
 
   QString gameDirectory() { return getGameDirectory().toLocalFile(); };
   QString javaExecutable() { return getJavaExecutable().toLocalFile(); };
   QString userMessage();
-
-  void play();
 
   static void sendError(ErrorMessage &message);
 
@@ -55,10 +58,8 @@ public:
 
   static Launcher* getInstance();
 
-signals:
-  void launcherError(const ErrorMessage &message);
-  void userMessageChanged();
-  void usernameChanged();
+public slots:
+  void play();
 
 private:
   static QUrl findGameDirectory();

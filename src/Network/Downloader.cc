@@ -7,7 +7,9 @@
 Downloader* Downloader::s_instance{nullptr};
 Downloader::DownloadState Downloader::s_downloadState{DownloadState::IDLE};
 
-Downloader::Downloader(QObject* parent) {
+Downloader::Downloader(QObject* parent)
+  : NetworkRequester(parent)
+{
   if (!s_instance) {
     s_instance = this;
   }
@@ -17,6 +19,9 @@ void Downloader::downloadFromClientJson(const QString& jsonUrl) {
 
 }
 
+// void Downloader::onNetworkReply(QNetworkReply* reply) {
+//   qDebug() << "Downloader::onNetworkReply()";
+// }
 
 Downloader* Downloader::getInstance() {
   if (!s_instance) {

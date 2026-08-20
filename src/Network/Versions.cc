@@ -8,8 +8,7 @@ Versions* Versions::s_instance {nullptr};
 Versions::ManifestState Versions::s_state {Versions::ManifestState::MISSING};
 
 Versions::Versions(QObject *parent)
-  : NetworkRequester(parent)
-{
+  : NetworkRequester(parent) {
   if (!s_instance) {
     s_instance = this;
   }

@@ -16,6 +16,9 @@ Item {
     property int versionManifestState: Versions.manifestState
     property bool versionsGotten: versionManifestState === Versions.ManifestState.PRESENT
 
+    property int donwloadState: Downloader.downloadState
+    property bool downloaded: downloading === Downloader.DownloadState.DOWNLOADING
+
     Loader {
         id: profileEditorLoader
         source: "./ProfileEditor.qml"
@@ -88,7 +91,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 16
 
-            visible: Downloader.downloading
+            visible: downloading
 
             value: Downloader.download_progress
             to: Downloader.download_progress_max
@@ -206,7 +209,7 @@ Item {
 
                     text: {
                         if (!authenticated || !versionsGotten) return qsTr("Loading...");
-                        if (Downloader.downloading) return qsTr("Downloading...");
+                        if (downloading) return qsTr("Downloading...");
                         if (preparing) return qsTr("Preparing...");
 
                         return qsTr("Play");
