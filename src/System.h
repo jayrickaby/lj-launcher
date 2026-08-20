@@ -11,10 +11,17 @@
 
 class System {
 public:
-  [[nodiscard]] static bool touch(const QString& path, bool existsOk=false);
-  [[nodiscard]] static bool write(const QString& path, const QString& content);
+  // Files
   [[nodiscard]] static QString read(const QString& path);
+  static bool touch(const QString& path, bool existsOk=false);
   [[nodiscard]] static QString which(const QString& path);
+  static bool write(const QString& path, const QString& content);
+
+  // System
+  [[nodiscard]] static QString getArchitecture();
+  [[nodiscard]] static QString getOs();
+  [[nodiscard]] static QString getOsVersion();
+
 };
 
 #endif  // LJ_LAUNCHER_SYSTEM_H_

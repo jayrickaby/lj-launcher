@@ -53,10 +53,12 @@ public:
   void onNetworkReply(QNetworkReply* reply) override;
 
 private:
+  static void processClientJson(const QString& url);
+  static bool shouldSkipFromJsonRules(const QVariantList& rule);
+
   static void setCurrentFile(const QString& currentFile);
   static void setCurrentProgress(qint64 received, qint64 total);
   static void setState(const DownloadState& state);
-
 
   static DownloadState s_downloadState;
   static QQueue<QPair<QString, QString>> s_downloadQueue;

@@ -91,3 +91,23 @@ QString System::which(const QString& path) {
 
   return foundPath;
 }
+
+QString System::getOs() {
+  QString name {QSysInfo::kernelType()};
+
+  if (name == "winnt") { return "windows"; }
+  if (name == "darwin") { return "osx"; }
+
+  return name;
+}
+
+QString System::getArchitecture() {
+  QString arch {QSysInfo::currentCpuArchitecture()};
+  if (arch == "i386") { return "x86"; }
+
+  return arch;
+}
+
+QString System::getOsVersion() {
+  return QSysInfo::kernelVersion();
+}
