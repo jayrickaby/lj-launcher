@@ -42,6 +42,8 @@ public:
   QString javaExecutable() { return getJavaExecutable().toLocalFile(); };
   QString userMessage();
 
+  void play();
+
   static void sendError(ErrorMessage &message);
 
   static QUrl getGameDirectory();

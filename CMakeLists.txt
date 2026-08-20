@@ -28,6 +28,8 @@ qt_add_executable(lj_launcher
         src/Network/Network.h
         src/Network/NetworkRequester.cc
         src/Network/NetworkRequester.h
+        src/Network/Downloader.cc
+        src/Network/Downloader.h
 )
 
 qt_add_qml_module(lj_launcher

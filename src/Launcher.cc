@@ -136,3 +136,9 @@ Launcher* Launcher::getInstance() {
   }
   return s_instance;
 }
+
+void Launcher::play() {
+  if (!Versions::isDownloaded(Profiles::getCurrentProfileVersion())) {
+    Downloader::
+  }
+}
