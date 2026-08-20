@@ -17,14 +17,14 @@
 
 class Profiles : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QVariantList profiles READ profiles NOTIFY profilesChanged)
+  Q_PROPERTY(QList<QVariantMap> profiles READ profiles NOTIFY profilesChanged)
 
   Q_PROPERTY(QString currentProfileId READ currentProfileId WRITE setCurrentProfileId NOTIFY currentProfileIdChanged)
-  Q_PROPERTY(QJsonObject currentProfile READ currentProfile NOTIFY currentProfileIdChanged)
+  Q_PROPERTY(QVariantMap currentProfile READ currentProfile NOTIFY currentProfileIdChanged)
   Q_PROPERTY(QString currentProfileVersion READ currentProfileVersion NOTIFY currentProfileIdChanged)
 
   Q_PROPERTY(QString defaultJavaArgs READ defaultJavaArgs CONSTANT)
-  Q_PROPERTY(QJsonObject defaultResolution READ defaultResolution CONSTANT)
+  Q_PROPERTY(QVariantMap defaultResolution READ defaultResolution CONSTANT)
 
 signals:
   void profilesChanged();
@@ -33,51 +33,54 @@ signals:
 public:
   explicit Profiles(QObject *parent = nullptr);
 
-  QVariantList profiles();
-  QJsonObject currentProfile();
+  QList<QVariantMap> profiles();
+  QVariantMap currentProfile();
   QString currentProfileId();
   QString currentProfileVersion() {return getCurrentProfileVersion();};
   QString defaultJavaArgs();
-  QJsonObject defaultResolution() {return DEFAULT_RESOLUTION;};
+  QVariantMap defaultResolution() {return DEFAULT_RESOLUTION;};
 
-  static void editProfile(const QString& profileId, QJsonObject& newParameters);
+  static void editProfile(const QString& profileId, QVariantMap& newParameters);
   static bool isProfile(const QString& profileId);
+  static QVariantMap getCurrentProfile() { return getProfiles().value(getCurrentProfileId()).toMap(); };
   static QString getCurrentProfileId();
   static QString getCurrentProfileVersion();
-  static QJsonObject getProfile(const QString& profileId);
-  static QJsonObject getProfiles();
+  static QVariantMap getProfile(const QString& profileId);
+  static QVariantMap getProfiles();
   static QString getProfileVersion(const QString& profileId, bool raw=false);
+
+  static void renameCurrentProfileIfDefault();
 
   static Profiles* getInstance();
 
   static QString createProfile(
     const QString& copyProfileId={},
-    QJsonObject parameters={},
+    QVariantMap parameters={},
     bool defaultTime=false
   );
 
 public slots:
-  void addNewProfile(QJsonObject parameters={}) {
+  void addNewProfile(QVariantMap parameters={}) {
     const QString NEW_PROFILE_ID {createProfile(QString(), parameters, false)};
     setCurrentProfileId(NEW_PROFILE_ID);
     emit profilesChanged();
   };
-  void editCurrentProfile(QJsonObject parameters={}) {
+  void editCurrentProfile(QVariantMap parameters={}) {
     editProfile(getCurrentProfileId(), parameters);
     emit profilesChanged();
   };
   void setCurrentProfileId(const QString& profileId);
 
 private:
-  static QJsonObject cleanProfile(const QJsonObject &profile, bool recursive=false);
-  static QJsonObject getDefaultProfile();
-  static QJsonObject getProfileFormat();
-  static void saveProfiles(const QJsonObject& profiles);
+  static QVariantMap cleanProfile(const QVariantMap &profile, bool recursive=false);
+  static QVariantMap getDefaultProfile();
+  static QVariantMap getProfileFormat();
+  static void saveProfiles(const QVariantMap& profiles);
 
-  static void dumpJson(const QJsonObject& data);
+  static void dumpJson(const QVariantMap& data);
   static QUrl findJsonPath();
-  static QJsonObject getJsonData();
-  static QJsonObject getJsonFormat();
+  static QVariantMap getJsonData();
+  static QVariantMap getJsonFormat();
 
   static QString generateUuid();
 
@@ -85,7 +88,7 @@ private:
   static inline const QUrl JSON_PATH {findJsonPath()};
 
   static inline const QString DEFAULT_JAVA_ARGS {R"("-Xms2G", "-Xmx4G", "-XX:+UseCompactObjectHeaders", "-XX:+AlwaysPreTouch", "-XX:+UseStringDeduplication")"};
-  static inline const QJsonObject DEFAULT_RESOLUTION {
+  static inline const QVariantMap DEFAULT_RESOLUTION {
       {"width", 854},
       {"height", 480},
     };

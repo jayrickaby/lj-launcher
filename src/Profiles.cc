@@ -18,6 +18,12 @@ Profiles::Profiles(QObject *parent)
     s_instance = this;
   }
 
+  connect(Authentication::getInstance(), &Authentication::authStateChanged,
+    this, &Profiles::renameCurrentProfileIfDefault);
+
+  connect(this, &Profiles::currentProfileIdChanged,
+    this, &Profiles::renameCurrentProfileIfDefault);
+
   QFile const FILE {JSON_PATH.toLocalFile()};
 
   if (FILE.size() == 0) { dumpJson(getJsonFormat()); }
@@ -37,7 +43,7 @@ Profiles::Profiles(QObject *parent)
   setCurrentProfileId(getProfiles().keys().first());
 }
 
-QJsonObject Profiles::currentProfile() {
+QVariantMap Profiles::currentProfile() {
   return Profiles::getProfile(getCurrentProfileId());
 }
 
@@ -55,19 +61,20 @@ void Profiles::setCurrentProfileId(const QString& profileId) {
   emit currentProfileIdChanged();
 }
 
-QVariantList Profiles::profiles() {
-  QVariantList profilesList;
-  QJsonObject const PROFILES {getProfiles()};
-  for (auto const& id : PROFILES.keys()) {
-    auto const& profile = PROFILES[id];
+QList<QVariantMap> Profiles::profiles() {
+  QList<QVariantMap> profilesList;
+  const QVariantMap PROFILES {getProfiles()};
 
-    profilesList.append(QVariantMap{{"id", id}, {"name", profile["name"]}});
+  for (const auto & profileId : PROFILES.keys()) {
+    const auto & profile = PROFILES[profileId].toMap();
+
+    profilesList.append(QVariantMap{{"id", profileId}, {"name", profile.value("name")}});
   }
 
   // Sort by creation date, not alphabetically
   std::ranges::sort(profilesList, [](const QVariant& a, const QVariant& b) {
-    const QJsonObject PROFILE_A {getProfile(a.toMap()["id"].toString())};
-    const QJsonObject PROFILE_B {getProfile(b.toMap()["id"].toString())};
+    const QVariantMap PROFILE_A {getProfile(a.toMap()["id"].toString())};
+    const QVariantMap PROFILE_B {getProfile(b.toMap()["id"].toString())};
 
     return PROFILE_A["created"].toString() < PROFILE_B["created"].toString();
   });
@@ -90,8 +97,8 @@ QUrl Profiles::findJsonPath() {
   return PROFILE_URL;
 }
 
-QJsonObject Profiles::getJsonFormat() {
-  const QJsonObject JSON {
+QVariantMap Profiles::getJsonFormat() {
+  const QVariantMap JSON {
     {"profiles", QJsonObject{}},
     {"settings", QJsonObject{}},
     {"version", 6}
@@ -100,20 +107,20 @@ QJsonObject Profiles::getJsonFormat() {
 }
 
 QString Profiles::createProfile(const QString& copyProfileId,
-                                QJsonObject parameters,
+                                QVariantMap parameters,
                                 bool defaultTime) {
 
-  QJsonObject const NEW_PROFILE {getDefaultProfile()};
-  QJsonObject const CLEANED_PROFILE {cleanProfile(NEW_PROFILE, true)};
+  QVariantMap const NEW_PROFILE {getDefaultProfile()};
+  QVariantMap const CLEANED_PROFILE {cleanProfile(NEW_PROFILE, true)};
 
-  QJsonObject profiles {getProfiles()};
+  QVariantMap profiles {getProfiles()};
   QString const NEW_UUID {generateUuid()};
   profiles[NEW_UUID] = CLEANED_PROFILE;
 
   saveProfiles(profiles);
 
   if (!copyProfileId.isEmpty()) {
-    QJsonObject originalProfile{getProfile(copyProfileId)};
+    QVariantMap originalProfile{getProfile(copyProfileId)};
     editProfile(NEW_UUID, originalProfile);
   }
 
@@ -122,7 +129,7 @@ QString Profiles::createProfile(const QString& copyProfileId,
   }
 
   if (!defaultTime) {
-    QJsonObject timeParam;
+    QVariantMap timeParam;
     timeParam["created"] = Launcher::getTime();
 
     editProfile(NEW_UUID, timeParam);
@@ -148,7 +155,7 @@ QString Profiles::getCurrentProfileId() {
 }
 
 QString Profiles::getProfileVersion(const QString& profileId, bool raw) {
-  const QJsonObject PROFILE {getProfile(profileId)};
+  const QVariantMap PROFILE {getProfile(profileId)};
 
   if (raw) {
     return PROFILE["lastVersionId"].toString();
@@ -162,8 +169,8 @@ QString Profiles::getProfileVersion(const QString& profileId, bool raw) {
   return PROFILE["lastVersionId"].toString();
 }
 
-void Profiles::editProfile(const QString& profileId, QJsonObject& newParameters) {
-  QJsonObject target = getProfile(profileId);
+void Profiles::editProfile(const QString& profileId, QVariantMap& newParameters) {
+  QVariantMap target = getProfile(profileId);
 
   for (auto const& key : newParameters.keys()) {
     auto value {newParameters[key]};
@@ -187,88 +194,114 @@ void Profiles::editProfile(const QString& profileId, QJsonObject& newParameters)
 
   target = cleanProfile(target, true);
 
-  QJsonObject profiles {getProfiles()};
+  QVariantMap profiles {getProfiles()};
   profiles[profileId] = target;
   saveProfiles(profiles);
 }
 
-QJsonObject Profiles::getProfile(const QString& profileId) {
-  const QJsonObject PROFILES = getProfiles();
+QVariantMap Profiles::getProfile(const QString& profileId) {
+  const QVariantMap PROFILES = getProfiles();
 
   if (!isProfile(profileId)) {
     const QString MSG ("Could not find profile %1");
     throw std::runtime_error(MSG.arg(profileId).toStdString());
   }
 
-  return PROFILES[profileId].toObject();
+  return PROFILES.value(profileId).toMap();
 }
 
 bool Profiles::isProfile(const QString& profileId) {
-  QJsonObject const PROFILES = getProfiles();
+  const QVariantMap PROFILES = getProfiles();
 
-  return PROFILES.contains(profileId) and PROFILES[profileId].isObject();
+  return PROFILES.contains(profileId)
+  and PROFILES.value(profileId).metaType().id() == QMetaType::QVariantMap;
 }
 
-void Profiles::saveProfiles(const QJsonObject& profiles) {
-  QJsonObject json {getJsonData()};
+void Profiles::saveProfiles(const QVariantMap& profiles) {
+  QVariantMap json {getJsonData()};
   json["profiles"] = profiles;
   dumpJson(json);
 
   emit getInstance()->profilesChanged();
 }
 
-void Profiles::dumpJson(const QJsonObject& data) {
-  for (auto const key : data.keys()) {
+void Profiles::dumpJson(const QVariantMap& data) {
+  for (const auto& key : data.keys()) {
     if (!getJsonFormat().contains(key)) {
       qDebug() << "Invalid key: " << key;
       throw std::runtime_error("Json being dumped is of incorrect format!");
     }
   }
-  QJsonDocument const DOC {data};
-  QString const RAW {DOC.toJson()};
+
+  QString const RAW {
+    QJsonDocument::fromVariant(data).toJson()
+  };
 
   if (!System::write(JSON_PATH.toLocalFile(), RAW)) {
     throw std::runtime_error("Failed to write to JSON file!");
   }
 }
 
-QJsonObject Profiles::getProfiles() {
-  const QJsonObject JSON {getJsonData()};
-
-  if (JSON["profiles"].isObject()) {
-    return JSON["profiles"].toObject();
-  }
-
-  return {};
+QVariantMap Profiles::getProfiles() {
+  return getJsonData().value("profiles").toMap();
 }
 
-QJsonObject Profiles::getJsonData() {
+QVariantMap Profiles::getJsonData() {
   const QString DATA{System::read(JSON_PATH.toLocalFile())};
-  QJsonObject const JSON {QJsonDocument::fromJson(DATA.toUtf8()).object()};
-  return JSON;
+
+  const QJsonObject JSON {
+    QJsonDocument::fromJson(DATA.toUtf8()).object()
+  };
+
+  return JSON.toVariantMap();
 }
 
-QJsonObject Profiles::cleanProfile(const QJsonObject &profile, bool recursive) {
-  QJsonObject cleanedProfile;
+QVariantMap Profiles::cleanProfile(const QVariantMap &profile, bool recursive) {
+  QVariantMap cleanedProfile;
 
-  for (auto key : profile.keys()) {
-    auto value {profile[key]};
-
-    if (value.isDouble() and value.toDouble() == 0.0) { continue; }
-
-    if (value.isString()) {
-      value = QJsonValue(value.toString().simplified());
-    }
-
-    if (value.isString() and value.toString().isEmpty()) { continue; }
-
-    if (value.isObject() and recursive) {
-      value = QJsonValue(cleanProfile(value.toObject(), true));
-    }
-
-    if (value.isObject() and value.toObject().isEmpty()) { continue; }
+  for (const auto& key : profile.keys()) {
+    auto value {profile.value(key)};
 
     if (value.isNull()) { continue; }
+
+    switch (value.metaType().id()) {
+      case QMetaType::Int:
+      case QMetaType::LongLong: {
+        if (value.toLongLong() == 0) {
+          continue;
+        }
+        break;
+      }
+
+      case QMetaType::Float:
+      case QMetaType::Double: {
+        if (value.toDouble() == 0.0) {
+          continue;
+        }
+        break;
+      }
+
+      case QMetaType::QString: {
+        const QString STR {value.toString().simplified()};
+        if (STR.isEmpty()) { continue; }
+        value = STR;
+        break;
+      }
+
+      case QMetaType::QVariantMap: {
+        QVariantMap map {value.toMap()};
+        if (recursive) {
+          map = cleanProfile(map, true);
+        }
+
+        if (map.isEmpty()) { continue; }
+        value = map;
+        break;
+      }
+
+      default:
+        break;
+    }
 
     cleanedProfile[key] = value;
   }
@@ -280,8 +313,8 @@ QString Profiles::generateUuid() {
   return QUuid::createUuid().toString(QUuid::Id128);
 }
 
-QJsonObject Profiles::getDefaultProfile() {
-  QJsonObject defaultProfile {getProfileFormat()};
+QVariantMap Profiles::getDefaultProfile() {
+  QVariantMap defaultProfile {getProfileFormat()};
 
   defaultProfile["name"] = "(Default)";
   defaultProfile["created"] = Launcher::getTime(true);
@@ -293,8 +326,8 @@ QJsonObject Profiles::getDefaultProfile() {
   return defaultProfile;
 }
 
-QJsonObject Profiles::getProfileFormat() {
-  const QJsonObject JSON {
+QVariantMap Profiles::getProfileFormat() {
+  const QVariantMap JSON {
   {"created", ""},
   {"icon", ""},
   {"gameDir", QJsonValue::Null},
@@ -304,7 +337,7 @@ QJsonObject Profiles::getProfileFormat() {
   {"javaDir", QJsonValue::Null},
   {"javaArgs", QJsonValue::Null},
   {
-      "resolution", QJsonObject{
+      "resolution", QVariantMap{
       {"width", 0},
       {"height", 0}
       }
@@ -319,4 +352,23 @@ Profiles* Profiles::getInstance() {
     s_instance = new Profiles;
   }
   return s_instance;
+}
+
+void Profiles::renameCurrentProfileIfDefault() {
+  const bool AUTHENTICATED {Authentication::getAuthState() == Authentication::AuthState::AUTHENTICATED};
+
+  if (!AUTHENTICATED) {
+    return;
+  }
+
+  const QString DEFAULT_DATE {Launcher::getTime(true)};
+  const QString PROFILE_DATE {getCurrentProfile().value("created").toString()};
+  const QString PROFILE_NAME {getCurrentProfile().value("name").toString()};
+
+  if (PROFILE_DATE == DEFAULT_DATE and PROFILE_NAME == "(Default)") {
+    const QString USERNAME {Launcher::getUsername()};
+
+    QVariantMap params({{"name", USERNAME}});
+    editProfile(getCurrentProfileId(), params);
+  }
 }
