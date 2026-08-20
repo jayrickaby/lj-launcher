@@ -4,7 +4,6 @@ import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 
 import jayrickaby.lj_launcher
-import "./template"
 
 ApplicationWindow {
     id: control

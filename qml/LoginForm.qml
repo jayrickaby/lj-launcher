@@ -6,8 +6,6 @@ import QtWebEngine
 
 import jayrickaby.lj_launcher
 
-import "./template"
-
 Item {
     id: control
 

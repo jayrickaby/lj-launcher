@@ -4,8 +4,6 @@ import QtQuick.Controls.Fusion
 
 import jayrickaby.lj_launcher
 
-import "./pages"
-
 ApplicationWindow {
     id: root
 
@@ -24,7 +22,7 @@ ApplicationWindow {
 
         source: authState === Authentication.AuthState.AUTHENTICATED
             || authState === Authentication.AuthState.AUTHENTICATING_REFRESH
-            ? "./pages/LauncherPage.qml" : "./pages/LoginForm.qml"
+            ? "./LauncherMenu.qml" : "./LoginForm.qml"
     }
 
     Component.onCompleted: {

@@ -35,11 +35,12 @@ qt_add_qml_module(lj_launcher
     RESOURCE_PREFIX /
     QML_FILES
         qml/Main.qml
-        qml/pages/LauncherPage.qml
-        qml/pages/LoginForm.qml
-        qml/pages/ProfileEditor.qml
-        qml/pages/template/ProfileCellDelegate.qml
-        qml/pages/template/ProfileEditorPage.qml
+        qml/LauncherMenu.qml
+        qml/LoginForm.qml
+        qml/ProfileEditor.qml
+        qml/LauncherPages/NewsPage.qml
+        qml/LauncherPages/ProfilesPage.qml
+        qml/LauncherPages/template/ProfileCellDelegate.qml
     RESOURCES
         assets/dirt.png
         assets/minecraft_logo.png

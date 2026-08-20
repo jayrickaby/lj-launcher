@@ -2,6 +2,8 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 
+import "./template"
+
 // Adapted plasma-systemmonitor/src/table/BaseTableView.qml
 FocusScope {
     id: root

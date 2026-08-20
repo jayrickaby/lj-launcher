@@ -2,11 +2,10 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Fusion
 import QtQuick.Layouts
-import QtWebEngine
 
 import jayrickaby.lj_launcher
 
-import "./template"
+import "./LauncherPages"
 
 Item {
     id: control
@@ -61,17 +60,9 @@ Item {
 
 
             // Update Notes
-            ScrollView {
+            NewsPage {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                WebEngineView {
-                    id: newsSite
-                    anchors.fill: parent
-
-                    url: Qt.resolvedUrl("https://jayrickaby.github.io/lj-launcher/")
-
-                }
             }
 
             // Launcher Log
@@ -82,7 +73,7 @@ Item {
             }
 
             // Profile Editor
-            ProfileEditorPage {
+            ProfilesPage {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
