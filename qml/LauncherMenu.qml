@@ -93,8 +93,8 @@ Item {
 
             visible: downloading
 
-            value: Downloader.download_progress
-            to: Downloader.download_progress_max
+            value: Downloader.currentProgress
+            to: Downloader.currentProgressMax
 
             Text {
                 z: 1

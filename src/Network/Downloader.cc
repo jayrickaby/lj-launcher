@@ -8,6 +8,8 @@
 Downloader* Downloader::s_instance{nullptr};
 Downloader::DownloadState Downloader::s_downloadState{DownloadState::IDLE};
 QString Downloader::s_currentFile{};
+qint64 Downloader::s_currentProgress{0};
+qint64 Downloader::s_currentProgressMax{0};
 QQueue<QPair<QString, QString>> Downloader::s_downloadQueue{};
 
 Downloader::Downloader(QObject* parent)
@@ -27,6 +29,17 @@ void Downloader::setCurrentFile(const QString& currentFile) {
   emit getInstance()->currentFileChanged();
 }
 
+void Downloader::setCurrentProgress(qint64 received, qint64 total) {
+  if (s_currentProgress != received) {
+    s_currentProgress = received;
+    emit getInstance()->currentProgressChanged();
+  }
+  if (s_currentProgressMax != total) {
+    s_currentProgressMax = total;
+    emit getInstance()->currentProgressMaxChanged();
+  }
+}
+
 void Downloader::addDownload(const QString& onlineUrl, const QString& localUrl) {
   s_downloadQueue.enqueue(QPair<QString, QString>(onlineUrl, localUrl));
 
@@ -42,6 +55,9 @@ void Downloader::downloadNext() {
   const QNetworkRequest REQUEST {file.first};
   QNetworkReply* reply { Network::get(getInstance(), REQUEST) };
   reply->setProperty("localfile", file.second);
+
+  connect (reply, &QNetworkReply::downloadProgress,
+    getInstance(), &Downloader::setCurrentProgress);
 
   const QFileInfo URL {file.second};
   setCurrentFile(URL.fileName());
