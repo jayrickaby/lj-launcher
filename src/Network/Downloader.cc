@@ -5,6 +5,8 @@
 #include "Downloader.h"
 
 
+#include "System.h"
+
 Downloader* Downloader::s_instance{nullptr};
 Downloader::DownloadState Downloader::s_downloadState{DownloadState::IDLE};
 QString Downloader::s_currentFile{};
@@ -64,7 +66,22 @@ void Downloader::downloadNext() {
 }
 
 void Downloader::onNetworkReply(QNetworkReply* reply) {
-  qDebug() << reply->property("localfile").toString();
+  if (reply->error() != QNetworkReply::NoError) {
+    throw std::runtime_error(reply->errorString().toStdString());
+  }
+
+  const QString URL {reply->property("localfile").toString()};
+  const QFileInfo fileInfo {URL};
+
+  if (!fileInfo.exists()) {
+    QDir().mkpath(fileInfo.absolutePath());
+  }
+
+  if (!System::touch(URL)
+    or !System::write(URL, reply->readAll())) {
+    throw std::runtime_error("Unable to download required version file:" + reply->url().toString().toStdString());
+  };
+
 }
 
 Downloader* Downloader::getInstance() {

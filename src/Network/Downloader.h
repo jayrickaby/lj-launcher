@@ -6,6 +6,7 @@
 #define LJ_LAUNCHER_DOWNLOADER_H_
 #include <qqml.h>
 
+#include <QDir>
 #include <QNetworkReply>
 #include <QUrlQuery>
 #include <QFileInfo>
