@@ -21,7 +21,7 @@ Item {
 
     Loader {
         id: profileEditorLoader
-        source: "./ProfileEditor.qml"
+        source: "ProfileEditor.qml"
         active: false
 
         onLoaded: {
@@ -255,9 +255,5 @@ Item {
                 }
             }
         }
-    }
-
-    ProfileEditor {
-        id: profileEditor
     }
 }
