@@ -103,6 +103,15 @@ QList<QVariantMap> Versions::getAvailableVersions(bool snapshot, bool historical
   return versions;
 }
 
+QVariantMap Versions::getAvailableVersion(const QString& versionId) {
+  for (const QVariantMap& entry : getAvailableVersions()) {
+    if (entry.value("id") == versionId) {
+      return entry;
+    }
+  }
+  return {};
+}
+
 QVariantMap Versions::getDownloadedVersion(const QString& versionId) {
   for (const QVariantMap& entry : getDownloadedVersions()) {
     if (entry.value("id") == versionId) {
@@ -159,6 +168,8 @@ void Versions::requestManifest() {
 }
 
 void Versions::onNetworkReply(QNetworkReply* reply) {
+  reply->deleteLater();
+
   if (reply->error()) {
     qDebug() << "Error: " << reply->errorString();
     throw std::runtime_error("Couldn't obtain versions manifest!");

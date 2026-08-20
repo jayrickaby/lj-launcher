@@ -101,7 +101,7 @@ Item {
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
 
-                text: Downloader.download_status
+                text: Downloader.currentFile
             }
         }
 

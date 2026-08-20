@@ -14,6 +14,7 @@
 #include <QUrl>
 
 #include "Network/Authentication.h"
+#include "Network/Downloader.h"
 #include "Network/Versions.h"
 #include "Profiles.h"
 

@@ -4,6 +4,7 @@
 
 #include "Launcher.h"
 
+
 Launcher* Launcher::s_instance {nullptr};
 QUrl Launcher::s_gameDirectory;
 QUrl Launcher::s_javaExecutable {QUrl::fromLocalFile(System::which("java"))}; // stores properly
@@ -138,7 +139,16 @@ Launcher* Launcher::getInstance() {
 }
 
 void Launcher::play() {
-  // if (!Versions::isDownloaded(Profiles::getCurrentProfileVersion())) {
-  //   // Downloader::
-  // }
+  const QString CURRENT_VER {Profiles::getCurrentProfileVersion()};
+
+  if (!Versions::isDownloaded(CURRENT_VER)) {
+    const QString ONLINE_URL {Versions::getAvailableVersion(CURRENT_VER).value("url").toString()};
+
+    const QString VERSIONS_DIR {Versions::getVersionsDirectory()};
+
+    const QString LOCAL_URL {
+      QString("%1/%2/%2.json").arg(VERSIONS_DIR, CURRENT_VER)
+    };
+    Downloader::addDownload(ONLINE_URL, LOCAL_URL);
+  }
 }

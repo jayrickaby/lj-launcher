@@ -46,9 +46,12 @@ public:
   static QString getLatestVersion(bool snapshot=false);
   static QList<QVariantMap> getAvailableVersions(bool snapshot=false, bool historical=false);
   static QList<QVariantMap> getDownloadedVersions();
+  static QVariantMap getAvailableVersion(const QString& versionId);
   static QVariantMap getDownloadedVersion(const QString& versionId);
   static ManifestState getState();
   static bool isDownloaded(const QString& versionId);
+
+  static QString getVersionsDirectory() { return VERSIONS_PATH.path(); };
 
   static Versions* getInstance();
 
