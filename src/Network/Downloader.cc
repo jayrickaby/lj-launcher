@@ -196,7 +196,37 @@ void Downloader::processClientJson(const QString& url) {
 }
 
 void Downloader::processAssetsIndex(const QString& url) {
+  const QVariantMap DATA {
+    QJsonDocument::fromJson(
+      System::read(url)
+      .toUtf8()
+    )
+    .object()
+    .toVariantMap()
+  };
 
+  const QVariantMap OBJECTS (DATA.value("objects").toMap());
+
+  for (const auto& filePath : OBJECTS.keys()) {
+    const QVariantMap OBJECT {OBJECTS.value(filePath).toMap()};
+
+    const QString OBJECTS_PATH {ASSETS_PATH + "/objects/"};
+    const QString HASH {OBJECT.value("hash").toString()};
+    const QString FILE_PATH {
+      QString("%1/%2").arg(HASH.left(2), HASH)
+    };
+
+    const QString ONLINE_FILE_PATH {
+      QString("%1/%2").arg(ASSETS_URL, FILE_PATH)
+    };
+    const QString LOCAL_FILE_PATH {
+      QString("%1/%2").arg(OBJECTS_PATH, FILE_PATH)
+    };
+
+    addDownload(
+      DownloadItem(ONLINE_FILE_PATH, LOCAL_FILE_PATH, DownloadType::ASSET, HASH)
+    );
+  }
 }
 
 bool Downloader::shouldSkipFromJsonRules(const QVariantList& rules) {
@@ -243,3 +273,6 @@ void Downloader::setState(const DownloadState& state) {
   emit getInstance()->downloadStateChanged();
 }
 
+QString Downloader::findAssetsPath() {
+  return Launcher::getGameDirectory().toLocalFile() + "/assets/";
+}

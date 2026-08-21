@@ -7,16 +7,17 @@
 #include <qqml.h>
 
 #include <QDir>
-#include <QNetworkReply>
-#include <QUrlQuery>
 #include <QFileInfo>
+#include <QNetworkReply>
 #include <QObject>
 #include <QQueue>
+#include <QUrlQuery>
 
+#include "Launcher.h"
 #include "Network.h"
 #include "NetworkRequester.h"
 
-enum class DownloadType {
+ enum class DownloadType {
   CLIENT_JSON,
   CLIENT_JAR,
   ASSET,
@@ -72,6 +73,8 @@ private:
   static void processClientJson(const QString& url);
   static bool shouldSkipFromJsonRules(const QVariantList& rule);
 
+  static QString findAssetsPath();
+
   static void setCurrentFile(const QString& currentFile);
   static void setCurrentProgress(qint64 received, qint64 total);
   static void setState(const DownloadState& state);
@@ -83,6 +86,8 @@ private:
   static qint64 s_currentProgressMax;
 
   static Downloader* s_instance;
+  inline static const QString ASSETS_URL {"https://resources.download.minecraft.net/"};
+  inline static const QString ASSETS_PATH {findAssetsPath()};
 };
 
 #endif  // LJ_LAUNCHER_DOWNLOADER_H_
