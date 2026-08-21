@@ -105,6 +105,9 @@ void Downloader::processClientJson(const QString& url) {
     .toVariantMap()
   };
 
+  // Saves having to keep getting it from Profiles
+  const QString VERSION_ID {data.value("id").toString()};
+
   const QVariantMap ASSETS_INDEX {data.value("assetIndex").toMap()};
   const QString INDEX_URL {ASSETS_INDEX.value("url").toString()};
   const QString INDEX_ID {ASSETS_INDEX.value("id").toString()};
@@ -119,7 +122,7 @@ void Downloader::processClientJson(const QString& url) {
   const QString JAR_URL {CLIENT_JAR.value("url").toString()};
   const QString JAR_PATH {
     QString("%1/%2.jar")
-    .arg(QFileInfo(url).absolutePath(), Profiles::getCurrentProfileVersion())
+    .arg(QFileInfo(url).absolutePath(), VERSION_ID)
   };
   addDownload(JAR_URL, JAR_PATH);
 
