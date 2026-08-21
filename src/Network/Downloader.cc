@@ -66,7 +66,12 @@ void Downloader::downloadNext() {
     getInstance(), &Downloader::setCurrentProgress);
 
   const QFileInfo URL {file.localUrl};
-  setCurrentFile(URL.fileName());
+  if (!file.name.isEmpty()) {
+    setCurrentFile(file.name);
+  }
+  else {
+    setCurrentFile(URL.fileName());
+  }
 }
 
 void Downloader::onNetworkReply(QNetworkReply* reply) {
@@ -189,7 +194,7 @@ void Downloader::processClientJson(const QString& url) {
     };
     addDownload(
       DownloadItem(
-        ARTIFACT_URL, ARTIFACT_PATH, DownloadType::LIBRARY, ARTIFACT_HASH
+        ARTIFACT_URL, ARTIFACT_PATH, DownloadType::LIBRARY, ARTIFACT_HASH, NAME
       )
     );
   }
@@ -224,7 +229,9 @@ void Downloader::processAssetsIndex(const QString& url) {
     };
 
     addDownload(
-      DownloadItem(ONLINE_FILE_PATH, LOCAL_FILE_PATH, DownloadType::ASSET, HASH)
+      DownloadItem(
+        ONLINE_FILE_PATH, LOCAL_FILE_PATH, DownloadType::ASSET, HASH, filePath
+      )
     );
   }
 }

@@ -30,6 +30,7 @@ struct DownloadItem {
   QString localUrl;
   DownloadType type;
   QString hash;
+  QString name;
 };
 
 class Downloader : public NetworkRequester {
