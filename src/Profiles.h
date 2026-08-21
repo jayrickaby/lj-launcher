@@ -4,15 +4,18 @@
 
 #ifndef LJ_LAUNCHER_PROFILES_H_
 #define LJ_LAUNCHER_PROFILES_H_
-#include <qqml.h>
+#include <algorithm>
 
+#include <qqml.h>
 #include <QDir>
 #include <QFileInfo>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QObject>
 
+
 #include "Launcher.h"
+#include "net/Versions.h"
 #include "System.h"
 
 class Profiles : public QObject {

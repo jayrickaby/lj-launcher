@@ -4,6 +4,10 @@
 
 #ifndef LJ_LAUNCHER_SYSTEM_H_
 #define LJ_LAUNCHER_SYSTEM_H_
+#include <qfile.h>
+
+#include <QCryptographicHash>
+#include <QStandardPaths>
 #include <QUrl>
 #include <QDebug>
 #include <QFileInfo>

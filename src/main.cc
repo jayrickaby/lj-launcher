@@ -7,9 +7,9 @@
 #include <QQmlApplicationEngine>
 
 #include "Application.h"
-#include "Network/Authentication.h"
-#include "Network/Downloader.h"
-#include "Network/Versions.h"
+#include "net/Authentication.h"
+#include "net/Downloader.h"
+#include "net/Versions.h"
 #include "Profiles.h"
 #include "Settings.h"
 

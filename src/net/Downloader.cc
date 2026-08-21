@@ -6,6 +6,8 @@
 
 #include "System.h"
 #include "Versions.h"
+#include "minecraft/AssetIndex.h"
+#include "sys/Json.h"
 
 Downloader* Downloader::s_instance{nullptr};
 Downloader::DownloadState Downloader::s_downloadState{DownloadState::IDLE};
@@ -133,14 +135,7 @@ void Downloader::onNetworkReply(QNetworkReply* reply) {
   }
 }
 void Downloader::processClientJson(const QString& url) {
-  const QVariantMap DATA {
-    QJsonDocument::fromJson(
-      System::read(url)
-      .toUtf8()
-    )
-    .object()
-    .toVariantMap()
-  };
+  const QVariantMap DATA {Json::readJson(url).toVariantMap()};
 
   // Saves having to keep getting it from Profiles
   const QString VERSION_ID {DATA.value("id").toString()};
@@ -201,28 +196,17 @@ void Downloader::processClientJson(const QString& url) {
 }
 
 void Downloader::processAssetsIndex(const QString& url) {
-  const QVariantMap DATA {
-    QJsonDocument::fromJson(
-      System::read(url)
-      .toUtf8()
-    )
-    .object()
-    .toVariantMap()
-  };
+  const QString OBJECTS_PATH {AssetIndex::getAssetsPath() + "/objects/"};
 
-  const QVariantMap OBJECTS (DATA.value("objects").toMap());
+  const AssetIndex INDEX {url};
 
-  for (const auto& filePath : OBJECTS.keys()) {
-    const QVariantMap OBJECT {OBJECTS.value(filePath).toMap()};
-
-    const QString OBJECTS_PATH {ASSETS_PATH + "/objects/"};
-    const QString HASH {OBJECT.value("hash").toString()};
+  for (const auto& asset : INDEX.getObjects()) {
     const QString FILE_PATH {
-      QString("%1/%2").arg(HASH.left(2), HASH)
+      QString("%1/%2").arg(asset.hash.left(2), asset.hash)
     };
 
     const QString ONLINE_FILE_PATH {
-      QString("%1/%2").arg(ASSETS_URL, FILE_PATH)
+      QString("%1/%2").arg(AssetIndex::getAssetsUrl(),FILE_PATH)
     };
     const QString LOCAL_FILE_PATH {
       QString("%1/%2").arg(OBJECTS_PATH, FILE_PATH)
@@ -230,7 +214,8 @@ void Downloader::processAssetsIndex(const QString& url) {
 
     addDownload(
       DownloadItem(
-        ONLINE_FILE_PATH, LOCAL_FILE_PATH, DownloadType::ASSET, HASH, filePath
+        ONLINE_FILE_PATH, LOCAL_FILE_PATH, DownloadType::ASSET,
+        asset.hash, asset.path
       )
     );
   }

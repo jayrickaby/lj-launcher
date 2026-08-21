@@ -4,10 +4,6 @@
 
 #include "Profiles.h"
 
-#include <algorithm>
-
-#include "Network/Versions.h"
-
 QString Profiles::s_currentProfileId;
 Profiles* Profiles::s_instance {nullptr};
 

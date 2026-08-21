@@ -20,16 +20,20 @@ qt_add_executable(lj_launcher
         src/Profiles.h
         src/System.cc
         src/System.h
-        src/Network/Versions.cc
-        src/Network/Versions.h
-        src/Network/Authentication.cc
-        src/Network/Authentication.h
-        src/Network/Network.cc
-        src/Network/Network.h
-        src/Network/NetworkRequester.cc
-        src/Network/NetworkRequester.h
-        src/Network/Downloader.cc
-        src/Network/Downloader.h
+        src/net/Versions.cc
+        src/net/Versions.h
+        src/net/Authentication.cc
+        src/net/Authentication.h
+        src/net/Network.cc
+        src/net/Network.h
+        src/net/NetworkRequester.cc
+        src/net/NetworkRequester.h
+        src/net/Downloader.cc
+        src/net/Downloader.h
+        src/net/minecraft/AssetIndex.cc
+        src/net/minecraft/AssetIndex.h
+        src/sys/Json.cc
+        src/sys/Json.h
 )
 
 qt_add_qml_module(lj_launcher

@@ -4,11 +4,6 @@
 
 #include "System.h"
 
-#include <qfile.h>
-
-#include <QCryptographicHash>
-#include <QStandardPaths>
-
 bool System::touch(const QString& path, bool existsOk) {
   QFileInfo const FILE_INFO {path};
   if (FILE_INFO.exists()) {

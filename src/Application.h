@@ -9,6 +9,8 @@
 #include <QObject>
 #include <QString>
 
+#include "Launcher.h"
+
 class Application : public QObject {
   Q_OBJECT
   Q_PROPERTY(QString defaultIcon READ defaultIcon CONSTANT)

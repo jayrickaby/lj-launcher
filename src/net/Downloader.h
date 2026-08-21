@@ -87,8 +87,6 @@ private:
   static qint64 s_currentProgressMax;
 
   static Downloader* s_instance;
-  inline static const QString ASSETS_URL {"https://resources.download.minecraft.net/"};
-  inline static const QString ASSETS_PATH {findAssetsPath()};
 };
 
 #endif  // LJ_LAUNCHER_DOWNLOADER_H_

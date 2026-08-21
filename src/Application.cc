@@ -3,7 +3,6 @@
 //
 
 #include "Application.h"
-#include "Launcher.h"
 
 Application* Application::s_instance {nullptr};
 
