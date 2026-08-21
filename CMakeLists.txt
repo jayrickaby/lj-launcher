@@ -30,16 +30,16 @@ qt_add_executable(lj_launcher
         src/net/NetworkRequester.h
         src/net/Downloader.cc
         src/net/Downloader.h
-        src/mojang/assets/AssetIndex.cc
-        src/mojang/assets/AssetIndex.h
+        src/minecraft/assets/AssetIndex.cc
+        src/minecraft/assets/AssetIndex.h
         src/sys/io/JsonUtils.cc
         src/sys/io/JsonUtils.h
-        src/mojang/assets/IndexedAsset.h
-        src/mojang/libraries/Library.h
+        src/minecraft/assets/IndexedAsset.h
+        src/minecraft/libraries/Library.h
         src/sys/info/OperatingSystem.h
-        src/mojang/libraries/LibraryIndex.cc
-        src/mojang/libraries/LibraryIndex.h
-        src/mojang/libraries/Library.cc
+        src/minecraft/libraries/LibraryIndex.cc
+        src/minecraft/libraries/LibraryIndex.h
+        src/minecraft/libraries/Library.cc
         src/sys/info/SystemInfo.cc
         src/sys/info/SystemInfo.h
 )

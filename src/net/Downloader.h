@@ -13,8 +13,8 @@
 #include <QQueue>
 #include <QUrlQuery>
 
-#include "mojang/libraries/Library.h"
-#include "mojang/libraries/LibraryIndex.h"
+#include "minecraft/libraries/Library.h"
+#include "minecraft/libraries/LibraryIndex.h"
 #include "Launcher.h"
 #include "Network.h"
 #include "NetworkRequester.h"

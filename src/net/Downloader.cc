@@ -6,8 +6,8 @@
 
 #include "System.h"
 #include "Versions.h"
-#include "mojang/assets/AssetIndex.h"
-#include "mojang/libraries/LibraryIndex.h"
+#include "minecraft/assets/AssetIndex.h"
+#include "minecraft/libraries/LibraryIndex.h"
 #include "sys/info/SystemInfo.h"
 #include "sys/io/JsonUtils.h"
 
