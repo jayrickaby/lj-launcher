@@ -58,14 +58,23 @@ void Downloader::addDownload(const DownloadItem& downloadItem) {
 }
 
 void Downloader::downloadNext() {
+  if (s_downloadQueue.empty()) {
+    setState(DownloadState::IDLE);
+    return;
+  }
   setState(DownloadState::DOWNLOADING);
 
   const auto& file {s_downloadQueue.dequeue()};
+
+  if (alreadyDownloaded(file)) {
+    qDebug() << "File:" << file.localUrl << "is already downloaded!";
+    downloadNext();
+    return;
+  }
+
   const QNetworkRequest REQUEST {file.onlineUrl};
   QNetworkReply* reply { Network::get(getInstance(), REQUEST) };
-  reply->setProperty("localfile", file.localUrl);
-  reply->setProperty("hash", file.hash);
-  reply->setProperty("type", QVariant::fromValue(file.type));
+  reply->setProperty("requestParameters", QVariant::fromValue(file));
 
   connect (reply, &QNetworkReply::downloadProgress,
     getInstance(), &Downloader::setCurrentProgress);
@@ -86,51 +95,45 @@ void Downloader::onNetworkReply(QNetworkReply* reply) {
 
   const QByteArray DATA {reply->readAll()};
   const QByteArray DATA_HASH {System::getSha1Checksum(DATA)};
-  const QByteArray DATA_TRUE_HASH {reply->property("hash").toByteArray()};
-  const QString DATA_LOCAL_URL {reply->property("localfile").toString()};
-  const QString DATA_ONLINE_URL {reply->url().toString()};
-  const DownloadType DATA_TYPE {reply->property("type").value<DownloadType>()};
+  const DownloadItem ITEM {reply->property("requestParameters").value<DownloadItem>()};
 
-  if (!DATA_TRUE_HASH.isEmpty() and DATA_HASH != DATA_TRUE_HASH) {
-    qDebug() << "File:" << DATA_ONLINE_URL << "was corrupted! Redownloading...";
-    qDebug() << "Calculated hash:" << DATA_HASH << "is meant to be:" << DATA_TRUE_HASH;
+  if (!ITEM.hash.isEmpty() and DATA_HASH != ITEM.hash) {
+    qDebug() << "File:" << ITEM.onlineUrl << "was corrupted! Redownloading...";
+    qDebug() << "Calculated hash:" << DATA_HASH << "is meant to be:" << ITEM.hash;
     addDownload(
-      DownloadItem(
-      DATA_ONLINE_URL, DATA_LOCAL_URL, DATA_TYPE, DATA_TRUE_HASH
-      )
+      DownloadItem{
+      .onlineUrl = ITEM.onlineUrl,
+      .localUrl = ITEM.localUrl,
+      .type = ITEM.type,
+      .hash = ITEM.hash,
+      .name = ITEM.name
+      }
     );
 
     return;
   }
 
-  const QFileInfo fileInfo {DATA_LOCAL_URL};
+  FileSystem::makePath(ITEM.localUrl);
 
-  if (!fileInfo.exists()) {
-    QDir().mkpath(fileInfo.absolutePath());
-  }
-
-  if (!System::touch(DATA_LOCAL_URL, true)
-    or !System::write(DATA_LOCAL_URL, DATA)) {
-    throw std::runtime_error("Unable to download required version file:" + reply->url().toString().toStdString());
+  if (!System::touch(ITEM.localUrl, true)
+    or !System::write(ITEM.localUrl, DATA)) {
+    throw std::runtime_error("Unable to download required version file: " + ITEM.onlineUrl.toStdString());
   };
 
-  switch (DATA_TYPE) {
+  setState(DownloadState::FINISHED);
+
+  switch (ITEM.type) {
     case DownloadType::ASSET_INDEX:
-      processAssetsIndex(DATA_LOCAL_URL);
+      processAssetsIndex(ITEM.localUrl);
       break;
     case DownloadType::CLIENT_JSON: {
-      processClientJson(DATA_LOCAL_URL);
+      processClientJson(ITEM.localUrl);
       break;
     };
     default:;
   }
 
-  if (s_downloadQueue.empty()) {
-    setState(DownloadState::FINISHED);
-  }
-  else {
-    downloadNext();
-  }
+  downloadNext();
 }
 void Downloader::processClientJson(const QString& url) {
   const QVariantMap DATA {JsonUtils::readJson(url).toVariantMap()};
@@ -236,4 +239,18 @@ void Downloader::setState(const DownloadState& state) {
 
 QString Downloader::findAssetsPath() {
   return Launcher::getGameDirectory().toLocalFile() + "/assets/";
+}
+
+bool Downloader::alreadyDownloaded(const DownloadItem& downloadItem) {
+  const QString FILE_PATH {downloadItem.localUrl};
+
+  if (!FileSystem::isFile(FILE_PATH)) {
+    return false;
+  }
+
+  const QByteArray FILE_HASH {System::getSha1Checksum(
+    System::read(FILE_PATH).toUtf8())
+  };
+
+  return downloadItem.hash == FILE_HASH;
 }

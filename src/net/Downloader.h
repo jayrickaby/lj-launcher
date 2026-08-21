@@ -72,16 +72,16 @@ public:
   void onNetworkReply(QNetworkReply* reply) override;
 
 private:
+  static bool alreadyDownloaded(const DownloadItem& downloadItem);
+
   static void processAssetsIndex(const QString& url);
   static void processClientJson(const QString& url);
-  static bool shouldSkipFromJsonRules(const QList<Rule>& rules);
-
-  static QString findAssetsPath();
-
   static void setCurrentFile(const QString& currentFile);
   static void setCurrentProgress(qint64 received, qint64 total);
   static void setState(const DownloadState& state);
 
+  static QString findAssetsPath();
+  
   static DownloadState s_downloadState;
   static QQueue<DownloadItem> s_downloadQueue;
   static QString s_currentFile;

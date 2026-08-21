@@ -10,6 +10,11 @@
 
 class FileSystem {
 public:
+  [[nodiscard]] static bool isDirectory(const QString& path);
+  [[nodiscard]] static bool isFile(const QString& path);
+
+  [[nodiscard]] static quint64 getFileSize(const QString& path);
+
   [[nodiscard]] static QString joinPath(const QString& root, const QString& path);
   [[nodiscard]] static QString joinPath(const QString& root, const QStringList& paths);
   static bool makePath(const QString& path);
