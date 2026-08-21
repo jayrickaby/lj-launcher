@@ -7,8 +7,25 @@
 #include <QList>
 #include <QString>
 
-#include "Artifact.h"
-#include "Rule.h"
+#include "sys/info/OperatingSystem.h"
+
+struct Artifact {
+  QString path;
+  QString sha1;
+  quint64 size;
+  QString url;
+};
+
+enum class Action {
+  ALLOW,
+  DISALLOW,
+  NONE
+};
+
+struct Rule {
+  Action action {Action::NONE};
+  OperatingSystem os;
+};
 
 struct Library {
   Artifact artifact;

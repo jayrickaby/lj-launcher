@@ -36,8 +36,6 @@ qt_add_executable(lj_launcher
         src/sys/io/JsonUtils.h
         src/mojang/assets/IndexedAsset.h
         src/mojang/libraries/Library.h
-        src/mojang/libraries/Artifact.h
-        src/mojang/libraries/Rule.h
         src/sys/info/OperatingSystem.h
         src/mojang/libraries/LibraryIndex.cc
         src/mojang/libraries/LibraryIndex.h
