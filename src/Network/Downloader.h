@@ -28,6 +28,7 @@ struct DownloadItem {
   QString onlineUrl;
   QString localUrl;
   DownloadType type;
+  QString hash;
 };
 
 class Downloader : public NetworkRequester {
@@ -60,7 +61,7 @@ public:
   qint64 currentProgress() { return s_currentProgress; };
   qint64 currentProgressMax() { return s_currentProgressMax; };
 
-  static void addDownload(const QString& onlineUrl, const QString& localUrl, const DownloadType& type);
+  static void addDownload(const DownloadItem& downloadItem);
   static void downloadNext();
   static Downloader* getInstance();
 

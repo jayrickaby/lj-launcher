@@ -6,6 +6,7 @@
 
 #include <qfile.h>
 
+#include <QCryptographicHash>
 #include <QStandardPaths>
 
 bool System::touch(const QString& path, bool existsOk) {
@@ -110,4 +111,8 @@ QString System::getArchitecture() {
 
 QString System::getOsVersion() {
   return QSysInfo::kernelVersion();
+}
+
+QByteArray System::getSha1Checksum(const QByteArray& data) {
+  return QCryptographicHash::hash(data, QCryptographicHash::Sha1).toHex();
 }

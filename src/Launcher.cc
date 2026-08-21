@@ -142,13 +142,19 @@ void Launcher::play() {
   const QString CURRENT_VER {Profiles::getCurrentProfileVersion()};
 
   if (!Versions::isDownloaded(CURRENT_VER)) {
-    const QString ONLINE_URL {Versions::getAvailableVersion(CURRENT_VER).value("url").toString()};
+    const QVariantMap ONLINE_VER {Versions::getAvailableVersion(CURRENT_VER)};
+    const QString ONLINE_URL {ONLINE_VER.value("url").toString()};
+    const QString HASH {ONLINE_VER.value("sha1").toString()};
 
     const QString VERSIONS_DIR {Versions::getVersionsDirectory()};
 
     const QString LOCAL_URL {
       QString("%1/%2/%2.json").arg(VERSIONS_DIR, CURRENT_VER)
     };
-    Downloader::addDownload(ONLINE_URL, LOCAL_URL, DownloadType::CLIENT_JSON);
+    Downloader::addDownload(
+      DownloadItem(
+        ONLINE_URL, LOCAL_URL, DownloadType::CLIENT_JSON, HASH
+      )
+    );
   }
 }

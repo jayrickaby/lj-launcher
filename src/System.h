@@ -16,6 +16,7 @@ public:
   static bool touch(const QString& path, bool existsOk=false);
   [[nodiscard]] static QString which(const QString& path);
   static bool write(const QString& path, const QString& content);
+  [[nodiscard]] static QByteArray getSha1Checksum(const QByteArray& data);
 
   // System
   [[nodiscard]] static QString getArchitecture();
