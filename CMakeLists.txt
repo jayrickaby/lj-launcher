@@ -30,10 +30,20 @@ qt_add_executable(lj_launcher
         src/net/NetworkRequester.h
         src/net/Downloader.cc
         src/net/Downloader.h
-        src/net/minecraft/AssetIndex.cc
-        src/net/minecraft/AssetIndex.h
-        src/sys/Json.cc
-        src/sys/Json.h
+        src/mojang/assets/AssetIndex.cc
+        src/mojang/assets/AssetIndex.h
+        src/sys/io/JsonUtils.cc
+        src/sys/io/JsonUtils.h
+        src/mojang/assets/IndexedAsset.h
+        src/mojang/libraries/Library.h
+        src/mojang/libraries/Artifact.h
+        src/mojang/libraries/Rule.h
+        src/sys/info/OperatingSystem.h
+        src/mojang/libraries/LibraryIndex.cc
+        src/mojang/libraries/LibraryIndex.h
+        src/mojang/libraries/Library.cc
+        src/sys/info/SystemInfo.cc
+        src/sys/info/SystemInfo.h
 )
 
 qt_add_qml_module(lj_launcher

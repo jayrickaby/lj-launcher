@@ -13,6 +13,8 @@
 #include <QQueue>
 #include <QUrlQuery>
 
+#include "mojang/libraries/LibraryIndex.h"
+#include "mojang/libraries/Rule.h"
 #include "Launcher.h"
 #include "Network.h"
 #include "NetworkRequester.h"
@@ -72,7 +74,7 @@ public:
 private:
   static void processAssetsIndex(const QString& url);
   static void processClientJson(const QString& url);
-  static bool shouldSkipFromJsonRules(const QVariantList& rule);
+  static bool shouldSkipFromJsonRules(const QList<Rule>& rules);
 
   static QString findAssetsPath();
 

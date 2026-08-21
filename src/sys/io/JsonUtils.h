@@ -8,7 +8,7 @@
 
 #include "System.h"
 
-class Json {
+class JsonUtils {
 public:
   static QJsonObject readJson(const QString& path);
 };

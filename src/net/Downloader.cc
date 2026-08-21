@@ -6,8 +6,10 @@
 
 #include "System.h"
 #include "Versions.h"
-#include "minecraft/AssetIndex.h"
-#include "sys/Json.h"
+#include "mojang/assets/AssetIndex.h"
+#include "mojang/libraries/LibraryIndex.h"
+#include "sys/info/SystemInfo.h"
+#include "sys/io/JsonUtils.h"
 
 Downloader* Downloader::s_instance{nullptr};
 Downloader::DownloadState Downloader::s_downloadState{DownloadState::IDLE};
@@ -135,7 +137,7 @@ void Downloader::onNetworkReply(QNetworkReply* reply) {
   }
 }
 void Downloader::processClientJson(const QString& url) {
-  const QVariantMap DATA {Json::readJson(url).toVariantMap()};
+  const QVariantMap DATA {JsonUtils::readJson(url).toVariantMap()};
 
   // Saves having to keep getting it from Profiles
   const QString VERSION_ID {DATA.value("id").toString()};
@@ -169,27 +171,28 @@ void Downloader::processClientJson(const QString& url) {
   );
 
   const QVariantList LIBRARY_DOWNLOADS (DATA.value("libraries").toList());
+  const LibraryIndex LIBRARIES {LIBRARY_DOWNLOADS};
 
-  for (const auto& lib : LIBRARY_DOWNLOADS) {
-    const QVariantMap LIBRARY {lib.toMap()};
-    const QVariantList RULES (LIBRARY.value("rules").toList());
-    const QString NAME (LIBRARY.value("name").toString());
+  const OperatingSystem USER_OS {SystemInfo::getOperatingSystem()};
 
-    if (shouldSkipFromJsonRules(RULES)) {
-      qDebug() << "Skipping" << NAME << "due to imposed rules";
+  for (const auto& library : LIBRARIES.getLibraries()) {
+
+    if (!library.isUserSuitable(USER_OS)) {
+      qDebug() << "Skipping" << library.name << "due to imposed rules";
       continue;
     }
 
-    const QVariantMap ARTIFACT {LIBRARY.value("downloads").toMap().value("artifact").toMap()};
-    const QString ARTIFACT_URL {ARTIFACT.value("url").toString()};
-    const QString ARTIFACT_HASH {ARTIFACT.value("sha1").toString()};
-    const QString ARTIFACT_PATH {
-      QString("%1/libraries/%2")
-      .arg(Launcher::getGameDirectory().toLocalFile(), ARTIFACT.value("path").toString())
+    const QString LIBRARY_LOCAL_PATH {
+      QString("%1/%2")
+      .arg(LibraryIndex::getLibraryPath(),
+        library.artifact.path
+      )
     };
+
     addDownload(
       DownloadItem(
-        ARTIFACT_URL, ARTIFACT_PATH, DownloadType::LIBRARY, ARTIFACT_HASH, NAME
+        library.artifact.url, LIBRARY_LOCAL_PATH, DownloadType::LIBRARY,
+        library.artifact.sha1, library.name
       )
     );
   }
@@ -219,36 +222,6 @@ void Downloader::processAssetsIndex(const QString& url) {
       )
     );
   }
-}
-
-bool Downloader::shouldSkipFromJsonRules(const QVariantList& rules) {
-  for (const auto& r : rules) {
-    const QVariantMap RULE {r.toMap()};
-    const QString RULE_ACTION {RULE.value("action").toString()};
-    const QString RULE_OS {RULE.value("os").toMap().value("name").toString()};
-    const QString RULE_ARCH {RULE.value("os").toMap().value("architecture").toString()};
-
-    const QString USER_OS {System::getOs()};
-    const QString USER_ARCH {System::getArchitecture()};
-
-    bool targetMatches{true};
-
-    if (!RULE_OS.isEmpty() and RULE_OS != USER_OS) {
-      targetMatches = false;
-    }
-    if (!RULE_ARCH.isEmpty() and RULE_ARCH != USER_ARCH) {
-      targetMatches = false;
-    }
-
-    if (RULE_ACTION == "allow" and !targetMatches) {
-     return true;
-    }
-    if (RULE_ACTION == "disallow" and targetMatches) {
-      return true;
-    }
-  }
-
-  return false;
 }
 
 Downloader* Downloader::getInstance() {

@@ -5,7 +5,7 @@
 #include "AssetIndex.h"
 
 AssetIndex::AssetIndex(QString const& path) {
-  const QVariantMap DATA {Json::readJson(path).toVariantMap()};
+  const QVariantMap DATA {JsonUtils::readJson(path).toVariantMap()};
   const QVariantMap OBJECTS (DATA.value("objects").toMap());
 
   for (const auto& filePath : OBJECTS.keys()) {
@@ -18,14 +18,14 @@ AssetIndex::AssetIndex(QString const& path) {
       continue;
     }
 
-    m_objects.append(Asset(filePath, HASH, SIZE));
+    m_objects.append(IndexedAsset(filePath, HASH, SIZE));
   }
 }
 
 QString AssetIndex::getAssetsPath() { return ASSETS_PATH; }
 QString AssetIndex::getAssetsUrl() { return ASSETS_URL; }
 
-QList<AssetIndex::Asset> AssetIndex::getObjects() const { return m_objects; }
+QList<IndexedAsset> AssetIndex::getObjects() const { return m_objects; }
 
 QString AssetIndex::findAssetsPath() {
   return Launcher::getGameDirectory().toLocalFile() + "/assets/";

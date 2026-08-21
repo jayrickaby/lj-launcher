@@ -7,11 +7,13 @@
 #include <qfile.h>
 
 #include <QCryptographicHash>
-#include <QStandardPaths>
-#include <QUrl>
 #include <QDebug>
 #include <QFileInfo>
 #include <QIODevice>
+#include <QStandardPaths>
+#include <QUrl>
+
+#include "sys/info/OperatingSystem.h"
 
 class System {
 public:
@@ -21,12 +23,6 @@ public:
   [[nodiscard]] static QString which(const QString& path);
   static bool write(const QString& path, const QString& content);
   [[nodiscard]] static QByteArray getSha1Checksum(const QByteArray& data);
-
-  // System
-  [[nodiscard]] static QString getArchitecture();
-  [[nodiscard]] static QString getOs();
-  [[nodiscard]] static QString getOsVersion();
-
 };
 
 #endif  // LJ_LAUNCHER_SYSTEM_H_

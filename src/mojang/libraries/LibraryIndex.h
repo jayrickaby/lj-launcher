@@ -1,0 +1,33 @@
+//
+// Created by jay on 21/08/2026.
+//
+
+#ifndef LJ_LAUNCHER_LIBRARYINDEX_H_
+#define LJ_LAUNCHER_LIBRARYINDEX_H_
+#include <QList>
+#include <QVariant>
+
+#include "Launcher.h"
+#include "Library.h"
+
+class LibraryIndex {
+public:
+  LibraryIndex(const QVariantList& rawLibraries);
+
+  static QString getLibraryPath();
+
+  QList<Library> getLibraries() const;
+private:
+  Artifact parseArtifact(const QVariantMap& rawArtifact);
+  Rule parseRule(const QVariantMap& rawRule);
+  Action parseAction(const QString& rawAction);
+  OperatingSystem parseOs(const QVariantMap& rawOs);
+
+  static QString findLibraryPath();
+
+  inline static const QString LIBRARY_PATH {findLibraryPath()};
+
+  QList<Library> m_libraries;
+};
+
+#endif  // LJ_LAUNCHER_LIBRARYINDEX_H_
