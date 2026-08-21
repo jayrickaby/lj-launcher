@@ -12,7 +12,7 @@ Downloader::DownloadState Downloader::s_downloadState{DownloadState::IDLE};
 QString Downloader::s_currentFile{};
 qint64 Downloader::s_currentProgress{0};
 qint64 Downloader::s_currentProgressMax{0};
-QQueue<QPair<QString, QString>> Downloader::s_downloadQueue{};
+QQueue<DownloadItem> Downloader::s_downloadQueue{};
 
 Downloader::Downloader(QObject* parent)
   : NetworkRequester(parent)
@@ -42,9 +42,10 @@ void Downloader::setCurrentProgress(qint64 received, qint64 total) {
   }
 }
 
-void Downloader::addDownload(const QString& onlineUrl, const QString& localUrl) {
+void Downloader::addDownload(const QString& onlineUrl, const QString& localUrl, const DownloadType& type) {
   qDebug() << "Queued download:" << onlineUrl << "to:" << localUrl;
-  s_downloadQueue.enqueue(QPair<QString, QString>(onlineUrl, localUrl));
+
+  s_downloadQueue.enqueue(DownloadItem(onlineUrl, localUrl, type));
 
   if (s_downloadState == DownloadState::IDLE) {
     downloadNext();
@@ -55,14 +56,15 @@ void Downloader::downloadNext() {
   setState(DownloadState::DOWNLOADING);
 
   const auto& file {s_downloadQueue.dequeue()};
-  const QNetworkRequest REQUEST {file.first};
+  const QNetworkRequest REQUEST {file.onlineUrl};
   QNetworkReply* reply { Network::get(getInstance(), REQUEST) };
-  reply->setProperty("localfile", file.second);
+  reply->setProperty("localfile", file.localUrl);
+  reply->setProperty("type", QVariant::fromValue(file.type));
 
   connect (reply, &QNetworkReply::downloadProgress,
     getInstance(), &Downloader::setCurrentProgress);
 
-  const QFileInfo URL {file.second};
+  const QFileInfo URL {file.localUrl};
   setCurrentFile(URL.fileName());
 }
 
@@ -83,6 +85,17 @@ void Downloader::onNetworkReply(QNetworkReply* reply) {
     throw std::runtime_error("Unable to download required version file:" + reply->url().toString().toStdString());
   };
 
+  switch (reply->property("type").value<DownloadType>()) {
+    case DownloadType::ASSET_INDEX:
+      processAssetsIndex(URL);
+      break;
+    case DownloadType::CLIENT_JSON: {
+      processClientJson(URL);
+      break;
+    };
+    default:;
+  }
+
   if (reply->url().toString() == Versions::getAvailableVersion(Profiles::getCurrentProfileVersion()).value("url").toString()) {
     // Adds more required downloads from the json
     processClientJson(URL);
@@ -96,7 +109,7 @@ void Downloader::onNetworkReply(QNetworkReply* reply) {
   }
 }
 void Downloader::processClientJson(const QString& url) {
-  QVariantMap data {
+  const QVariantMap DATA {
     QJsonDocument::fromJson(
       System::read(url)
       .toUtf8()
@@ -106,27 +119,27 @@ void Downloader::processClientJson(const QString& url) {
   };
 
   // Saves having to keep getting it from Profiles
-  const QString VERSION_ID {data.value("id").toString()};
+  const QString VERSION_ID {DATA.value("id").toString()};
 
-  const QVariantMap ASSETS_INDEX {data.value("assetIndex").toMap()};
+  const QVariantMap ASSETS_INDEX {DATA.value("assetIndex").toMap()};
   const QString INDEX_URL {ASSETS_INDEX.value("url").toString()};
   const QString INDEX_ID {ASSETS_INDEX.value("id").toString()};
   const QString INDEX_PATH {
     QString("%1/assets/indexes/%2.json")
     .arg(Launcher::getGameDirectory().toLocalFile(),INDEX_ID)
   };
-  addDownload(INDEX_URL, INDEX_PATH);
+  addDownload(INDEX_URL, INDEX_PATH, DownloadType::ASSET_INDEX);
 
-  const QVariantMap JAR_DOWNLOADS {data.value("downloads").toMap()};
+  const QVariantMap JAR_DOWNLOADS {DATA.value("downloads").toMap()};
   const QVariantMap CLIENT_JAR {JAR_DOWNLOADS.value("client").toMap()};
   const QString JAR_URL {CLIENT_JAR.value("url").toString()};
   const QString JAR_PATH {
     QString("%1/%2.jar")
     .arg(QFileInfo(url).absolutePath(), VERSION_ID)
   };
-  addDownload(JAR_URL, JAR_PATH);
+  addDownload(JAR_URL, JAR_PATH, DownloadType::CLIENT_JAR);
 
-  const QVariantList LIBRARY_DOWNLOADS (data.value("libraries").toList());
+  const QVariantList LIBRARY_DOWNLOADS (DATA.value("libraries").toList());
 
   for (const auto& lib : LIBRARY_DOWNLOADS) {
     const QVariantMap LIBRARY {lib.toMap()};
@@ -144,8 +157,12 @@ void Downloader::processClientJson(const QString& url) {
       QString("%1/libraries/%2")
       .arg(Launcher::getGameDirectory().toLocalFile(), ARTIFACT.value("path").toString())
     };
-    addDownload(ARTIFACT_URL, ARTIFACT_PATH);
+    addDownload(ARTIFACT_URL, ARTIFACT_PATH, DownloadType::LIBRARY);
   }
+}
+
+void Downloader::processAssetsIndex(const QString& url) {
+  
 }
 
 bool Downloader::shouldSkipFromJsonRules(const QVariantList& rules) {

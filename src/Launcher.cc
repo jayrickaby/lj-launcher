@@ -149,6 +149,6 @@ void Launcher::play() {
     const QString LOCAL_URL {
       QString("%1/%2/%2.json").arg(VERSIONS_DIR, CURRENT_VER)
     };
-    Downloader::addDownload(ONLINE_URL, LOCAL_URL);
+    Downloader::addDownload(ONLINE_URL, LOCAL_URL, DownloadType::CLIENT_JSON);
   }
 }

@@ -16,6 +16,20 @@
 #include "Network.h"
 #include "NetworkRequester.h"
 
+enum class DownloadType {
+  CLIENT_JSON,
+  CLIENT_JAR,
+  ASSET,
+  ASSET_INDEX,
+  LIBRARY
+};
+
+struct DownloadItem {
+  QString onlineUrl;
+  QString localUrl;
+  DownloadType type;
+};
+
 class Downloader : public NetworkRequester {
   Q_OBJECT
   Q_PROPERTY(QString currentFile READ currentFile NOTIFY currentFileChanged)
@@ -46,13 +60,14 @@ public:
   qint64 currentProgress() { return s_currentProgress; };
   qint64 currentProgressMax() { return s_currentProgressMax; };
 
-  static void addDownload(const QString& onlineUrl, const QString& localUrl);
+  static void addDownload(const QString& onlineUrl, const QString& localUrl, const DownloadType& type);
   static void downloadNext();
   static Downloader* getInstance();
 
   void onNetworkReply(QNetworkReply* reply) override;
 
 private:
+  static void processAssetsIndex(const QString& url);
   static void processClientJson(const QString& url);
   static bool shouldSkipFromJsonRules(const QVariantList& rule);
 
@@ -61,7 +76,7 @@ private:
   static void setState(const DownloadState& state);
 
   static DownloadState s_downloadState;
-  static QQueue<QPair<QString, QString>> s_downloadQueue;
+  static QQueue<DownloadItem> s_downloadQueue;
   static QString s_currentFile;
   static qint64 s_currentProgress;
   static qint64 s_currentProgressMax;

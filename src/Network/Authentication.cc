@@ -274,7 +274,7 @@ void Authentication::onNetworkReply(QNetworkReply* reply) {
     QJsonDocument const JSON_DOC {QJsonDocument::fromJson(JSON_RAW)};
     QJsonObject const JSON {JSON_DOC.object()};
 
-    switch (auto authType = reply->property("type").value<AuthType>()) {
+    switch (reply->property("type").value<AuthType>()) {
       case AuthType::MICROSOFT_TOKEN: {
         qDebug("Received Microsoft Auth Tokens");
         QString const ACCESS_TOKEN {parseMicrosoftTokens(JSON)};
