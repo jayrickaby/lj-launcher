@@ -21,11 +21,9 @@ public:
   [[nodiscard]] QList<IndexedAsset> getObjects() const;
 
 private:
-  static QString findAssetsPath();
-
   QList<IndexedAsset> m_objects;
 
-  inline static const QString ASSETS_PATH {findAssetsPath()};
+  inline static const QString ASSETS_PATH {FileSystem::joinPath(Launcher::getGameDirectory().toLocalFile(), "assets")};
   inline static const QString ASSETS_URL {"https://resources.download.minecraft.net/"};
 };
 

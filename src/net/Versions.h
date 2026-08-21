@@ -16,57 +16,40 @@
 #include "../Launcher.h"
 #include "../System.h"
 
+enum class VersionType {
+  RELEASE,
+  SNAPSHOT,
+  OLD_ALPHA,
+  OLD_BETA
+};
 
 class Versions : public NetworkRequester {
   Q_OBJECT
-  Q_PROPERTY(ManifestState manifestState READ manifestState NOTIFY stateChanged)
-  Q_PROPERTY(QVariantList versionsList READ versionsList NOTIFY versionsListChanged);
+  Q_PROPERTY(QList<QVariantMap> versionsList READ versionsList NOTIFY versionsListChanged);
   QML_ELEMENT
   QML_SINGLETON
 
 signals:
-  void stateChanged();
   void versionsListChanged();
 
 public:
   explicit Versions(QObject *parent = nullptr);
 
-  enum class ManifestState {
-    MISSING,      // Not Requested
-    DOWNLOADING,  // Requested
-    PRESENT       // Successfully Downloaded
-  };
-  Q_ENUM(ManifestState)
-
-  ManifestState manifestState();
-  QVariantList versionsList();
-
-  void onNetworkReply(QNetworkReply* reply) override;
-
-  static QString getLatestVersion(bool snapshot=false);
-  static QList<QVariantMap> getAvailableVersions(bool snapshot=false, bool historical=false);
+  QList<QVariantMap> versionsList();
+  
   static QList<QVariantMap> getDownloadedVersions();
-  static QVariantMap getAvailableVersion(const QString& versionId);
   static QVariantMap getDownloadedVersion(const QString& versionId);
-  static ManifestState getState();
   static bool isDownloaded(const QString& versionId);
 
-  static QString getVersionsDirectory() { return VERSIONS_PATH.path(); };
+  static QString getVersionsPath() { return VERSIONS_PATH.path(); };
 
   static Versions* getInstance();
 
 private:
   static QUrl findVersionsPath();
-  static QUrl findJsonPath();
-  static QVariantMap getManifest();
-  static void requestManifest();
-  static void setState(const ManifestState& state);
 
   static inline const QUrl VERSIONS_PATH {findVersionsPath()};
-  static inline const QUrl JSON_PATH {findJsonPath()};
-  static inline const QUrl MANIFEST_URL {"https://launchermeta.mojang.com/mc/game/version_manifest_v2.json"};
 
-  static ManifestState s_state;
   static Versions* s_instance;
 };
 

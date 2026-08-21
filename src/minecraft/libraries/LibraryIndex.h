@@ -9,6 +9,7 @@
 
 #include "Launcher.h"
 #include "Library.h"
+#include "sys/io/FileSystem.h"
 
 class LibraryIndex {
 public:

@@ -13,8 +13,8 @@ Item {
     property int authState: Authentication.authState
     property bool authenticated: authState === Authentication.AuthState.AUTHENTICATED
 
-    property int versionManifestState: Versions.manifestState
-    property bool versionsGotten: versionManifestState === Versions.ManifestState.PRESENT
+    property int versionManifestState: VersionManifest.manifestState
+    property bool versionsGotten: versionManifestState === VersionManifest.ManifestState.PRESENT
 
     property int donwloadState: Downloader.downloadState
     property bool downloading: donwloadState === Downloader.DownloadState.DOWNLOADING

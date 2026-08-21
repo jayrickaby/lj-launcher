@@ -7,37 +7,32 @@
 bool System::touch(const QString& path, bool existsOk) {
   QFileInfo const FILE_INFO {path};
   if (FILE_INFO.exists()) {
-    QString const MSG {"The file %1 already exists!"};
-    qDebug() << MSG.arg(path);
+    qDebug() << "The file" << path << "already exists!";
     return existsOk;
   }
 
   QFile file {path};
   if (!file.open(QIODevice::WriteOnly)) {
-    QString const MSG {"Failed to create %1!"};
-    qDebug() << MSG.arg(path);
+    qDebug() << "Failed to create" << path << "!";
     return false;
   }
 
   // Close early as only creating the file
   file.close();
-  QString const MSG {"Successfully created %1!"};
-  qDebug() << MSG.arg(path);
+  qDebug() << "Successfully created" << path << "!";
   return true;
 }
 
 bool System::write(const QString& path, const QString& content) {
   QFileInfo const FILE_INFO {path}; 
   if (!FILE_INFO.exists()) {
-    QString const MSG {"The file %1 does not exist! Attempted to write: %2"};
-    qDebug() << MSG.arg(path, content);
+    qDebug() << "The file" << path << "does not exist! Attempted to write:" << content;
     return false;
   }
 
   QFile file {path};
   if (!file.open(QIODevice::WriteOnly)) {
-    QString const MSG {"Failed to write to %1!"};
-    qDebug() << MSG.arg(path);
+    qDebug() << "Failed to write" << path << "!";
     return false;
   }
 
@@ -45,23 +40,20 @@ bool System::write(const QString& path, const QString& content) {
   stream << content;
   file.close();
 
-  QString const MSG {"Successfully wrote to %1!"};
-  qDebug() << MSG.arg(path);
+  qDebug() << "Successfully wrote to" << path << "!";
   return true;
 }
 
 QString System::read(const QString& path) {
   QFileInfo const FILE_INFO {path};
   if (!FILE_INFO.exists()) {
-    QString const MSG {"The file %1 does not exists!"};
-    qDebug() << MSG.arg(path);
+    qDebug() << "The file" << path << "does not exist!";
     return {};
   }
 
   QFile file {path};
   if (!file.open(QIODevice::ReadOnly)) {
-    QString const MSG {"Failed to read from %1!"};
-    qDebug() << MSG.arg(path);
+    qDebug() << "Failed to read from" << path << "!";
     return {};
   }
 
@@ -69,21 +61,18 @@ QString System::read(const QString& path) {
   QString contents {stream.readAll()};
   file.close();
 
-  QString const MSG {"Successfully read from %1!"};
-  qDebug() << MSG.arg(path);
+  qDebug() << "Successfully read from" << path << "!";
   return contents;
 }
 
 QString System::which(const QString& path) {
   QString foundPath {QStandardPaths::findExecutable(path)};
 
-  if (foundPath.isEmpty()) {
-    const QString MSG {"The executable \"%1\" could not be found!"};
-    qDebug() << MSG.arg(path);
+  if (foundPath.isEmpty()) {;
+    qDebug() << "The executable" << path << "could not be found!";
     return {};
   }
-  const QString MSG {"Found %1 at %2"};
-  qDebug() << MSG.arg(path, foundPath);
+  qDebug() << "Found" << path << "at:" << foundPath;
 
   return foundPath;
 }

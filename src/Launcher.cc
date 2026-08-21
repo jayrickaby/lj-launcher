@@ -4,6 +4,8 @@
 
 #include "Launcher.h"
 
+#include "minecraft/versions/VersionManifest.h"
+
 Launcher* Launcher::s_instance {nullptr};
 QUrl Launcher::s_gameDirectory;
 QUrl Launcher::s_javaExecutable {QUrl::fromLocalFile(System::which("java"))}; // stores properly
@@ -23,7 +25,7 @@ Launcher::Launcher(QObject *parent)
   connect(Profiles::getInstance(), &Profiles::profilesChanged,
     this, &Launcher::userMessageChanged);
 
-  connect(Versions::getInstance(), &Versions::stateChanged,
+  connect(VersionManifest::getInstance(), &VersionManifest::stateChanged,
   this, &Launcher::userMessageChanged);
 
   if (!s_instance) {
@@ -42,7 +44,7 @@ QUrl Launcher::getJavaExecutable() {
 QString Launcher::userMessage() {
   qDebug() << "Updating user message...";
   const bool AUTHENTICATED {Authentication::getAuthState() == Authentication::AuthState::AUTHENTICATED};
-  const bool MANIFEST_DOWNLOADED {Versions::getState() == Versions::ManifestState::PRESENT};
+  const bool MANIFEST_DOWNLOADED {VersionManifest::getManifestState() == VersionManifest::ManifestState::PRESENT};
   const QString CURRENT_VERSION{Profiles::getCurrentProfileVersion()};
 
   QString const USERNAME {getUsername()};
@@ -141,19 +143,21 @@ void Launcher::play() {
   const QString CURRENT_VER {Profiles::getCurrentProfileVersion()};
 
   if (!Versions::isDownloaded(CURRENT_VER)) {
-    const QVariantMap ONLINE_VER {Versions::getAvailableVersion(CURRENT_VER)};
-    const QString ONLINE_URL {ONLINE_VER.value("url").toString()};
-    const QString HASH {ONLINE_VER.value("sha1").toString()};
+    const ManifestEntry ONLINE_VER {VersionManifest::getVersion(CURRENT_VER)};
 
-    const QString VERSIONS_DIR {Versions::getVersionsDirectory()};
+    const QString VERSIONS_DIR {Versions::getVersionsPath()};
 
     const QString LOCAL_URL {
       QString("%1/%2/%2.json").arg(VERSIONS_DIR, CURRENT_VER)
     };
     Downloader::addDownload(
-      DownloadItem(
-        ONLINE_URL, LOCAL_URL, DownloadType::CLIENT_JSON, HASH
-      )
+      DownloadItem{
+      .onlineUrl = ONLINE_VER.url,
+      .localUrl = LOCAL_URL,
+      .type = DownloadType::CLIENT_JSON,
+      .hash = ONLINE_VER.sha1,
+      .name = ""
+      }
     );
   }
 }

@@ -26,7 +26,3 @@ QString AssetIndex::getAssetsPath() { return ASSETS_PATH; }
 QString AssetIndex::getAssetsUrl() { return ASSETS_URL; }
 
 QList<IndexedAsset> AssetIndex::getObjects() const { return m_objects; }
-
-QString AssetIndex::findAssetsPath() {
-  return Launcher::getGameDirectory().toLocalFile() + "/assets/";
-}

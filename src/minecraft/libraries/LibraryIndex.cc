@@ -11,7 +11,6 @@ LibraryIndex::LibraryIndex(const QVariantList& rawLibraries) {
   }
 
   for (const auto& rawVariant : rawLibraries) {
-
     Library library;
 
     const QVariantMap RAW_LIBRARY {rawVariant.toMap()};
@@ -103,10 +102,13 @@ OperatingSystem LibraryIndex::parseOs(const QVariantMap& rawOs) {
   return operatingSystem;
 }
 
-QString LibraryIndex::findLibraryPath() {
-  return Launcher::getGameDirectory().toLocalFile() + "/libraries/";
-}
-
 QString LibraryIndex::getLibraryPath() {
   return LIBRARY_PATH;
+}
+
+QString LibraryIndex::findLibraryPath() {
+  return FileSystem::joinPath(
+    Launcher::getGameDirectory().toLocalFile(),
+    "libraries"
+  );
 }

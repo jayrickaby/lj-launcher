@@ -7,11 +7,12 @@
 #include <QQmlApplicationEngine>
 
 #include "Application.h"
+#include "Profiles.h"
+#include "Settings.h"
+#include "minecraft/versions/VersionManifest.h"
 #include "net/Authentication.h"
 #include "net/Downloader.h"
 #include "net/Versions.h"
-#include "Profiles.h"
-#include "Settings.h"
 
 int main(int argc, char *argv[]) {
   QGuiApplication app(argc, argv);
@@ -29,6 +30,7 @@ int main(int argc, char *argv[]) {
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Profiles", Profiles::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Settings", Settings::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Versions", Versions::getInstance());
+  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "VersionManifest", VersionManifest::getInstance());
 
   QQmlApplicationEngine engine;
   QObject::connect(

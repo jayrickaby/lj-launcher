@@ -4,6 +4,8 @@
 
 #include "Profiles.h"
 
+#include "minecraft/versions/VersionManifest.h"
+
 QString Profiles::s_currentProfileId;
 Profiles* Profiles::s_instance {nullptr};
 
@@ -157,10 +159,10 @@ QString Profiles::getProfileVersion(const QString& profileId, bool raw) {
     return PROFILE["lastVersionId"].toString();
   }
   if (PROFILE["type"] == "latest-release") {
-    return Versions::getLatestVersion();
+    return VersionManifest::getLatestVersions().release;
   }
   if (PROFILE["type"] == "latest-snapshot") {
-    return Versions::getLatestVersion(true);
+    return VersionManifest::getLatestVersions().snapshot;
   }
   return PROFILE["lastVersionId"].toString();
 }

@@ -8,6 +8,7 @@
 #include "Versions.h"
 #include "minecraft/assets/AssetIndex.h"
 #include "minecraft/libraries/LibraryIndex.h"
+#include "minecraft/versions/VersionManifest.h"
 #include "sys/info/SystemInfo.h"
 #include "sys/io/JsonUtils.h"
 
@@ -122,11 +123,6 @@ void Downloader::onNetworkReply(QNetworkReply* reply) {
       break;
     };
     default:;
-  }
-
-  if (reply->url().toString() == Versions::getAvailableVersion(Profiles::getCurrentProfileVersion()).value("url").toString()) {
-    // Adds more required downloads from the json
-    processClientJson(DATA_LOCAL_URL);
   }
 
   if (s_downloadQueue.empty()) {

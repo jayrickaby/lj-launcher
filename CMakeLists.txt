@@ -42,6 +42,10 @@ qt_add_executable(lj_launcher
         src/minecraft/libraries/Library.cc
         src/sys/info/SystemInfo.cc
         src/sys/info/SystemInfo.h
+        src/minecraft/versions/VersionManifest.cc
+        src/minecraft/versions/VersionManifest.h
+        src/sys/io/FileSystem.cc
+        src/sys/io/FileSystem.h
 )
 
 qt_add_qml_module(lj_launcher
