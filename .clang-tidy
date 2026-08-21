@@ -1,6 +1,3 @@
-# Tailored Production-Grade Clang-Tidy Configuration
-# Combines enterprise safety exclusions with clean App-Developer naming rules.
-
 Checks: >
   -*,
   abseil-*,
@@ -25,11 +22,10 @@ CheckOptions:
   - { key: readability-identifier-naming.MemberCase,                    value: camelBack }
   - { key: readability-identifier-naming.MemberPrefix,                  value: m_ }
   - { key: readability-identifier-naming.PrivateMemberCase,             value: camelBack }
-  - { key: readability-identifier-naming.PrivateMemberIgnoredRegexp,    value: '^[ms]_[a-z][a-zA-Z0-9]*$' }
   - { key: readability-identifier-naming.ProtectedMemberCase,           value: camelBack }
-  - { key: readability-identifier-naming.ProtectedMemberIgnoredRegexp,  value: '^[ms]_[a-z][a-zA-Z0-9]*$' }
   - { key: readability-identifier-naming.PublicMemberCase,              value: camelBack }
-  - { key: readability-identifier-naming.PublicMemberIgnoredRegexp,     value: '^[ms]_[a-z][a-zA-Z0-9]*$' }
+  - { key: readability-identifier-naming.ClassMemberPrefix,             value: s_ }
+  - { key: readability-identifier-naming.ClassMemberCase,               value: camelBack }
   - { key: readability-identifier-naming.StaticVariableCase,            value: camelBack  }
   - { key: readability-identifier-naming.StaticVariablePrefix,          value: s_ }
   - { key: readability-identifier-naming.LocalConstantCase,             value: UPPER_CASE }
