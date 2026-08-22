@@ -19,9 +19,14 @@ class System {
 public:
   // Files
   [[nodiscard]] static QString read(const QString& path);
+  [[nodiscard]] static QByteArray cat(const QString& path);
+
   static bool touch(const QString& path, bool existsOk=false);
   [[nodiscard]] static QString which(const QString& path);
+
   static bool write(const QString& path, const QString& content);
+  static bool write(const QString& path, const QByteArray& content);
+
   [[nodiscard]] static QByteArray getSha1Checksum(const QByteArray& data);
 };
 

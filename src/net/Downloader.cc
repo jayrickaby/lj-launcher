@@ -77,11 +77,11 @@ void Downloader::downloadNext() {
 
   qDebug() << "Processing:" << pair.downloadItem.url << "to:" << pair.downloadItem.path;
 
-  if (alreadyDownloaded(pair.downloadItem)) {
-    qDebug() << "File:" << pair.downloadItem.url << "is already downloaded!";
-    downloadNext();
-    return;
-  }
+  // if (alreadyDownloaded(pair.downloadItem)) {
+  //   qDebug() << "File:" << pair.downloadItem.url << "is already downloaded!";
+  //   downloadNext();
+  //   return;
+  // }
 
   const QNetworkRequest REQUEST {pair.downloadItem.url};
 

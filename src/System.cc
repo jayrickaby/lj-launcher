@@ -4,6 +4,9 @@
 
 #include "System.h"
 
+#include "sys/info/SystemInfo.h"
+#include "sys/io/FileSystem.h"
+
 bool System::touch(const QString& path, bool existsOk) {
   QFileInfo const FILE_INFO {path};
   if (FILE_INFO.exists()) {
@@ -24,20 +27,17 @@ bool System::touch(const QString& path, bool existsOk) {
 }
 
 bool System::write(const QString& path, const QString& content) {
-  QFileInfo const FILE_INFO {path}; 
-  if (!FILE_INFO.exists()) {
-    qDebug() << "The file" << path << "does not exist! Attempted to write:" << content;
-    return false;
-  }
+  return write(path, content.toUtf8());
+}
 
+bool System::write(const QString& path, const QByteArray& content) {
   QFile file {path};
   if (!file.open(QIODevice::WriteOnly)) {
     qDebug() << "Failed to write" << path << "!";
     return false;
   }
 
-  QTextStream stream {&file};
-  stream << content;
+  file.write(content);
   file.close();
 
   qDebug() << "Successfully wrote to" << path << "!";
@@ -45,8 +45,11 @@ bool System::write(const QString& path, const QString& content) {
 }
 
 QString System::read(const QString& path) {
-  QFileInfo const FILE_INFO {path};
-  if (!FILE_INFO.exists()) {
+  return cat(path);
+}
+
+QByteArray System::cat(const QString& path) {
+  if (!FileSystem::isFile(path)) {
     qDebug() << "The file" << path << "does not exist!";
     return {};
   }
@@ -57,12 +60,9 @@ QString System::read(const QString& path) {
     return {};
   }
 
-  QTextStream stream {&file};
-  QString contents {stream.readAll()};
-  file.close();
-
   qDebug() << "Successfully read from" << path << "!";
-  return contents;
+
+  return file.readAll();
 }
 
 QString System::which(const QString& path) {
