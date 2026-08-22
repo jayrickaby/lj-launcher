@@ -32,7 +32,6 @@ public:
 
   [[nodiscard]] static QString getAssetsPath();
   [[nodiscard]] static QString getAssetsUrl();
-  [[nodiscard]] QList<DownloadItem> getObjects() const;
   [[nodiscard]] AssetIndexState getState() const;
 
   void requestAssets();
@@ -43,7 +42,7 @@ public:
   void refreshIndex();
 
 private:
-  QList<DownloadItem> m_objects;
+  QQueue<DownloadItem> m_objects;
 
   DownloadItem m_downloadItem {};
   AssetIndexState m_state{AssetIndexState::UNINITIALISED};

@@ -25,6 +25,8 @@ void AssetIndex::refreshIndex() {
   const QVariantMap OBJECTS (DATA.value("objects").toMap());
 
   m_objects.clear();
+  m_objects.reserve(OBJECTS.size());
+
   for (const auto& filePath : OBJECTS.keys()) {
     const QVariantMap OBJECT {OBJECTS.value(filePath).toMap()};
     const QString HASH {OBJECT.value("hash").toString()};
@@ -48,7 +50,7 @@ void AssetIndex::refreshIndex() {
       FileSystem::joinPaths({ASSETS_PATH, "objects", BASE})
     };
 
-    m_objects.append(
+    m_objects.enqueue(
       DownloadItem {
       .hash = HASH,
       .id = "",
@@ -107,13 +109,15 @@ void AssetIndex::requestAssets() {
     return;
   }
 
-  for (const auto& asset : m_objects) {
-    if (asset.isDownloaded()) {
+  while (!m_objects.isEmpty()) {
+    const auto ASSET {m_objects.dequeue()};
+
+    if (ASSET.isDownloaded()) {
       continue;
     }
 
     expectedAssetReplies++;
-    Downloader::addDownload(this, asset);
+    Downloader::addDownload(this, ASSET);
     setState(AssetIndexState::DOWNLOADING_ASSETS);
   }
 
@@ -136,5 +140,3 @@ void AssetIndex::setState(const AssetIndexState& state) {
 
 QString AssetIndex::getAssetsPath() { return ASSETS_PATH; }
 QString AssetIndex::getAssetsUrl() { return ASSETS_URL; }
-
-QList<DownloadItem> AssetIndex::getObjects() const { return m_objects; }
