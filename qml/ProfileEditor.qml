@@ -112,17 +112,17 @@ ApplicationWindow {
                 }
 
                 // Row 4
-                CheckBox {
-                    text: qsTr("Automatically ask Mojang for assistance with fixing crashes")
-
-                    // TODO: Add actual crash stuff
-                    checked: Launcher.settings.crashAssistance
-
-                    font.pointSize: 8
-                    Layout.columnSpan: 2
-
-                    onCheckedChanged: Launcher.set_setting("crashAssistance", checked)
-                }
+                // CheckBox {
+                //     text: qsTr("Automatically ask Mojang for assistance with fixing crashes")
+                //
+                //     // TODO: Add actual crash stuff
+                //     checked: Launcher.settings.crashAssistance
+                //
+                //     font.pointSize: 8
+                //     Layout.columnSpan: 2
+                //
+                //     onCheckedChanged: Launcher.set_setting("crashAssistance", checked)
+                // }
 
                 // Row 5
                 CheckBox {
