@@ -4,7 +4,9 @@
 
 #include "Launcher.h"
 
-#include "minecraft/versions/VersionManifest.h"
+#include "minecraft/exec/Game.h"
+#include "minecraft/ver/ClientJson.h"
+#include "minecraft/ver/VersionManifest.h"
 
 Launcher* Launcher::s_instance {nullptr};
 QUrl Launcher::s_gameDirectory;
@@ -65,7 +67,7 @@ QString Launcher::userMessage() {
     message.append(READY_MESSAGE.arg(DOWNLOAD_MESSAGE, CURRENT_VERSION));
   }
   else {
-    message.append("Loading versions...");
+    message.append("Loading ver...");
   }
 
   return message;
@@ -142,14 +144,7 @@ Launcher* Launcher::getInstance() {
 void Launcher::play() {
   const QString CURRENT_VER {Profiles::getCurrentProfileVersion()};
 
-  if (!Versions::isDownloaded(CURRENT_VER)) {
-    const ManifestEntry ONLINE_VER {VersionManifest::getVersion(CURRENT_VER)};
-
-    const QString VERSIONS_DIR {Versions::getVersionsPath()};
-
-    const QString LOCAL_URL {
-      QString("%1/%2/%2.json").arg(VERSIONS_DIR, CURRENT_VER)
-    };
-    Downloader::addDownload(ONLINE_VER.item);
-  }
+  Game::createInstance(
+    VersionManifest::getVersion(CURRENT_VER)
+  );
 }

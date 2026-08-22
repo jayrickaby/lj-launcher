@@ -8,15 +8,17 @@ OperatingSystem SystemInfo::getOperatingSystem() {
   OperatingSystem system;
   const QString NAME {QSysInfo::kernelType()};
 
-  if (NAME == "winnt") { system.name == SystemName::WINDOWS; }
-  else if (NAME == "darwin") { system.name == SystemName::OSX; }
-  else if (NAME == "linux") { system.name == SystemName::LINUX; }
-  else { system.name == SystemName::NONE; }
+  if (NAME == "winnt") { system.name = SystemName::WINDOWS; }
+  else if (NAME == "darwin") { system.name = SystemName::OSX; }
+  else if (NAME == "linux") { system.name = SystemName::LINUX; }
+  else { system.name = SystemName::NONE; }
+
+  SystemName balls {system.name};
 
   const QString ARCH {QSysInfo::currentCpuArchitecture()};
 
-  if (ARCH == "i386") { system.arch == SystemArchitecture::X86; }
-  else { system.arch == SystemArchitecture::NONE; }
+  if (ARCH == "i386") { system.arch = SystemArchitecture::X86; }
+  else { system.arch = SystemArchitecture::NONE; }
 
   return system;
 }

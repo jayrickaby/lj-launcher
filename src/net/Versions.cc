@@ -4,7 +4,7 @@
 
 #include "Versions.h"
 
-#include "minecraft/versions/VersionManifest.h"
+#include "minecraft/ver/VersionManifest.h"
 
 Versions* Versions::s_instance {nullptr};
 
@@ -41,6 +41,9 @@ QString Versions::convertFromVersionType(const VersionType& versionType) {
       return "old_beta";
       break;
   }
+
+  qDebug() << "Unknown version type:" << static_cast<int>(versionType);
+  return "release";
 }
 
 VersionType Versions::convertToVersionType(const QString& type) {
@@ -66,7 +69,7 @@ QUrl Versions::findVersionsPath() {
 
   FileSystem::makePath(ROOT_PATH);
 
-  qDebug() << "Found versions directory:" << ROOT_PATH;
+  qDebug() << "Found ver directory:" << ROOT_PATH;
   return {ROOT_PATH};
 }
 
@@ -112,7 +115,7 @@ QList<QVariantMap> Versions::getDownloadedVersions() {
   }
 
   if (versions.empty()) {
-    qDebug() << "No versions found.";
+    qDebug() << "No downloaded versions found.";
   }
 
   return versions;

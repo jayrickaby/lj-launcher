@@ -4,7 +4,7 @@
 
 #include "Profiles.h"
 
-#include "minecraft/versions/VersionManifest.h"
+#include "minecraft/ver/VersionManifest.h"
 
 QString Profiles::s_currentProfileId;
 Profiles* Profiles::s_instance {nullptr};

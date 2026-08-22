@@ -7,8 +7,8 @@
 #include "System.h"
 #include "Versions.h"
 #include "minecraft/assets/AssetIndex.h"
-#include "minecraft/libraries/LibraryIndex.h"
-#include "minecraft/versions/VersionManifest.h"
+#include "minecraft/lib/LibraryIndex.h"
+#include "minecraft/ver/VersionManifest.h"
 #include "sys/info/SystemInfo.h"
 #include "sys/io/JsonUtils.h"
 
@@ -122,7 +122,7 @@ void Downloader::onNetworkReply(QNetworkReply* reply) {
     processGenericRequest(reply);
   }
 
-  setState(DownloadState::FINISHED);
+  setState(DownloadState::IDLE);
 }
 
 void Downloader::processDownload(QNetworkReply* reply) {
@@ -183,10 +183,6 @@ void Downloader::setState(const DownloadState& state) {
 
   s_downloadState = state;
   emit getInstance()->downloadStateChanged();
-}
-
-QString Downloader::findAssetsPath() {
-  return Launcher::getGameDirectory().toLocalFile() + "/assets/";
 }
 
 bool Downloader::alreadyDownloaded(const DownloadItem& downloadItem) {

@@ -32,19 +32,21 @@ qt_add_executable(lj_launcher
         src/minecraft/assets/AssetIndex.h
         src/sys/io/JsonUtils.cc
         src/sys/io/JsonUtils.h
-        src/minecraft/libraries/Library.h
+        src/minecraft/lib/Library.h
         src/sys/info/OperatingSystem.h
-        src/minecraft/libraries/LibraryIndex.cc
-        src/minecraft/libraries/LibraryIndex.h
-        src/minecraft/libraries/Library.cc
+        src/minecraft/lib/LibraryIndex.cc
+        src/minecraft/lib/LibraryIndex.h
+        src/minecraft/lib/Library.cc
         src/sys/info/SystemInfo.cc
         src/sys/info/SystemInfo.h
-        src/minecraft/versions/VersionManifest.cc
-        src/minecraft/versions/VersionManifest.h
+        src/minecraft/ver/VersionManifest.cc
+        src/minecraft/ver/VersionManifest.h
         src/sys/io/FileSystem.cc
         src/sys/io/FileSystem.h
-        src/minecraft/versions/ClientJson.cc
-        src/minecraft/versions/ClientJson.h
+        src/minecraft/ver/ClientJson.cc
+        src/minecraft/ver/ClientJson.h
+        src/minecraft/exec/Game.cc
+        src/minecraft/exec/Game.h
 )
 
 qt_add_qml_module(lj_launcher

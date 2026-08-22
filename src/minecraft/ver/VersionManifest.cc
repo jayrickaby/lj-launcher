@@ -15,7 +15,7 @@ VersionManifest::VersionManifest(QObject* parent)
 }
 
 void VersionManifest::requestManifest() {
-  qDebug() << "Requesting versions manifest";
+  qDebug() << "Requesting ver manifest";
 
   setState(ManifestState::DOWNLOADING);
 
@@ -48,7 +48,7 @@ void VersionManifest::onNetworkReply(QNetworkReply* reply) {
 
   if (reply->error()) {
     qDebug() << "Error: " << reply->errorString();
-    throw std::runtime_error("Couldn't obtain versions manifest!");
+    throw std::runtime_error("Couldn't obtain ver manifest!");
     return;
   }
 
@@ -81,12 +81,12 @@ void VersionManifest::setState(const ManifestState& state) {
 }
 
 ManifestLatest VersionManifest::getLatestVersions() {
-  qDebug() << "Retrieving latest manifest versions...";
+  qDebug() << "Retrieving latest manifest ver...";
   return s_latestVersions;
 }
 
 QList<ManifestEntry> VersionManifest::getVersions(const QList<VersionType>& types) {
-  qDebug() << "Retrieving manifest versions...";
+  qDebug() << "Retrieving manifest ver...";
   QList<ManifestEntry> versions;
   for (const auto& version: s_versions ) {
     if (types.contains(version.type)) {
@@ -97,7 +97,7 @@ QList<ManifestEntry> VersionManifest::getVersions(const QList<VersionType>& type
 }
 
 void VersionManifest::refreshManifest() {
-  qDebug() << "Refreshing versions manifest...";
+  qDebug() << "Refreshing ver manifest...";
   const QVariantMap MANIFEST_DATA {JsonUtils::readJson(MANIFEST_PATH).toVariantMap()};
 
   s_latestVersions = parseLatestVersions(MANIFEST_DATA.value("latest").toMap());
@@ -115,7 +115,7 @@ void VersionManifest::refreshManifest() {
 }
 
 ManifestLatest VersionManifest::parseLatestVersions(const QVariantMap& latestData) {
-  qDebug() << "Parsing raw manifest data of latest versions...";
+  qDebug() << "Parsing raw manifest data of latest ver...";
   return ManifestLatest {
     .release = latestData.value("release").toString(),
     .snapshot = latestData.value("snapshot").toString()

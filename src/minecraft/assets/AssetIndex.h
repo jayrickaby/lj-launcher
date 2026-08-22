@@ -14,6 +14,7 @@
 
 class AssetIndex {
 public:
+  AssetIndex() = default;
   AssetIndex(const QVariantMap& data);
 
   [[nodiscard]] static QString getAssetsPath();

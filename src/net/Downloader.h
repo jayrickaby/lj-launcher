@@ -59,8 +59,7 @@ public:
 
   enum class DownloadState {
     IDLE,
-    DOWNLOADING,
-    FINISHED
+    DOWNLOADING
   };
   Q_ENUM(DownloadState);
 
@@ -90,8 +89,6 @@ private:
   static void setCurrentFile(const QString& currentFile);
   static void setCurrentProgress(qint64 received, qint64 total);
   static void setState(const DownloadState& state);
-
-  static QString findAssetsPath();
 
   static DownloadState s_downloadState;
   static QQueue<DownloadPair> s_downloadQueue;

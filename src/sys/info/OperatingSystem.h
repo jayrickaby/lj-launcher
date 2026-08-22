@@ -2,8 +2,8 @@
 // Created by jay on 21/08/2026.
 //
 
-#ifndef LJ_LAUNCHER_OS_H_
-#define LJ_LAUNCHER_OS_H_
+#ifndef LJ_LAUNCHER_OPERATINGSYSTEM_H_
+#define LJ_LAUNCHER_OPERATINGSYSTEM_H_
 
 enum class SystemName {
   WINDOWS,
@@ -23,4 +23,4 @@ struct OperatingSystem {
 };
 
 
-#endif  // LJ_LAUNCHER_OS_H_
+#endif  // LJ_LAUNCHER_OPERATINGSYSTEM_H_

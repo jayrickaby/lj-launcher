@@ -9,7 +9,7 @@
 #include "Application.h"
 #include "Profiles.h"
 #include "Settings.h"
-#include "minecraft/versions/VersionManifest.h"
+#include "minecraft/ver/VersionManifest.h"
 #include "net/Authentication.h"
 #include "net/Downloader.h"
 #include "net/Versions.h"

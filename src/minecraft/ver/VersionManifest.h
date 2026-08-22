@@ -7,6 +7,7 @@
 
 #include "sys/io/FileSystem.h"
 #include "sys/io/JsonUtils.h"
+#include "net/Downloader.h"
 #include "net/Versions.h"
 
 struct ManifestEntry {

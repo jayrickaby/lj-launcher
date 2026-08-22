@@ -13,11 +13,10 @@
 #include <QString>
 #include <QUrl>
 
+#include "Profiles.h"
 #include "net/Authentication.h"
 #include "net/Downloader.h"
 #include "net/Versions.h"
-#include "Profiles.h"
-
 
 struct ErrorMessage {
   Q_GADGET
