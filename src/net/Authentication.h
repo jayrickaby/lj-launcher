@@ -12,7 +12,6 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QObject>
@@ -22,7 +21,6 @@
 
 #include "../Launcher.h"
 #include "../Settings.h"
-#include "Network.h"
 #include "NetworkRequester.h"
 
 struct PkceData {

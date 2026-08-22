@@ -19,7 +19,7 @@ public:
 
   QList<Library> getLibraries() const;
 private:
-  Artifact parseArtifact(const QVariantMap& rawArtifact);
+  DownloadItem parseArtifact(const QVariantMap& rawArtifact);
   Rule parseRule(const QVariantMap& rawRule);
   Action parseAction(const QString& rawAction);
   OperatingSystem parseOs(const QVariantMap& rawOs);

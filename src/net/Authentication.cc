@@ -108,7 +108,7 @@ void Authentication::requestMicrosoftAuthViaRefresh(const QString& oldToken) {
   QByteArray const DATA {query.toString(QUrl::FullyEncoded).toUtf8()};
 
   qDebug("Requesting Microsoft Auth Tokens via Stored Refresh");
-  QNetworkReply* reply = Network::post(s_instance, request, DATA);
+  QNetworkReply* reply = Downloader::post(s_instance, request, DATA);
   reply->setProperty("type", QVariant::fromValue(AuthType::MICROSOFT_TOKEN));
   setState(AuthState::AUTHENTICATING_REFRESH);
 }
@@ -131,7 +131,7 @@ void Authentication::requestMicrosoftAuth(const QString& code) {
   QByteArray const DATA {query.toString(QUrl::FullyEncoded).toUtf8()};
 
   qDebug("Requesting Microsoft Auth Tokens");
-  QNetworkReply* reply = Network::post(s_instance, request, DATA);
+  QNetworkReply* reply = Downloader::post(s_instance, request, DATA);
   reply->setProperty("type", QVariant::fromValue(AuthType::MICROSOFT_TOKEN));
 }
 
@@ -160,7 +160,7 @@ void Authentication::requestXboxLiveAuth(const QString& accessToken) {
 
   QJsonDocument const JSON_DOC {json};
 
-  QNetworkReply* reply = Network::post(s_instance, request, JSON_DOC.toJson());
+  QNetworkReply* reply = Downloader::post(s_instance, request, JSON_DOC.toJson());
   reply->setProperty("type", QVariant::fromValue(AuthType::XBOX_LIVE_TOKEN));
 
   qDebug("Requesting Xbox Live Auth Token");
@@ -190,7 +190,7 @@ void Authentication::requestXboxServicesAuth(const QString& token) {
 
   QJsonDocument const JSON_DOC {json};
 
-  QNetworkReply* reply = Network::post(s_instance, request, JSON_DOC.toJson());
+  QNetworkReply* reply = Downloader::post(s_instance, request, JSON_DOC.toJson());
   reply->setProperty("type", QVariant::fromValue(AuthType::XBOX_SERVICES_TOKEN));
 
   qDebug("Requesting Xbox Services Auth Token");
@@ -220,7 +220,7 @@ void Authentication::requestMinecraftAuth(const XboxServicesData& data) {
 
   QJsonDocument const JSON_DOC {json};
 
-  QNetworkReply* reply = Network::post(s_instance, request, JSON_DOC.toJson());
+  QNetworkReply* reply = Downloader::post(s_instance, request, JSON_DOC.toJson());
   reply->setProperty("type", QVariant::fromValue(AuthType::MINECRAFT_TOKEN));
 
   qDebug("Requesting Minecraft Services Access Token");
@@ -235,7 +235,7 @@ void Authentication::requestGameOwnership(const QString& accessToken) {
     QString("Bearer %1").arg(accessToken).toUtf8()
   );
 
-  QNetworkReply* reply = Network::get(this, request);
+  QNetworkReply* reply = Downloader::get(this, request);
   reply->setProperty("type", QVariant::fromValue(AuthType::GAME_OWNERSHIP));
 
   qDebug("Requesting Minecraft Game Ownership");
@@ -250,7 +250,7 @@ void Authentication::requestMinecraftProfile(const QString& accessToken) {
     QString("Bearer %1").arg(accessToken).toUtf8()
   );
 
-  QNetworkReply* reply = Network::get(s_instance, request);
+  QNetworkReply* reply = Downloader::get(s_instance, request);
   reply->setProperty("type", QVariant::fromValue(AuthType::PROFILE));
 
   qDebug("Requesting Minecraft Profile");

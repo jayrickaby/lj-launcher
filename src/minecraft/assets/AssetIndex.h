@@ -8,8 +8,8 @@
 #include <QString>
 #include <QVariantMap>
 
-#include "IndexedAsset.h"
 #include "Launcher.h"
+#include "sys/io/FileSystem.h"
 #include "sys/io/JsonUtils.h"
 
 class AssetIndex {

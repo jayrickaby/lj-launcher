@@ -10,12 +10,10 @@
 #include "net/Versions.h"
 
 struct ManifestEntry {
-  QString id;
+  DownloadItem item;
   VersionType type;
-  QString url;
   QString time;
   QString releaseTime;
-  QString sha1;
   int complianceLevel;
 };
 

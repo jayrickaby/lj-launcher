@@ -7,6 +7,7 @@
 #include <QVariant>
 
 #include "minecraft/assets/AssetIndex.h"
+#include "minecraft/libraries/LibraryIndex.h"
 
 class ClientJson {
 public:

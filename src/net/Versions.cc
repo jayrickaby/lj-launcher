@@ -12,32 +12,53 @@ Versions::Versions(QObject *parent)
   : NetworkRequester(parent) {}
 
 QList<QVariantMap> Versions::versionsList() {
-  const QList<ManifestEntry> AVAILABLE_VERSIONS{VersionManifest::getVersions({VersionType::RELEASE})};
+  const auto AVAILABLE_VERSIONS{
+    VersionManifest::getVersions({VersionType::RELEASE})
+  };
 
   QList<QVariantMap> versions{};
 
   for (const auto& version : AVAILABLE_VERSIONS) {
-    QString type;
-    switch (version.type) {
-      case VersionType::RELEASE:
-        type = "release";
-        break;
-      case VersionType::SNAPSHOT:
-        type = "snapshot";
-        break;
-      case VersionType::OLD_ALPHA:
-        type = "old-alpha";
-        break;
-      case VersionType::OLD_BETA:
-        type = "old-beta";
-        break;
-    }
+    QString type {convertFromVersionType(version.type)};
 
-    const QString VERSION_NAME{QString("%1 %2").arg(type, version.id)};
+    const QString VERSION_NAME{QString("%1 %2").arg(type, version.item.id)};
 
-    versions.append(QVariantMap{{"id", version.id}, {"name", VERSION_NAME}});
+    versions.append(QVariantMap{{"id", version.item.id}, {"name", VERSION_NAME}});
   }
   return versions;
+}
+
+QString Versions::convertFromVersionType(const VersionType& versionType) {
+  switch (versionType) {
+    case VersionType::RELEASE:
+      return "release";
+    case VersionType::SNAPSHOT:
+      return "snapshot";
+    case VersionType::OLD_ALPHA:
+      return "old_alpha";
+      break;
+    case VersionType::OLD_BETA:
+      return "old_beta";
+      break;
+  }
+}
+
+VersionType Versions::convertToVersionType(const QString& type) {
+  if (type == "release") {
+    return VersionType::RELEASE;
+  }
+  if (type == "snapshot") {
+    return VersionType::SNAPSHOT;
+  }
+  if (type == "old_alpha" or type == "old-alpha") {
+    return VersionType::OLD_ALPHA;
+  }
+  if (type == "old_beta" or type == "old-beta") {
+    return VersionType::OLD_BETA;
+  }
+
+  qDebug() << "Unknown version type:" << type;
+  return VersionType::RELEASE;
 }
 
 QUrl Versions::findVersionsPath() {

@@ -36,11 +36,13 @@ public:
   explicit Versions(QObject *parent = nullptr);
 
   QList<QVariantMap> versionsList();
-  
+
   static QList<QVariantMap> getDownloadedVersions();
   static QVariantMap getDownloadedVersion(const QString& versionId);
   static bool isDownloaded(const QString& versionId);
 
+  static VersionType convertToVersionType(const QString& type);
+  static QString convertFromVersionType(const VersionType& versionType);
   static QString getVersionsPath() { return VERSIONS_PATH.path(); };
 
   static Versions* getInstance();

@@ -17,14 +17,16 @@ Downloader::DownloadState Downloader::s_downloadState{DownloadState::IDLE};
 QString Downloader::s_currentFile{};
 qint64 Downloader::s_currentProgress{0};
 qint64 Downloader::s_currentProgressMax{0};
-QQueue<DownloadItem> Downloader::s_downloadQueue{};
+QQueue<DownloadPair> Downloader::s_downloadQueue{};
 
 Downloader::Downloader(QObject* parent)
-  : NetworkRequester(parent)
+  : QNetworkAccessManager(parent)
 {
   if (!s_instance) {
     s_instance = this;
   }
+
+  connect(getInstance(), &QNetworkAccessManager::finished,&onNetworkReply);
 }
 
 void Downloader::setCurrentFile(const QString& currentFile) {
@@ -47,14 +49,21 @@ void Downloader::setCurrentProgress(qint64 received, qint64 total) {
   }
 }
 
-void Downloader::addDownload(const DownloadItem& downloadItem) {
+void Downloader::addDownload(NetworkRequester* requester, const DownloadItem& downloadItem) {
   qDebug() << "Queued download:" << downloadItem.path << "to:" << downloadItem.url;
 
-  s_downloadQueue.enqueue(downloadItem);
+  s_downloadQueue.enqueue(DownloadPair {
+    .requester = requester,
+    .downloadItem = downloadItem
+  });
 
   if (s_downloadState == DownloadState::IDLE) {
     downloadNext();
   }
+}
+
+void Downloader::addDownload(const DownloadItem& downloadItem) {
+  addDownload(nullptr, downloadItem);
 }
 
 void Downloader::downloadNext() {
@@ -64,35 +73,59 @@ void Downloader::downloadNext() {
   }
   setState(DownloadState::DOWNLOADING);
 
-  const auto& file {s_downloadQueue.dequeue()};
+  const auto& pair {s_downloadQueue.dequeue()};
 
-  if (alreadyDownloaded(file)) {
-    qDebug() << "File:" << file.url << "is already downloaded!";
+  qDebug() << "Processing:" << pair.downloadItem.url << "to:" << pair.downloadItem.path;
+
+  if (alreadyDownloaded(pair.downloadItem)) {
+    qDebug() << "File:" << pair.downloadItem.url << "is already downloaded!";
     downloadNext();
     return;
   }
 
-  const QNetworkRequest REQUEST {file.path};
-  QNetworkReply* reply { Network::get(getInstance(), REQUEST) };
-  reply->setProperty("requestParameters", QVariant::fromValue(file));
+  const QNetworkRequest REQUEST {pair.downloadItem.url};
+
+  QNetworkReply* reply {nullptr};
+
+  if (pair.requester) {
+    reply = get(pair.requester, REQUEST);
+  }
+  else {
+    reply = getInstance()->QNetworkAccessManager::get(REQUEST);
+  }
+  reply->setProperty("requestParameters", QVariant::fromValue(pair.downloadItem));
 
   connect (reply, &QNetworkReply::downloadProgress,
     getInstance(), &Downloader::setCurrentProgress);
 
-  const QFileInfo URL {file.url};
-  if (!file.name.isEmpty()) {
-    setCurrentFile(file.name);
+  if (!pair.downloadItem.name.isEmpty()) {
+    setCurrentFile(pair.downloadItem.name);
   }
   else {
+    const QFileInfo URL {pair.downloadItem.url};
     setCurrentFile(URL.fileName());
   }
 }
 
 void Downloader::onNetworkReply(QNetworkReply* reply) {
   if (reply->error() != QNetworkReply::NoError) {
+    if (reply->property("requestParameters").isValid()) {
+      DownloadItem item {reply->property("requestParameters").value<DownloadItem>()};
+    }
     throw std::runtime_error(reply->errorString().toStdString());
   }
 
+  if (reply->property("requestParameters").isValid()) {
+    processDownload(reply);
+  }
+  if (reply->property("requester").isValid()) {
+    processGenericRequest(reply);
+  }
+
+  setState(DownloadState::FINISHED);
+}
+
+void Downloader::processDownload(QNetworkReply* reply) {
   const QByteArray DATA {reply->readAll()};
   const DownloadItem ITEM {reply->property("requestParameters").value<DownloadItem>()};
 
@@ -111,27 +144,31 @@ void Downloader::onNetworkReply(QNetworkReply* reply) {
     return;
   }
 
-  FileSystem::makePath(ITEM.url);
+  FileSystem::makePath(ITEM.path);
 
-  if (!System::touch(ITEM.url, true)
-    or !System::write(ITEM.url, DATA)) {
+  if (!System::touch(ITEM.path, true)
+    or !System::write(ITEM.path, DATA)) {
     throw std::runtime_error("Unable to download required version file: " + ITEM.path.toStdString());
   };
 
-  setState(DownloadState::FINISHED);
+  downloadNext();
+}
 
-  switch (ITEM.type) {
-    case DownloadType::ASSET_INDEX:
-      processAssetsIndex(ITEM.url);
-      break;
-    case DownloadType::CLIENT_JSON: {
-      processClientJson(ITEM.url);
-      break;
-    };
-    default:;
+void Downloader::processGenericRequest(QNetworkReply* reply) {
+  QVariant const REQUESTER_PROPERTY = reply->property("requester");
+
+  if (REQUESTER_PROPERTY.isNull() or !REQUESTER_PROPERTY.isValid()) {
+    qDebug() << "Unknown network requester!";
+    return;
   }
 
-  downloadNext();
+  auto* requester {REQUESTER_PROPERTY.value<NetworkRequester*>()};
+  if (!requester) {
+    qDebug() << "Requester is null!";
+    return;
+  }
+
+  requester->onNetworkReply(reply);
 }
 
 Downloader* Downloader::getInstance() {
@@ -153,9 +190,15 @@ QString Downloader::findAssetsPath() {
 }
 
 bool Downloader::alreadyDownloaded(const DownloadItem& downloadItem) {
-  const QString FILE_PATH {downloadItem.url};
+  qDebug() << "Checking if file" << downloadItem.path << "exists and is correct...";
+  const QString FILE_PATH {downloadItem.path};
 
   if (!FileSystem::isFile(FILE_PATH)) {
+    return false;
+  }
+
+  // No hash? Redownload just incase
+  if (downloadItem.hash.isEmpty()) {
     return false;
   }
 
@@ -164,4 +207,22 @@ bool Downloader::alreadyDownloaded(const DownloadItem& downloadItem) {
   };
 
   return downloadItem.hash == FILE_HASH;
+}
+
+QNetworkReply* Downloader::get(const NetworkRequester* requester, const QNetworkRequest& request) {
+  qDebug() << "Requesting GET from:" << request.url();
+  auto* reply {getInstance()->QNetworkAccessManager::get(request)};
+
+  reply->setProperty("requester", QVariant::fromValue(requester));
+
+  return reply;
+}
+
+QNetworkReply* Downloader::post(const NetworkRequester* requester, const QNetworkRequest& request, const QByteArray& data) {
+  qDebug() << "Requesting POST from:" << request.url();
+  auto* reply {getInstance()->QNetworkAccessManager::post(request,data)};
+
+  reply->setProperty("requester", QVariant::fromValue(requester));
+
+  return reply;
 }

@@ -36,7 +36,7 @@ QList<Library> LibraryIndex::getLibraries() const {
   return m_libraries;
 }
 
-Artifact LibraryIndex::parseArtifact(const QVariantMap& rawArtifact) {
+DownloadItem LibraryIndex::parseArtifact(const QVariantMap& rawArtifact) {
   if (rawArtifact.isEmpty()) {
     return {};
   }
@@ -53,6 +53,7 @@ Artifact LibraryIndex::parseArtifact(const QVariantMap& rawArtifact) {
     .totalSize = 0,
     .url = rawArtifact.value("url").toString()
   };
+}
 
 Rule LibraryIndex::parseRule(const QVariantMap& rawRule) {
   if (rawRule.isEmpty()) {

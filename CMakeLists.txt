@@ -24,8 +24,6 @@ qt_add_executable(lj_launcher
         src/net/Versions.h
         src/net/Authentication.cc
         src/net/Authentication.h
-        src/net/Network.cc
-        src/net/Network.h
         src/net/NetworkRequester.cc
         src/net/NetworkRequester.h
         src/net/Downloader.cc

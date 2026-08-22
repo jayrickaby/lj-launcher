@@ -16,10 +16,21 @@ VersionManifest::VersionManifest(QObject* parent)
 
 void VersionManifest::requestManifest() {
   qDebug() << "Requesting versions manifest";
-  QNetworkRequest const REQUEST {MANIFEST_URL};
 
   setState(ManifestState::DOWNLOADING);
-  Network::get(getInstance(), REQUEST);
+
+  Downloader::addDownload(
+    getInstance(),
+    DownloadItem {
+    .hash = "",
+    .id = "",
+    .name = "",
+    .path = MANIFEST_PATH,
+    .size = 0,
+    .totalSize = 0,
+    .url = MANIFEST_URL
+    }
+  );
 }
 
 VersionManifest* VersionManifest::getInstance() {
@@ -41,14 +52,6 @@ void VersionManifest::onNetworkReply(QNetworkReply* reply) {
     return;
   }
 
-  if (!System::touch(MANIFEST_PATH, true)) {
-    throw std::runtime_error("Couldn't create manifest file!");
-  }
-
-  if (!System::write(MANIFEST_PATH, reply->readAll())) {
-    throw std::runtime_error("Couldn't write versions to manifest file!");
-  }
-
   refreshManifest();
   setState(ManifestState::PRESENT);
 }
@@ -56,7 +59,7 @@ void VersionManifest::onNetworkReply(QNetworkReply* reply) {
 ManifestEntry VersionManifest::getVersion(const QString& versionId) {
   qDebug() << "Getting manifest version:" << versionId;
   for (const auto& version: s_versions ) {
-    if (version.id == versionId) {
+    if (version.item.id == versionId) {
       return version;
     }
   }
@@ -121,33 +124,30 @@ ManifestLatest VersionManifest::parseLatestVersions(const QVariantMap& latestDat
 
 ManifestEntry VersionManifest::parseManifestEntry(const QVariantMap& entryData) {
   qDebug() << "Parsing raw manifest data of a version entry...";
-  const QString RAW_TYPE {entryData.value("type").toString()};
-  VersionType type;
 
-  if (RAW_TYPE == "release") {
-    type = VersionType::RELEASE;
-  }
-  else if (RAW_TYPE == "snapshot") {
-    type = VersionType::SNAPSHOT;
-  }
-  else if (RAW_TYPE == "old_alpha") {
-    type = VersionType::OLD_ALPHA;
-  }
-  else if (RAW_TYPE == "old_beta") {
-    type = VersionType::OLD_BETA;
-  }
-  else {
-    qCritical() << "Unknown version type:" << RAW_TYPE;
-    throw std::runtime_error("Unknown version type in manifest!");
-  }
+  const VersionType TYPE {
+    Versions::convertToVersionType(entryData.value("type").toString())
+  };
+
+  const QString VERSION_ID {entryData.value("id").toString()};
+  const QString FILE_NAME {VERSION_ID + ".json"};
+  const QString PATH {
+    FileSystem::joinPaths({Versions::getVersionsPath(), VERSION_ID, FILE_NAME})
+  };
 
   return ManifestEntry {
-    .id = entryData.value("id").toString(),
-    .type = type,
-    .url = entryData.value("url").toString(),
+    .item = DownloadItem{
+      .hash = entryData.value("sha1").toString(),
+      .id = VERSION_ID,
+      .name = "",
+      .path = PATH,
+      .size = 0,
+      .totalSize = 0,
+      .url = entryData.value("url").toString()
+    },
+    .type = TYPE,
     .time = entryData.value("time").toString(),
     .releaseTime = entryData.value("releaseTime").toString(),
-    .sha1 = entryData.value("sha1").toString(),
-    .complianceLevel = entryData.value("complianceLevel").toInt(),
+    .complianceLevel = entryData.value("complianceLevel").toInt()
   };
 }

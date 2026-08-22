@@ -4,6 +4,8 @@
 
 #include "ClientJson.h"
 
+#include "sys/info/SystemInfo.h"
+
 ClientJson::ClientJson(const QString& path)
 // TODO: Find some way to circumvent this horribleness
 : m_assetIndex{JsonUtils::readJson(path).toVariantMap().value("assetIndex").toMap()},
@@ -16,11 +18,8 @@ ClientJson::ClientJson(const QString& path)
   m_releaseTime = DATA.value("releaseTime").toString();
   m_time = DATA.value("time").toString();
 
-  const QString TYPE = DATA.value("type").toString();
-  if (TYPE == "release") { m_type = VersionType::RELEASE; }
-  else if (TYPE == "snapshot") { m_type = VersionType::SNAPSHOT; }
-  else if (TYPE == "old_alpha") { m_type = VersionType::OLD_ALPHA; }
-  else if (TYPE == "old_beta") { m_type = VersionType::OLD_BETA; }
+  m_type = Versions::convertToVersionType(DATA.value("type").toString());
+
 
   m_clientJar = (
     parseClientJar(

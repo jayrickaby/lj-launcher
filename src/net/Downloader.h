@@ -11,12 +11,10 @@
 #include <QNetworkReply>
 #include <QObject>
 #include <QQueue>
+#include <QNetworkAccessManager>
 #include <QUrlQuery>
 
-#include "minecraft/libraries/Library.h"
-#include "minecraft/libraries/LibraryIndex.h"
 #include "Launcher.h"
-#include "Network.h"
 #include "NetworkRequester.h"
 
  enum class DownloadType {
@@ -37,7 +35,12 @@ struct DownloadItem {
   QString url {""};
 };
 
-class Downloader : public NetworkRequester {
+struct DownloadPair {
+  NetworkRequester* requester {nullptr};
+  DownloadItem downloadItem {};
+};
+
+class Downloader : public QNetworkAccessManager {
   Q_OBJECT
   Q_PROPERTY(QString currentFile READ currentFile NOTIFY currentFileChanged)
   Q_PROPERTY(qint64 currentProgress READ currentProgress NOTIFY currentProgressChanged)
@@ -68,13 +71,21 @@ public:
   qint64 currentProgressMax() { return s_currentProgressMax; };
 
   static void addDownload(const DownloadItem& downloadItem);
+  static void addDownload(NetworkRequester* requester, const DownloadItem& downloadItem);
   static void downloadNext();
   static Downloader* getInstance();
 
-  void onNetworkReply(QNetworkReply* reply) override;
+  static QNetworkReply* get(const NetworkRequester* requester, const QNetworkRequest& request);
+  static QNetworkReply* post(const NetworkRequester* requester, const QNetworkRequest& request, const QByteArray& data);
+
+private slots:
+  static void onNetworkReply(QNetworkReply* reply);
 
 private:
   static bool alreadyDownloaded(const DownloadItem& downloadItem);
+
+  static void processDownload(QNetworkReply* reply);
+  static void processGenericRequest(QNetworkReply* reply);
 
   static void setCurrentFile(const QString& currentFile);
   static void setCurrentProgress(qint64 received, qint64 total);
@@ -83,7 +94,7 @@ private:
   static QString findAssetsPath();
 
   static DownloadState s_downloadState;
-  static QQueue<DownloadItem> s_downloadQueue;
+  static QQueue<DownloadPair> s_downloadQueue;
   static QString s_currentFile;
   static qint64 s_currentProgress;
   static qint64 s_currentProgressMax;

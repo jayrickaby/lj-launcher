@@ -35,15 +35,16 @@ void AssetIndex::refreshIndex() {
     }
 
     // File contains whole hash, parent folder contains first two digits of same hash
+    // e
     const QString BASE {
-      FileSystem::joinPaths({asset.hash.left(2), asset.hash})
+      FileSystem::joinPaths({HASH.left(2), HASH})
     };
 
     const QString URL {
-      FileSystem::joinPaths({AssetIndex::getAssetsUrl(), BASE})
+      FileSystem::joinPaths({ASSETS_URL, BASE})
     };
     const QString PATH {
-      FileSystem::joinPaths({OBJECTS_PATH, objects, "objects", BASE})
+      FileSystem::joinPaths({ASSETS_PATH, "objects", BASE})
     };
 
     m_objects.append(
