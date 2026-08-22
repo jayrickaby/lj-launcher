@@ -27,6 +27,7 @@ public:
 
 private:
   DownloadItem parseClientJar(const QVariantMap& data);
+  bool isJarDownloaded();
 
   AssetIndex m_assetIndex;
   DownloadItem m_clientJson;

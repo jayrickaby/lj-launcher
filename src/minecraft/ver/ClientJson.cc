@@ -38,13 +38,48 @@ void ClientJson::refreshJson() {
 
 void ClientJson::requestJson() {
   qDebug() << "Requesting client.json file...";
+
+
   Downloader::addDownload(this, m_clientJson);
 }
 
 void ClientJson::requestJar() {
   qDebug() << "Requesting client.jar file...";
+
+  if (isJarDownloaded()) {
+    qDebug() << "Skipped client.jar as it was already downloaded!";
+    return;
+  }
+
   // Don't add this as requester or else it will be an infinite loop of refresh -> request
   Downloader::addDownload(m_clientJar);
+}
+
+bool ClientJson::isJarDownloaded() {
+  qDebug() << "Checking if client.jar is downloaded...";
+
+  if (!FileSystem::isFile(m_clientJar.path)) {
+    qDebug() << "Client.jar is not downloaded!";
+    return false;
+  }
+
+  quint64 size {FileSystem::getFileSize(m_clientJar.path)};
+
+  if (size != m_clientJar.size) {
+    qDebug() << "Client.jar size mismatch!";
+    qDebug() << "Expected:" << m_clientJar.size << "but locally:" << size;
+    return false;
+  }
+
+  QByteArray hash {System::getSha1Checksum(System::cat(m_clientJar.path))};
+
+  if (hash != m_clientJar.hash) {
+    qDebug() << "Client.jar hash mismatch!";
+    qDebug() << "Expected:" << m_clientJar.hash << "but locally:" << hash;
+    return false;
+  }
+
+  return true;
 }
 
 void ClientJson::onNetworkReply(QNetworkReply* reply) {
@@ -66,7 +101,7 @@ DownloadItem ClientJson::parseClientJar(const QVariantMap& data) {
   const QString JAR_NAME {m_id + ".jar"};
 
   return DownloadItem{
-    .hash = data.value("sha").toString(),
+    .hash = data.value("sha1").toString(),
     .id = "",
     .name = "",
     .path = FileSystem::joinPaths({CLIENT_PATH, JAR_NAME}),
