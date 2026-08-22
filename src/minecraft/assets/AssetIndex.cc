@@ -63,18 +63,34 @@ void AssetIndex::refreshIndex() {
 }
 
 void AssetIndex::onNetworkReply(QNetworkReply* reply) {
-  refreshIndex();
-  requestAssets();
+  reply->deleteLater();
+
+  const DownloadItem REQUEST {reply->property("requestParameters").value<DownloadItem>()};
+  // Branch if AssetIndex
+  if (REQUEST.url == m_downloadItem.url) {
+    setState(AssetIndexState::DOWNLOADED_INDEX);
+    refreshIndex();
+    requestAssets();
+    return;
+  }
+
+  expectedAssetReplies--;
+  if (expectedAssetReplies == 0) {
+    setState(AssetIndexState::DOWNLOADED_ASSETS);
+    setState(AssetIndexState::INITIALISED);
+  }
 }
 
 void AssetIndex::requestIndex() {
   if (m_downloadItem.isDownloaded()) {
+    setState(AssetIndexState::DOWNLOADED_INDEX);
     refreshIndex();
     requestAssets();
     return;
   }
 
   Downloader::addDownload(this, m_downloadItem);
+  setState(AssetIndexState::DOWNLOADING_INDEX);
 }
 
 void AssetIndex::requestAssets() {
@@ -86,6 +102,8 @@ void AssetIndex::requestAssets() {
 
   if (folderSize == m_downloadItem.totalSize) {
     qDebug() << "All assets already downloaded!";
+    setState(AssetIndexState::DOWNLOADED_ASSETS);
+    setState(AssetIndexState::INITIALISED);
     return;
   }
 
@@ -94,7 +112,25 @@ void AssetIndex::requestAssets() {
       continue;
     }
 
-    Downloader::addDownload(asset);
+    expectedAssetReplies++;
+    Downloader::addDownload(this, asset);
+    setState(AssetIndexState::DOWNLOADING_ASSETS);
+  }
+
+  if (expectedAssetReplies == 0) {
+    setState(AssetIndexState::DOWNLOADED_ASSETS);
+    setState(AssetIndexState::INITIALISED);
+  }
+}
+
+AssetIndexState AssetIndex::getState() const {
+  return m_state;
+}
+
+void AssetIndex::setState(const AssetIndexState& state) {
+  if (m_state != state) {
+    m_state = state;
+    emit stateChanged();
   }
 }
 

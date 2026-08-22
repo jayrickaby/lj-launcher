@@ -16,8 +16,11 @@ Item {
     property int versionManifestState: VersionManifest.manifestState
     property bool versionsGotten: versionManifestState === VersionManifest.ManifestState.PRESENT
 
-    property int donwloadState: Downloader.downloadState
-    property bool downloading: donwloadState === Downloader.DownloadState.DOWNLOADING
+    property int gameState: Game.state
+    property bool gameUninitialised: Game.state === Game.GameState.UNINITIALISED
+    property bool gamePreparing: Game.state === Game.GameState.PREPARING
+    property bool gameDownloading: Game.state === Game.GameState.DOWNLOADING
+    property bool gameDownloaded: Game.state === Game.GameState.DOWNLOADED
 
     Loader {
         id: profileEditorLoader
@@ -91,7 +94,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 16
 
-            visible: downloading
+            visible: gameDownloading
 
             value: Downloader.currentProgress
             to: Downloader.currentProgressMax
@@ -205,25 +208,20 @@ Item {
 
                     font.bold: true
 
-                    property bool preparing: false
-
                     text: {
                         if (!authenticated || !versionsGotten) return qsTr("Loading...");
-                        if (downloading) return qsTr("Downloading...");
-                        if (preparing) return qsTr("Preparing...");
+                        if (gamePreparing) return qsTr("Preparing...");
+                        if (!gameUninitialised) return qsTr("Downloading...");
 
                         return qsTr("Play");
                     }
 
                     enabled: {
-                        if (!authenticated || !versionsGotten) return false;
-                        if (preparing) return false;
-
+                        if (!authenticated || !versionsGotten || !gameUninitialised) return false;
                         return true;
                     }
 
                     onClicked: {
-                        preparing = true;
                         Launcher.play();
                     }
                 }

@@ -32,6 +32,10 @@ bool System::write(const QString& path, const QString& content) {
 
 bool System::write(const QString& path, const QByteArray& content) {
   QFile file {path};
+  if (!FileSystem::isDirectory(FileSystem::getParentDirectory(path))) {
+    FileSystem::makePath(path);
+  }
+
   if (!file.open(QIODevice::WriteOnly)) {
     qDebug() << "Failed to write" << path << "!";
     return false;

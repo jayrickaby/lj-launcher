@@ -9,6 +9,7 @@
 #include "Application.h"
 #include "Profiles.h"
 #include "Settings.h"
+#include "minecraft/exec/Game.h"
 #include "minecraft/ver/VersionManifest.h"
 #include "net/Authentication.h"
 #include "net/Downloader.h"
@@ -26,6 +27,7 @@ int main(int argc, char *argv[]) {
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Application", Application::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Authentication", Authentication::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Downloader", Downloader::getInstance());
+  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Game", Game::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Launcher", Launcher::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Profiles", Profiles::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Settings", Settings::getInstance());

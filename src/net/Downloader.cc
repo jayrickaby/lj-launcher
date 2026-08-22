@@ -103,9 +103,6 @@ void Downloader::downloadNext() {
 
 void Downloader::onNetworkReply(QNetworkReply* reply) {
   if (reply->error() != QNetworkReply::NoError) {
-    if (reply->property("requestParameters").isValid()) {
-      DownloadItem item {reply->property("requestParameters").value<DownloadItem>()};
-    }
     throw std::runtime_error(reply->errorString().toStdString());
   }
 

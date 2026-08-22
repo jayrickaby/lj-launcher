@@ -5,6 +5,10 @@
 #include "DownloadItem.h"
 
 bool DownloadItem::isDownloaded() const {
+  if (url.isEmpty() or path.isEmpty()) {
+    return false;
+  }
+
   qDebug() << "Checking if item" << url << "is downloaded...";
 
   if (!FileSystem::isFile(path)) {

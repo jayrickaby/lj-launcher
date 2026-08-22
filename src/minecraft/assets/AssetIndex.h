@@ -12,14 +12,28 @@
 #include "sys/io/FileSystem.h"
 #include "sys/io/JsonUtils.h"
 
+enum class AssetIndexState {
+  UNINITIALISED,
+  DOWNLOADING_INDEX,
+  DOWNLOADED_INDEX,
+  DOWNLOADING_ASSETS,
+  DOWNLOADED_ASSETS,
+  INITIALISED
+};
+
 class AssetIndex : public NetworkRequester{
   Q_OBJECT
+
+signals:
+  void stateChanged();
+
 public:
   AssetIndex(const QVariantMap& data, QObject *parent = nullptr);
 
   [[nodiscard]] static QString getAssetsPath();
   [[nodiscard]] static QString getAssetsUrl();
   [[nodiscard]] QList<DownloadItem> getObjects() const;
+  [[nodiscard]] AssetIndexState getState() const;
 
   void requestAssets();
   void requestIndex();
@@ -32,6 +46,11 @@ private:
   QList<DownloadItem> m_objects;
 
   DownloadItem m_downloadItem {};
+  AssetIndexState m_state{AssetIndexState::UNINITIALISED};
+
+  quint64 expectedAssetReplies {0};
+
+  void setState(const AssetIndexState& state);
 
   inline static const QString ASSETS_PATH {FileSystem::joinPaths({Launcher::getGameDirectory().toLocalFile(), "assets"})};
   inline static const QString ASSETS_URL {"https://resources.download.minecraft.net/"};

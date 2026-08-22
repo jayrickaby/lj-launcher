@@ -144,7 +144,7 @@ Launcher* Launcher::getInstance() {
 void Launcher::play() {
   const QString CURRENT_VER {Profiles::getCurrentProfileVersion()};
 
-  Game::createInstance(
+  Game::launch(
     VersionManifest::getVersion(CURRENT_VER)
   );
 }
