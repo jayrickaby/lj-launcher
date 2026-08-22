@@ -152,8 +152,8 @@ void Launcher::play() {
     };
     Downloader::addDownload(
       DownloadItem{
-      .onlineUrl = ONLINE_VER.url,
-      .localUrl = LOCAL_URL,
+      .path = ONLINE_VER.url,
+      .url = LOCAL_URL,
       .type = DownloadType::CLIENT_JSON,
       .hash = ONLINE_VER.sha1,
       .name = ""

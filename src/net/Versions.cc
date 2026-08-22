@@ -41,7 +41,7 @@ QList<QVariantMap> Versions::versionsList() {
 }
 
 QUrl Versions::findVersionsPath() {
-  QString const ROOT_PATH {FileSystem::joinPath(Launcher::getGameDirectory().toLocalFile(), "/versions")};
+  QString const ROOT_PATH {FileSystem::joinPaths({Launcher::getGameDirectory().toLocalFile(), "versions"})};
 
   FileSystem::makePath(ROOT_PATH);
 

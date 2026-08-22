@@ -63,7 +63,7 @@ private:
 
   static VersionManifest* s_instance;
   static inline ManifestState s_manifestState {ManifestState::MISSING};
-  static inline const QString MANIFEST_PATH {FileSystem::joinPath(Versions::getVersionsPath(), "version_manifest_v2.json")};
+  static inline const QString MANIFEST_PATH {FileSystem::joinPaths({Versions::getVersionsPath(), "version_manifest_v2.json"})};
   static inline const QString MANIFEST_URL {"https://launchermeta.mojang.com/mc/game/version_manifest_v2.json"};
 };
 

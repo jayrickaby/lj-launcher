@@ -4,16 +4,18 @@
 
 #include "FileSystem.h"
 
-QString FileSystem::joinPath(const QString& root, const QString& path) {
-  return joinPath(root, QStringList{path});
-}
-
-QString FileSystem::joinPath(const QString& root, const QStringList& paths) {
-  QString result {root};
+QString FileSystem::joinPaths(const QStringList& paths) {
+  QString result {};
   for (const QString& path : paths) {
     result += "/" + path;
   }
   return QDir::cleanPath(result);
+}
+
+QString FileSystem::getParentDirectory(const QString& path) {
+  return QFileInfo(
+    QDir::cleanPath(path)
+  ).absolutePath();
 }
 
 bool FileSystem::makePath(const QString& path) {

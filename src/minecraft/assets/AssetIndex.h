@@ -14,16 +14,20 @@
 
 class AssetIndex {
 public:
-  AssetIndex(QString const& path);
+  AssetIndex(const QVariantMap& data);
 
   [[nodiscard]] static QString getAssetsPath();
   [[nodiscard]] static QString getAssetsUrl();
-  [[nodiscard]] QList<IndexedAsset> getObjects() const;
+  [[nodiscard]] QList<DownloadItem> getObjects() const;
+
+  void refreshIndex();
 
 private:
-  QList<IndexedAsset> m_objects;
+  QList<DownloadItem> m_objects;
 
-  inline static const QString ASSETS_PATH {FileSystem::joinPath(Launcher::getGameDirectory().toLocalFile(), "assets")};
+  DownloadItem m_downloadItem {};
+
+  inline static const QString ASSETS_PATH {FileSystem::joinPaths({Launcher::getGameDirectory().toLocalFile(), "assets"})};
   inline static const QString ASSETS_URL {"https://resources.download.minecraft.net/"};
 };
 

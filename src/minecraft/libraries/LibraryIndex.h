@@ -13,7 +13,7 @@
 
 class LibraryIndex {
 public:
-  LibraryIndex(const QVariantList& rawLibraries);
+  LibraryIndex(const QVariantList& data);
 
   static QString getLibraryPath();
 
@@ -24,11 +24,10 @@ private:
   Action parseAction(const QString& rawAction);
   OperatingSystem parseOs(const QVariantMap& rawOs);
 
-  static QString findLibraryPath();
-
-  inline static const QString LIBRARY_PATH {findLibraryPath()};
-
   QList<Library> m_libraries;
+
+  static QString findLibraryPath();
+  inline static const QString LIBRARY_PATH {findLibraryPath()};
 };
 
 #endif  // LJ_LAUNCHER_LIBRARYINDEX_H_

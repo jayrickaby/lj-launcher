@@ -28,11 +28,13 @@
 };
 
 struct DownloadItem {
-  QString onlineUrl;
-  QString localUrl;
-  DownloadType type;
-  QString hash;
-  QString name;
+  QString hash {""};
+  QString id {""};
+  QString name {""};
+  QString path {""};
+  quint64 size {0};
+  quint64 totalSize {0};
+  QString url {""};
 };
 
 class Downloader : public NetworkRequester {
@@ -74,14 +76,12 @@ public:
 private:
   static bool alreadyDownloaded(const DownloadItem& downloadItem);
 
-  static void processAssetsIndex(const QString& url);
-  static void processClientJson(const QString& url);
   static void setCurrentFile(const QString& currentFile);
   static void setCurrentProgress(qint64 received, qint64 total);
   static void setState(const DownloadState& state);
 
   static QString findAssetsPath();
-  
+
   static DownloadState s_downloadState;
   static QQueue<DownloadItem> s_downloadQueue;
   static QString s_currentFile;

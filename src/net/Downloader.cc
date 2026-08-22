@@ -48,7 +48,7 @@ void Downloader::setCurrentProgress(qint64 received, qint64 total) {
 }
 
 void Downloader::addDownload(const DownloadItem& downloadItem) {
-  qDebug() << "Queued download:" << downloadItem.onlineUrl << "to:" << downloadItem.localUrl;
+  qDebug() << "Queued download:" << downloadItem.path << "to:" << downloadItem.url;
 
   s_downloadQueue.enqueue(downloadItem);
 
@@ -67,19 +67,19 @@ void Downloader::downloadNext() {
   const auto& file {s_downloadQueue.dequeue()};
 
   if (alreadyDownloaded(file)) {
-    qDebug() << "File:" << file.localUrl << "is already downloaded!";
+    qDebug() << "File:" << file.url << "is already downloaded!";
     downloadNext();
     return;
   }
 
-  const QNetworkRequest REQUEST {file.onlineUrl};
+  const QNetworkRequest REQUEST {file.path};
   QNetworkReply* reply { Network::get(getInstance(), REQUEST) };
   reply->setProperty("requestParameters", QVariant::fromValue(file));
 
   connect (reply, &QNetworkReply::downloadProgress,
     getInstance(), &Downloader::setCurrentProgress);
 
-  const QFileInfo URL {file.localUrl};
+  const QFileInfo URL {file.url};
   if (!file.name.isEmpty()) {
     setCurrentFile(file.name);
   }
@@ -94,133 +94,44 @@ void Downloader::onNetworkReply(QNetworkReply* reply) {
   }
 
   const QByteArray DATA {reply->readAll()};
-  const QByteArray DATA_HASH {System::getSha1Checksum(DATA)};
   const DownloadItem ITEM {reply->property("requestParameters").value<DownloadItem>()};
 
+  if (ITEM.size != 0 and DATA.size() != ITEM.size) {
+    qDebug() << "File:" << ITEM.path << "was corrupted! Redownloading...";
+    qDebug() << "Calculated size:" << DATA.size() << "is meant to be:" << ITEM.size;
+  }
+
+  const QByteArray DATA_HASH {System::getSha1Checksum(DATA)};
+
   if (!ITEM.hash.isEmpty() and DATA_HASH != ITEM.hash) {
-    qDebug() << "File:" << ITEM.onlineUrl << "was corrupted! Redownloading...";
+    qDebug() << "File:" << ITEM.path << "was corrupted! Redownloading...";
     qDebug() << "Calculated hash:" << DATA_HASH << "is meant to be:" << ITEM.hash;
-    addDownload(
-      DownloadItem{
-      .onlineUrl = ITEM.onlineUrl,
-      .localUrl = ITEM.localUrl,
-      .type = ITEM.type,
-      .hash = ITEM.hash,
-      .name = ITEM.name
-      }
-    );
+    addDownload(ITEM);
 
     return;
   }
 
-  FileSystem::makePath(ITEM.localUrl);
+  FileSystem::makePath(ITEM.url);
 
-  if (!System::touch(ITEM.localUrl, true)
-    or !System::write(ITEM.localUrl, DATA)) {
-    throw std::runtime_error("Unable to download required version file: " + ITEM.onlineUrl.toStdString());
+  if (!System::touch(ITEM.url, true)
+    or !System::write(ITEM.url, DATA)) {
+    throw std::runtime_error("Unable to download required version file: " + ITEM.path.toStdString());
   };
 
   setState(DownloadState::FINISHED);
 
   switch (ITEM.type) {
     case DownloadType::ASSET_INDEX:
-      processAssetsIndex(ITEM.localUrl);
+      processAssetsIndex(ITEM.url);
       break;
     case DownloadType::CLIENT_JSON: {
-      processClientJson(ITEM.localUrl);
+      processClientJson(ITEM.url);
       break;
     };
     default:;
   }
 
   downloadNext();
-}
-void Downloader::processClientJson(const QString& url) {
-  const QVariantMap DATA {JsonUtils::readJson(url).toVariantMap()};
-
-  // Saves having to keep getting it from Profiles
-  const QString VERSION_ID {DATA.value("id").toString()};
-
-  const QVariantMap ASSETS_INDEX {DATA.value("assetIndex").toMap()};
-  const QString INDEX_URL {ASSETS_INDEX.value("url").toString()};
-  const QString INDEX_ID {ASSETS_INDEX.value("id").toString()};
-  const QString INDEX_HASH {ASSETS_INDEX.value("sha1").toString()};
-  const QString INDEX_PATH {
-    QString("%1/assets/indexes/%2.json")
-    .arg(Launcher::getGameDirectory().toLocalFile(),INDEX_ID)
-  };
-  addDownload(
-    DownloadItem(
-      INDEX_URL, INDEX_PATH, DownloadType::ASSET_INDEX, INDEX_HASH
-    )
-  );
-
-  const QVariantMap JAR_DOWNLOADS {DATA.value("downloads").toMap()};
-  const QVariantMap CLIENT_JAR {JAR_DOWNLOADS.value("client").toMap()};
-  const QString JAR_URL {CLIENT_JAR.value("url").toString()};
-  const QString JAR_HASH {CLIENT_JAR.value("sha1").toString()};
-  const QString JAR_PATH {
-    QString("%1/%2.jar")
-    .arg(QFileInfo(url).absolutePath(), VERSION_ID)
-  };
-  addDownload(
-    DownloadItem(
-      JAR_URL, JAR_PATH, DownloadType::CLIENT_JAR, JAR_HASH
-    )
-  );
-
-  const QVariantList LIBRARY_DOWNLOADS (DATA.value("libraries").toList());
-  const LibraryIndex LIBRARIES {LIBRARY_DOWNLOADS};
-
-  const OperatingSystem USER_OS {SystemInfo::getOperatingSystem()};
-
-  for (const auto& library : LIBRARIES.getLibraries()) {
-
-    if (!library.isUserSuitable(USER_OS)) {
-      qDebug() << "Skipping" << library.name << "due to imposed rules";
-      continue;
-    }
-
-    const QString LIBRARY_LOCAL_PATH {
-      QString("%1/%2")
-      .arg(LibraryIndex::getLibraryPath(),
-        library.artifact.path
-      )
-    };
-
-    addDownload(
-      DownloadItem(
-        library.artifact.url, LIBRARY_LOCAL_PATH, DownloadType::LIBRARY,
-        library.artifact.sha1, library.name
-      )
-    );
-  }
-}
-
-void Downloader::processAssetsIndex(const QString& url) {
-  const QString OBJECTS_PATH {AssetIndex::getAssetsPath() + "/objects/"};
-
-  const AssetIndex INDEX {url};
-
-  for (const auto& asset : INDEX.getObjects()) {
-    const QString FILE_PATH {
-      QString("%1/%2").arg(asset.hash.left(2), asset.hash)
-    };
-
-    const QString ONLINE_FILE_PATH {
-      QString("%1/%2").arg(AssetIndex::getAssetsUrl(),FILE_PATH)
-    };
-    const QString LOCAL_FILE_PATH {
-      QString("%1/%2").arg(OBJECTS_PATH, FILE_PATH)
-    };
-
-    addDownload(
-      DownloadItem(
-        ONLINE_FILE_PATH, LOCAL_FILE_PATH, DownloadType::ASSET,
-        asset.hash, asset.path
-      )
-    );
-  }
 }
 
 Downloader* Downloader::getInstance() {
@@ -242,7 +153,7 @@ QString Downloader::findAssetsPath() {
 }
 
 bool Downloader::alreadyDownloaded(const DownloadItem& downloadItem) {
-  const QString FILE_PATH {downloadItem.localUrl};
+  const QString FILE_PATH {downloadItem.url};
 
   if (!FileSystem::isFile(FILE_PATH)) {
     return false;

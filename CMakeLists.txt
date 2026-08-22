@@ -34,7 +34,6 @@ qt_add_executable(lj_launcher
         src/minecraft/assets/AssetIndex.h
         src/sys/io/JsonUtils.cc
         src/sys/io/JsonUtils.h
-        src/minecraft/assets/IndexedAsset.h
         src/minecraft/libraries/Library.h
         src/sys/info/OperatingSystem.h
         src/minecraft/libraries/LibraryIndex.cc
@@ -46,6 +45,8 @@ qt_add_executable(lj_launcher
         src/minecraft/versions/VersionManifest.h
         src/sys/io/FileSystem.cc
         src/sys/io/FileSystem.h
+        src/minecraft/versions/ClientJson.cc
+        src/minecraft/versions/ClientJson.h
 )
 
 qt_add_qml_module(lj_launcher

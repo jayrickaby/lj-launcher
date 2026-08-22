@@ -5,19 +5,22 @@
 #include "LibraryIndex.h"
 
 
-LibraryIndex::LibraryIndex(const QVariantList& rawLibraries) {
-  if (rawLibraries.isEmpty()) {
+LibraryIndex::LibraryIndex(const QVariantList& data) {
+  if (data.isEmpty()) {
     return;
   }
 
-  for (const auto& rawVariant : rawLibraries) {
+  for (const auto& rawVariant : data) {
     Library library;
 
     const QVariantMap RAW_LIBRARY {rawVariant.toMap()};
     library.name = RAW_LIBRARY.value("name").toString();
 
-    const QVariantMap RAW_ARTIFACT {RAW_LIBRARY.value("downloads").toMap().value("artifact").toMap()};
-    library.artifact = parseArtifact(RAW_ARTIFACT);
+    library.artifact = parseArtifact(
+      RAW_LIBRARY
+      .value("downloads").toMap()
+      .value("artifact").toMap()
+    );
 
     const QVariantList RAW_RULES (RAW_LIBRARY.value("rules").toList());
     for (const auto& rawRule : RAW_RULES) {
@@ -38,13 +41,18 @@ Artifact LibraryIndex::parseArtifact(const QVariantMap& rawArtifact) {
     return {};
   }
 
-  return Artifact{
-    .path=rawArtifact.value("path").toString(),
-    .sha1=rawArtifact.value("sha1").toString(),
-    .size=rawArtifact.value("size").toULongLong(),
-    .url=rawArtifact.value("url").toString()
+  const QString PATH {rawArtifact.value("path").toString()};
+
+  return DownloadItem{
+    .hash = rawArtifact.value("sha1").toString(),
+    .id = "",
+    .name = "",
+    // Artifact is relative to library path, so make absolute
+    .path = FileSystem::joinPaths({getLibraryPath(), PATH}),
+    .size = rawArtifact.value("size").toULongLong(),
+    .totalSize = 0,
+    .url = rawArtifact.value("url").toString()
   };
-}
 
 Rule LibraryIndex::parseRule(const QVariantMap& rawRule) {
   if (rawRule.isEmpty()) {
@@ -107,8 +115,7 @@ QString LibraryIndex::getLibraryPath() {
 }
 
 QString LibraryIndex::findLibraryPath() {
-  return FileSystem::joinPath(
-    Launcher::getGameDirectory().toLocalFile(),
-    "libraries"
+  return FileSystem::joinPaths(
+    { Launcher::getGameDirectory().toLocalFile(), "libraries" }
   );
 }

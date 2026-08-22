@@ -7,14 +7,8 @@
 #include <QList>
 #include <QString>
 
+#include "net/Downloader.h"
 #include "sys/info/OperatingSystem.h"
-
-struct Artifact {
-  QString path;
-  QString sha1;
-  quint64 size;
-  QString url;
-};
 
 enum class Action {
   ALLOW,
@@ -24,12 +18,12 @@ enum class Action {
 
 struct Rule {
   Action action {Action::NONE};
-  OperatingSystem os;
+  OperatingSystem os {};
 };
 
 struct Library {
-  Artifact artifact;
-  QString name;
+  DownloadItem artifact {};
+  QString name {""};
   QList<Rule> rules;
 
   bool isUserSuitable(const OperatingSystem& user) const;
