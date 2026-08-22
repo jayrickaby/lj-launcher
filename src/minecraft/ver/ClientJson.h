@@ -17,7 +17,6 @@ public:
   explicit ClientJson(QObject *parent = nullptr);
   explicit ClientJson(const ManifestEntry& manifestEntry, QObject *parent = nullptr);
 
-  void requestAssets();
   void requestJar();
   void requestJson();
 
@@ -29,7 +28,7 @@ private:
   DownloadItem parseClientJar(const QVariantMap& data);
   bool isJarDownloaded();
 
-  AssetIndex m_assetIndex;
+  AssetIndex* m_assetIndex;
   DownloadItem m_clientJson;
   DownloadItem m_clientJar;
   LibraryIndex* m_libraryIndex;

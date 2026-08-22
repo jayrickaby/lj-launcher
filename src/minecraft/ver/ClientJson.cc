@@ -22,7 +22,7 @@ ClientJson::ClientJson(const ManifestEntry& manifestEntry, QObject* parent)
 
 void ClientJson::refreshJson() {
   const QVariantMap DATA {JsonUtils::readJson(m_clientJson.path).toVariantMap()};
-  m_assetIndex = DATA.value("assetIndex").toMap();
+  m_assetIndex = new AssetIndex(DATA.value("assetIndex").toMap());
   m_libraryIndex = new LibraryIndex(DATA.value("libraries").toList());
 
   m_mainClass = DATA.value("mainClass").toString();
@@ -46,7 +46,7 @@ void ClientJson::requestJson() {
 void ClientJson::requestJar() {
   qDebug() << "Requesting client.jar file...";
 
-  if (isJarDownloaded()) {
+  if (m_clientJar.isDownloaded()) {
     qDebug() << "Skipped client.jar as it was already downloaded!";
     return;
   }
@@ -55,46 +55,12 @@ void ClientJson::requestJar() {
   Downloader::addDownload(m_clientJar);
 }
 
-bool ClientJson::isJarDownloaded() {
-  qDebug() << "Checking if client.jar is downloaded...";
-
-  if (!FileSystem::isFile(m_clientJar.path)) {
-    qDebug() << "Client.jar is not downloaded!";
-    return false;
-  }
-
-  quint64 size {FileSystem::getFileSize(m_clientJar.path)};
-
-  if (size != m_clientJar.size) {
-    qDebug() << "Client.jar size mismatch!";
-    qDebug() << "Expected:" << m_clientJar.size << "but locally:" << size;
-    return false;
-  }
-
-  QByteArray hash {System::getSha1Checksum(System::cat(m_clientJar.path))};
-
-  if (hash != m_clientJar.hash) {
-    qDebug() << "Client.jar hash mismatch!";
-    qDebug() << "Expected:" << m_clientJar.hash << "but locally:" << hash;
-    return false;
-  }
-
-  return true;
-}
-
 void ClientJson::onNetworkReply(QNetworkReply* reply) {
   reply->deleteLater();
   refreshJson();
   requestJar();
   m_libraryIndex->requestLibraries();
-}
-
-void ClientJson::requestAssets() {
-  const QString OBJECTS_PATH {AssetIndex::getAssetsPath() + "/objects/"};
-
-  for (const auto& asset : m_assetIndex.getObjects()) {
-    Downloader::addDownload(this, asset);
-  }
+  m_assetIndex->requestIndex();
 }
 
 DownloadItem ClientJson::parseClientJar(const QVariantMap& data) {

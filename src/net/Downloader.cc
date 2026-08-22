@@ -77,12 +77,6 @@ void Downloader::downloadNext() {
 
   qDebug() << "Processing:" << pair.downloadItem.url << "to:" << pair.downloadItem.path;
 
-  // if (alreadyDownloaded(pair.downloadItem)) {
-  //   qDebug() << "File:" << pair.downloadItem.url << "is already downloaded!";
-  //   downloadNext();
-  //   return;
-  // }
-
   const QNetworkRequest REQUEST {pair.downloadItem.url};
 
   QNetworkReply* reply {nullptr};
@@ -144,10 +138,9 @@ void Downloader::processDownload(QNetworkReply* reply) {
     return;
   }
 
-  FileSystem::makePath(ITEM.path);
+  FileSystem::makePath(FileSystem::getParentDirectory(ITEM.path));
 
-  if (!System::touch(ITEM.path, true)
-    or !System::write(ITEM.path, DATA)) {
+  if (!System::write(ITEM.path, DATA)) {
     throw std::runtime_error("Unable to download required version file: " + ITEM.path.toStdString());
   };
 
@@ -183,26 +176,6 @@ void Downloader::setState(const DownloadState& state) {
 
   s_downloadState = state;
   emit getInstance()->downloadStateChanged();
-}
-
-bool Downloader::alreadyDownloaded(const DownloadItem& downloadItem) {
-  qDebug() << "Checking if file" << downloadItem.path << "exists and is correct...";
-  const QString FILE_PATH {downloadItem.path};
-
-  if (!FileSystem::isFile(FILE_PATH)) {
-    return false;
-  }
-
-  // No hash? Redownload just incase
-  if (downloadItem.hash.isEmpty()) {
-    return false;
-  }
-
-  const QByteArray FILE_HASH {System::getSha1Checksum(
-    System::read(FILE_PATH).toUtf8())
-  };
-
-  return downloadItem.hash == FILE_HASH;
 }
 
 QNetworkReply* Downloader::get(const NetworkRequester* requester, const QNetworkRequest& request) {

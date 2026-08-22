@@ -12,14 +12,19 @@
 #include "sys/io/FileSystem.h"
 #include "sys/io/JsonUtils.h"
 
-class AssetIndex {
+class AssetIndex : public NetworkRequester{
+  Q_OBJECT
 public:
-  AssetIndex() = default;
-  AssetIndex(const QVariantMap& data);
+  AssetIndex(const QVariantMap& data, QObject *parent = nullptr);
 
   [[nodiscard]] static QString getAssetsPath();
   [[nodiscard]] static QString getAssetsUrl();
   [[nodiscard]] QList<DownloadItem> getObjects() const;
+
+  void requestAssets();
+  void requestIndex();
+
+  void onNetworkReply(QNetworkReply* reply) override;
 
   void refreshIndex();
 

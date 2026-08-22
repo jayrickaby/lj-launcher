@@ -4,6 +4,8 @@
 
 #include "FileSystem.h"
 
+#include <QDirIterator>
+
 QString FileSystem::joinPaths(const QStringList& paths) {
   QString result {};
   for (const QString& path : paths) {
@@ -44,4 +46,17 @@ quint64 FileSystem::getFileSize(const QString& path) {
   const QFileInfo FILE {path};
 
   return FILE.size();
+}
+
+quint64 FileSystem::getFolderSize(const QString& path) {
+  quint64 totalSize {0};
+
+  QDirIterator iterator(path, QDir::Files | QDir::Hidden | QDir::NoSymLinks , QDirIterator::Subdirectories);
+
+  while (iterator.hasNext()) {
+    iterator.next();
+    totalSize += iterator.fileInfo().size();
+  }
+
+  return totalSize;
 }

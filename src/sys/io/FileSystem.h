@@ -15,6 +15,7 @@ public:
 
   [[nodiscard]] static QString getParentDirectory(const QString& path);
   [[nodiscard]] static quint64 getFileSize(const QString& path);
+  [[nodiscard]] static quint64 getFolderSize(const QString& path);
 
   [[nodiscard]] static QString joinPaths(const QStringList& paths);
   static bool makePath(const QString& path);

@@ -47,6 +47,8 @@ qt_add_executable(lj_launcher
         src/minecraft/ver/ClientJson.h
         src/minecraft/exec/Game.cc
         src/minecraft/exec/Game.h
+        src/net/DownloadItem.cc
+        src/net/DownloadItem.h
 )
 
 qt_add_qml_module(lj_launcher

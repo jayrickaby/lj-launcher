@@ -84,10 +84,6 @@ QUrl Profiles::findJsonPath() {
   QString const ROOT_PATH {Launcher::getGameDirectory().toLocalFile()};
   QString const FULL_PATH {QDir(ROOT_PATH).filePath("launcher_profiles.json")};
 
-  if (!System::touch(FULL_PATH, true)) {
-    throw std::runtime_error("Could not create profiles json!");
-  }
-
   QFile const FILE {FULL_PATH};
   qDebug() << "Found profiles file: " << FULL_PATH;
 

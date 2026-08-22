@@ -15,6 +15,7 @@
 #include <QUrlQuery>
 
 #include "Launcher.h"
+#include "DownloadItem.h"
 #include "NetworkRequester.h"
 
  enum class DownloadType {
@@ -23,16 +24,6 @@
   ASSET,
   ASSET_INDEX,
   LIBRARY
-};
-
-struct DownloadItem {
-  QString hash {""};
-  QString id {""};
-  QString name {""};
-  QString path {""};
-  quint64 size {0};
-  quint64 totalSize {0};
-  QString url {""};
 };
 
 struct DownloadPair {
@@ -81,8 +72,6 @@ private slots:
   static void onNetworkReply(QNetworkReply* reply);
 
 private:
-  static bool alreadyDownloaded(const DownloadItem& downloadItem);
-
   static void processDownload(QNetworkReply* reply);
   static void processGenericRequest(QNetworkReply* reply);
 

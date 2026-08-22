@@ -4,7 +4,8 @@
 
 #include "AssetIndex.h"
 
-AssetIndex::AssetIndex(const QVariantMap& data) {
+AssetIndex::AssetIndex(const QVariantMap& data, QObject *parent)
+: NetworkRequester(parent) {
   const QString INDEX_ID {data.value("id").toString()};
   const QString FILE_NAME {INDEX_ID + ".json"};
 
@@ -41,7 +42,7 @@ void AssetIndex::refreshIndex() {
     };
 
     const QString URL {
-      FileSystem::joinPaths({ASSETS_URL, BASE})
+      ASSETS_URL + "/" + BASE
     };
     const QString PATH {
       FileSystem::joinPaths({ASSETS_PATH, "objects", BASE})
@@ -58,6 +59,42 @@ void AssetIndex::refreshIndex() {
       .url = URL
       }
     );
+  }
+}
+
+void AssetIndex::onNetworkReply(QNetworkReply* reply) {
+  refreshIndex();
+  requestAssets();
+}
+
+void AssetIndex::requestIndex() {
+  if (m_downloadItem.isDownloaded()) {
+    refreshIndex();
+    requestAssets();
+    return;
+  }
+
+  Downloader::addDownload(this, m_downloadItem);
+}
+
+void AssetIndex::requestAssets() {
+  quint64 folderSize {
+    FileSystem::getFolderSize(
+      FileSystem::joinPaths({ASSETS_PATH, "objects"})
+    )
+  };
+
+  if (folderSize == m_downloadItem.totalSize) {
+    qDebug() << "All assets already downloaded!";
+    return;
+  }
+
+  for (const auto& asset : m_objects) {
+    if (asset.isDownloaded()) {
+      continue;
+    }
+
+    Downloader::addDownload(asset);
   }
 }
 
