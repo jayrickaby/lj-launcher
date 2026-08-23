@@ -84,7 +84,7 @@ Item {
                 Layout.fillHeight: true
 
                 columnWidths: [0.5, 0.5]
-                model: Profiles.model
+                model: ProfilesTable {}
             }
         }
 

@@ -42,6 +42,8 @@ FocusScope {
 
         width: scrollView.width
 
+        height: 32
+
         signal resize(int column, real width)
 
         resizableColumns: true
@@ -64,7 +66,7 @@ FocusScope {
 
         property real innerWidth: width - rightPadding
 
-        TreeView {
+        TableView {
             id: tableView
             anchors.fill: parent
 

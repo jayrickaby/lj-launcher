@@ -97,7 +97,7 @@ QList<ManifestEntry> VersionManifest::getVersions(const QList<VersionType>& type
 }
 
 void VersionManifest::refreshManifest() {
-  qDebug() << "Refreshing ver manifest...";
+  qDebug() << "Refreshing versions manifest...";
   const QVariantMap MANIFEST_DATA {JsonUtils::readJson(MANIFEST_PATH).toVariantMap()};
 
   s_latestVersions = parseLatestVersions(MANIFEST_DATA.value("latest").toMap());

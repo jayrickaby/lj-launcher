@@ -4,7 +4,7 @@ import QtQuick.Layouts
 import QtQml.Models
 
 // Adapted from plasma-systemmonitor/src/table/BaseCellDelegate.qml and TextCellDelegate.qml
-TreeViewDelegate {
+TableViewDelegate {
     id: root
 
     text: model.display

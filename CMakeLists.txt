@@ -49,6 +49,8 @@ qt_add_executable(lj_launcher
         src/minecraft/exec/Game.h
         src/net/DownloadItem.cc
         src/net/DownloadItem.h
+        src/minecraft/profiles/ProfilesTable.cc
+        src/minecraft/profiles/ProfilesTable.h
 )
 
 qt_add_qml_module(lj_launcher
@@ -68,7 +70,10 @@ qt_add_qml_module(lj_launcher
         assets/icons/icon.png
 )
 
-target_include_directories(lj_launcher PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
+target_include_directories(lj_launcher PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/minecraft/profiles
+)
 
         # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
