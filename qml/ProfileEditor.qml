@@ -211,7 +211,7 @@ ApplicationWindow {
                     textRole: "name"
 
                     model: Versions.versionsList
-                    currentValue: Profiles.currentProfileVersion
+                    currentValue: currentProfile.lastVersionId
 
                     onActivated: (index) => {
                         let selectedItem = model[index]
