@@ -34,6 +34,14 @@ int ProfilesTable::columnCount(const QModelIndex& parent) const {
 void ProfilesTable::refresh() {
   beginResetModel();
   m_uuidList = Profiles::getProfiles().keys();
+
+  std::ranges::sort(m_uuidList, [](const QVariant& a, const QVariant& b) {
+    const QVariantMap PROFILE_A {Profiles::getProfile(a.toString())};
+    const QVariantMap PROFILE_B {Profiles::getProfile(b.toString())};
+
+    return PROFILE_A["created"].toString() < PROFILE_B["created"].toString();
+  });
+
   endResetModel();
 }
 
