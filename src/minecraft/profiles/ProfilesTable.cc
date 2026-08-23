@@ -79,3 +79,9 @@ QVariant ProfilesTable::headerData(int section, Qt::Orientation orientation,
 
   return {};
 }
+
+QHash<int, QByteArray> ProfilesTable::roleNames() const {
+  QHash<int, QByteArray> roles = QAbstractTableModel::roleNames();
+  roles[ProfileRole::UUID_ROLE] = "uuid";
+  return roles;
+}

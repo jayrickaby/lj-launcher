@@ -7,6 +7,8 @@ import QtQml.Models
 TableViewDelegate {
     id: root
 
+    property var contextMenu: null
+
     text: model.display
 
     // Important: Don't remove this until QTBUG-84858 is resolved properly.
@@ -28,5 +30,17 @@ TableViewDelegate {
     background: Rectangle {
         border.width: 1
         color: selected ? palette.highlight : "white"
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.RightButton
+
+        onClicked: {
+            if (contextMenu) {
+                contextMenu.targetUuid = model.uuid
+                contextMenu.popup()
+            }
+        }
     }
 }

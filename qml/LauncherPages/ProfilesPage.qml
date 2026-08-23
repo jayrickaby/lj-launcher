@@ -146,21 +146,9 @@ FocusScope {
 
             rowHeightProvider: function(row) { return 16 }
 
-            delegate: DelegateChooser {
-                // Only 0 and 1 so any extras dont show up
-                DelegateChoice {
-                    column: 0
-                    delegate: ProfileCellDelegate {
-                        text: model.display
-                    }
-                }
-
-                DelegateChoice {
-                    column: 1
-                    delegate: ProfileCellDelegate {
-                        text: model.display
-                    }
-                }
+            delegate: ProfileCellDelegate {
+                contextMenu: profilesMenu
+                text: model.display
             }
         }
     }
@@ -171,5 +159,23 @@ FocusScope {
         selectionMode: SelectionRectangle.Drag
         topLeftHandle: null
         bottomRightHandle: null
+    }
+
+    Menu {
+        id: profilesMenu
+        property var targetUuid: null
+
+        MenuItem {
+            text: qsTr("Add Profile")
+        }
+        MenuItem {
+            text: qsTr("Copy Profile")
+        }
+        MenuItem {
+            text: qsTr("Delete Profile")
+        }
+        MenuItem {
+            text: qsTr("Open Game Folder")
+        }
     }
 }
