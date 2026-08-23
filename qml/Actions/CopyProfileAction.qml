@@ -11,6 +11,8 @@ Action {
     text: qsTr("Copy Profile")
 
     onTriggered: {
+        if (!profileId) return;
+
         let profile = Profiles.getProfileFromId(profileId);
         profile["name"] = `Copy of ${profile["name"]}`;
         Profiles.addNewProfile(profile);

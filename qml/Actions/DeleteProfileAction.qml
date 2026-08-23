@@ -11,6 +11,8 @@ Action {
     text: qsTr("Delete Profile")
 
     onTriggered: {
+        if (!profileId) return;
+
         Profiles.deleteProfileById(profileId);
     }
-}   
+}

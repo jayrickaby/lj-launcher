@@ -13,6 +13,7 @@ Action {
 
     onTriggered: {
         if (!editorLoader) return;
+        if (!profileId) return;
 
         editorLoader.active = true;
         let profile = Profiles.getProfileFromId(profileId);
