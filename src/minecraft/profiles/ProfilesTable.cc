@@ -33,13 +33,13 @@ int ProfilesTable::columnCount(const QModelIndex& parent) const {
 
 void ProfilesTable::refresh() {
   beginResetModel();
-  m_uuidList = Profiles::getProfiles().keys();
+  m_uuidList = ProfileManager::getProfiles().keys();
 
   std::ranges::sort(m_uuidList, [](const QVariant& a, const QVariant& b) {
-    const QVariantMap PROFILE_A {Profiles::getProfile(a.toString())};
-    const QVariantMap PROFILE_B {Profiles::getProfile(b.toString())};
+    const auto PROFILE_A {ProfileManager::getProfile(a.toString())};
+    const auto PROFILE_B {ProfileManager::getProfile(b.toString())};
 
-    return PROFILE_A["created"].toString() < PROFILE_B["created"].toString();
+    return PROFILE_A->created < PROFILE_B->created;
   });
 
   endResetModel();
@@ -57,11 +57,11 @@ QVariant ProfilesTable::data(const QModelIndex& index, int role) const {
   }
 
   if (role == Qt::DisplayRole) {
-    const QVariantMap profile {Profiles::getProfile(UUID)};
+    auto profile {ProfileManager::getProfile(UUID)};
 
     switch (index.column()) {
-      case 0: return profile["name"].toString();
-      case 1: return profile["lastVersionId"].toString();
+      case 0: return profile->name;
+      case 1: return profile->lastVersionId;
     }
   }
   return {};

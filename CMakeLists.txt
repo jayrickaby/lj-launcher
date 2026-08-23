@@ -51,6 +51,8 @@ qt_add_executable(lj_launcher
         src/minecraft/profiles/ProfilesTable.h
         src/minecraft/profiles/ProfileManager.cc
         src/minecraft/profiles/ProfileManager.h
+        src/minecraft/profiles/Profile.cc
+        src/minecraft/profiles/Profile.h
 )
 
 qt_add_qml_module(lj_launcher

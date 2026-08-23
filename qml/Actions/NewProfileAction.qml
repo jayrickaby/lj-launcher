@@ -16,7 +16,7 @@ Action {
         if (!profileId) return;
 
         editorLoader.active = true;
-        let profile = Profiles.getProfileFromId(profileId);
+        let profile = Profiles.getProfile(profileId);
         profile["name"] = `Copy of ${profile["name"]}`;
         editorLoader.item.setProfile(profile, null);
     }

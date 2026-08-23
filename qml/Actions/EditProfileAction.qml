@@ -16,7 +16,7 @@ Action {
         if (!profileId) return;
 
         editorLoader.active = true;
-        let profile = Profiles.getProfileFromId(profileId);
+        let profile = Profiles.getProfile(profileId);
         editorLoader.item.setProfile(profile, profileId);
     }
 }

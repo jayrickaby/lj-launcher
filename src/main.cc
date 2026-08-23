@@ -7,6 +7,7 @@
 #include <QQmlApplicationEngine>
 
 #include "Application.h"
+#include "Profile.h"
 #include "Profiles.h"
 #include "ProfilesTable.h"
 #include "Settings.h"
@@ -25,6 +26,8 @@ int main(int argc, char *argv[]) {
 
   QGuiApplication::setWindowIcon(QIcon(Application::getDefaultIcon()));
 
+  ProfileManager::refreshProfiles();
+
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Application", Application::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Authentication", Authentication::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Downloader", Downloader::getInstance());
@@ -36,6 +39,7 @@ int main(int argc, char *argv[]) {
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "VersionManifest", VersionManifest::getInstance());
 
   qmlRegisterType<ProfilesTable>("jayrickaby.lj_launcher", 1, 0, "ProfilesTable");
+  // qmlRegisterType<Profile>("jayrickaby.lj_launcher", 1, 0, "Profile");
 
   QQmlApplicationEngine engine;
   QObject::connect(

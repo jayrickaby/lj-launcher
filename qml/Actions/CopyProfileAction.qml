@@ -13,8 +13,8 @@ Action {
     onTriggered: {
         if (!profileId) return;
 
-        let profile = Profiles.getProfileFromId(profileId);
+        let profile = Profiles.getProfile(profileId);
         profile["name"] = `Copy of ${profile["name"]}`;
-        Profiles.addNewProfile(profile);
+        Profiles.createProfile(profile);
     }
 }

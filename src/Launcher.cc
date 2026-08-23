@@ -45,26 +45,37 @@ QUrl Launcher::getJavaExecutable() {
 
 QString Launcher::userMessage() {
   qDebug() << "Updating user message...";
-  const bool AUTHENTICATED {Authentication::getAuthState() == Authentication::AuthState::AUTHENTICATED};
-  const bool MANIFEST_DOWNLOADED {VersionManifest::getManifestState() == VersionManifest::ManifestState::PRESENT};
-  const QString CURRENT_VERSION{Profiles::getCurrentProfileVersion()};
+  bool authenticated {Authentication::getAuthState() == Authentication::AuthState::AUTHENTICATED};
+  bool manifestDownloaded {VersionManifest::getManifestState() == VersionManifest::ManifestState::PRESENT};
 
-  QString const USERNAME {getUsername()};
+  QString version {
+    ProfileManager::getProfile(
+      Profiles::getCurrentProfileId()
+    )->lastVersionId
+  };
+  if (version == "latest-release") {
+    version = VersionManifest::getLatestVersions().release;
+  }
+  else if (version == "latest-snapshot") {
+    version = VersionManifest::getLatestVersions().snapshot;
+  }
 
-  QString message {QString("Welcome, <b>%1</b>").arg(USERNAME)};
+  QString username {getUsername()};
 
-  if (!AUTHENTICATED) {
+  QString message {QString("Welcome, <b>%1</b>").arg(username)};
+
+  if (!authenticated) {
     message.append("! Please log in.");
   }
 
   message.append("<br>");
 
-  if (MANIFEST_DOWNLOADED and AUTHENTICATED) {
-    const QString DOWNLOAD_MESSAGE {Versions::isDownloaded(CURRENT_VERSION) ? "" : "download & "};
+  if (manifestDownloaded and authenticated) {
+    const QString DOWNLOAD_MESSAGE {Versions::isDownloaded(version) ? "" : "download & "};
 
     const QString READY_MESSAGE {"Ready to %1play Minecraft %2"};
 
-    message.append(READY_MESSAGE.arg(DOWNLOAD_MESSAGE, CURRENT_VERSION));
+    message.append(READY_MESSAGE.arg(DOWNLOAD_MESSAGE, version));
   }
   else {
     message.append("Loading ver...");
@@ -142,7 +153,11 @@ Launcher* Launcher::getInstance() {
 }
 
 void Launcher::play() {
-  const QString CURRENT_VER {Profiles::getCurrentProfileVersion()};
+  const QString CURRENT_VER {
+    ProfileManager::getProfile(
+      Profiles::getCurrentProfileId()
+    )->lastVersionId
+  };
 
   Game::launch(
     VersionManifest::getVersion(CURRENT_VER)

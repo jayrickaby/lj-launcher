@@ -13,7 +13,7 @@ Action {
     onTriggered: {
         if (!profileId) return;
 
-        let profile = Profiles.getProfileFromId(profileId)
+        let profile = Profiles.getProfile(profileId)
         let path = profile.gameDir ? profile.gameDir : Launcher.gameDirectory
         let url = path.startsWith("file://") ? path : "file://" + path
 

@@ -295,10 +295,10 @@ ApplicationWindow {
                 onClicked: {
                     let profile = constructProfileJson();
                     if (currentProfileId == null) {
-                        Profiles.addNewProfile(profile);
+                        Profiles.createProfile(profile);
                     }
                     else {
-                        Profiles.editCurrentProfile(profile);
+                        Profiles.editProfile(currentProfileId, profile);
                     }
                     control.close();
                 }
