@@ -284,7 +284,10 @@ ApplicationWindow {
             Button {
                 text: qsTr("Open Game Dir")
 
-                onClicked: Qt.openUrlExternally(Launcher.game_directory)
+                action:OpenGameDirectoryAction {
+                    id: openGameDirAction
+                    profileId: currentProfileId
+                }
             }
             Button {
                 text: qsTr("Save Profile")

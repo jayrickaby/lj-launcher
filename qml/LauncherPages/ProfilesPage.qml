@@ -177,7 +177,7 @@ FocusScope {
             action: deleteProfileAction
         }
         MenuItem {
-            text: qsTr("Open Game Folder")
+            action: openGameDirAction
         }
     }
 
@@ -195,6 +195,11 @@ FocusScope {
 
     DeleteProfileAction {
         id: deleteProfileAction
+        profileId: profilesMenu.targetUuid
+    }
+
+    OpenGameDirectoryAction {
+        id: openGameDirAction
         profileId: profilesMenu.targetUuid
     }
 }

@@ -65,6 +65,7 @@ qt_add_qml_module(lj_launcher
         qml/Actions/DeleteProfileAction.qml
         qml/Actions/EditProfileAction.qml
         qml/Actions/NewProfileAction.qml
+        qml/Actions/OpenGameDirectoryAction.qml
         qml/LauncherPages/NewsPage.qml
         qml/LauncherPages/ProfilesPage.qml
         qml/LauncherPages/template/ProfileCellDelegate.qml
