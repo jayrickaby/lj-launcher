@@ -62,6 +62,7 @@ qt_add_qml_module(lj_launcher
         qml/LoginForm.qml
         qml/ProfileEditor.qml
         qml/Actions/CopyProfileAction.qml
+        qml/Actions/DeleteProfileAction.qml
         qml/Actions/EditProfileAction.qml
         qml/Actions/NewProfileAction.qml
         qml/LauncherPages/NewsPage.qml

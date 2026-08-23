@@ -12,6 +12,7 @@ Action {
 
     onTriggered: {
         let profile = Profiles.getProfileFromId(profileId);
+        profile["name"] = `Copy of ${profile["name"]}`;
         Profiles.addNewProfile(profile);
     }
 }

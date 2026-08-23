@@ -174,7 +174,7 @@ FocusScope {
             action: copyProfileAction
         }
         MenuItem {
-            text: qsTr("Delete Profile")
+            action: deleteProfileAction
         }
         MenuItem {
             text: qsTr("Open Game Folder")
@@ -190,6 +190,11 @@ FocusScope {
 
     CopyProfileAction {
         id: copyProfileAction
+        profileId: profilesMenu.targetUuid
+    }
+
+    DeleteProfileAction {
+        id: deleteProfileAction
         profileId: profilesMenu.targetUuid
     }
 }

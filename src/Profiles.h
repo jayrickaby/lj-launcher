@@ -62,11 +62,16 @@ public:
     bool defaultTime=false
   );
 
+  static void deleteProfile(const QString& profileId);
+
 public slots:
   void addNewProfile(QVariantMap parameters={}) {
     const QString NEW_PROFILE_ID {createProfile(QString(), parameters, false)};
     setCurrentProfileId(NEW_PROFILE_ID);
     emit profilesChanged();
+  };
+  void deleteProfileById(const QString& profileId) {
+    deleteProfile(profileId);
   };
   void editCurrentProfile(QVariantMap parameters={}) {
     editProfile(getCurrentProfileId(), parameters);

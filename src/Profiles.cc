@@ -366,3 +366,23 @@ void Profiles::renameCurrentProfileIfDefault() {
     editProfile(getCurrentProfileId(), params);
   }
 }
+
+void Profiles::deleteProfile(const QString& profileId) {
+  if (!isProfile(profileId)) {
+    return;
+  }
+
+  QVariantMap profiles {getProfiles()};
+  profiles.remove(profileId);
+
+  if (profiles.empty()) {
+    getInstance()->setCurrentProfileId(createProfile({}, {}, true));
+    renameCurrentProfileIfDefault();
+  }
+
+  if (getCurrentProfileId() == profileId) {
+    getInstance()->setCurrentProfileId(profiles.keys().first());
+  }
+
+  saveProfiles(profiles);
+}
