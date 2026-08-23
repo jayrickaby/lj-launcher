@@ -70,9 +70,9 @@ QList<QVariantMap> Profiles::profiles() {
   }
 
   // Sort by creation date, not alphabetically
-  std::ranges::sort(profilesList, [](const QVariant& a, const QVariant& b) {
-    const QVariantMap PROFILE_A {getProfile(a.toMap()["id"].toString())};
-    const QVariantMap PROFILE_B {getProfile(b.toMap()["id"].toString())};
+  std::ranges::sort(profilesList, [](const QVariantMap& a, const QVariantMap& b) {
+    const QVariantMap PROFILE_A {getProfile(a.value("id").toString())};
+    const QVariantMap PROFILE_B {getProfile(b.value("id").toString())};
 
     return PROFILE_A["created"].toString() < PROFILE_B["created"].toString();
   });

@@ -171,7 +171,7 @@ FocusScope {
             action: newProfileAction
         }
         MenuItem {
-            text: qsTr("Copy Profile")
+            action: copyProfileAction
         }
         MenuItem {
             text: qsTr("Delete Profile")
@@ -185,6 +185,11 @@ FocusScope {
         id: newProfileAction
 
         editorLoader: profileEditorLoader
+        profileId: profilesMenu.targetUuid
+    }
+
+    CopyProfileAction {
+        id: copyProfileAction
         profileId: profilesMenu.targetUuid
     }
 }
