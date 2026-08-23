@@ -6,6 +6,7 @@ import QtQuick.Layouts
 import jayrickaby.lj_launcher
 
 import "./LauncherPages"
+import "./Actions"
 
 Item {
     id: control
@@ -33,6 +34,14 @@ Item {
                 profileEditorLoader.active = false;
             });
         }
+    }
+
+
+    NewProfileAction {
+        id: newProfileAction
+
+        editorLoader: profileEditorLoader
+        profileId: profileChooser.currentValue
     }
 
     ColumnLayout {
@@ -134,6 +143,7 @@ Item {
                     RowLayout {
                        Text { text: qsTr("Profile:") }
                        ComboBox {
+                           id: profileChooser
                            Layout.preferredWidth: 137
                            Layout.preferredHeight: 20
 
@@ -170,16 +180,9 @@ Item {
                             Layout.preferredWidth: 85
                             Layout.preferredHeight: 21
 
-                            text: qsTr("New Profile")
+                            action: newProfileAction
 
                             enabled: authenticated && versionsGotten
-
-                            onClicked: {
-                                profileEditorLoader.active = true;
-                                let profile = Profiles.currentProfile;
-                                profile["name"] = `Copy of ${profile["name"]}`;
-                                profileEditorLoader.item.setProfile(profile, null);
-                            }
                         }
                         Button {
                             Layout.preferredWidth: 85

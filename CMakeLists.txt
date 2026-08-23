@@ -61,6 +61,7 @@ qt_add_qml_module(lj_launcher
         qml/LauncherMenu.qml
         qml/LoginForm.qml
         qml/ProfileEditor.qml
+        qml/Actions/NewProfileAction.qml
         qml/LauncherPages/NewsPage.qml
         qml/LauncherPages/ProfilesPage.qml
         qml/LauncherPages/template/ProfileCellDelegate.qml

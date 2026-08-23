@@ -72,6 +72,7 @@ public slots:
     editProfile(getCurrentProfileId(), parameters);
     emit profilesChanged();
   };
+  QVariantMap getProfileFromId(const QString& profileId) { return getProfile(profileId); };
   void setCurrentProfileId(const QString& profileId);
 
 private:

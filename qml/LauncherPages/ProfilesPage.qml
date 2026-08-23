@@ -3,12 +3,14 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import "./template"
+import "../Actions"
 
 // Adapted plasma-systemmonitor/src/table/BaseTableView.qml
 FocusScope {
     id: root
 
     property var model
+    property var editorLoader
     property alias view: tableView
 
     // From plasma-systemmonitor/src/table/BaseTableView.qml:
@@ -166,7 +168,7 @@ FocusScope {
         property var targetUuid: null
 
         MenuItem {
-            text: qsTr("Add Profile")
+            action: newProfileAction
         }
         MenuItem {
             text: qsTr("Copy Profile")
@@ -177,5 +179,12 @@ FocusScope {
         MenuItem {
             text: qsTr("Open Game Folder")
         }
+    }
+
+    NewProfileAction {
+        id: newProfileAction
+
+        editorLoader: profileEditorLoader
+        profileId: profilesMenu.targetUuid
     }
 }
