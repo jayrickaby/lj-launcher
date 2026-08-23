@@ -379,8 +379,7 @@ void Profiles::deleteProfile(const QString& profileId) {
     getInstance()->setCurrentProfileId(createProfile({}, {}, true));
     renameCurrentProfileIfDefault();
   }
-
-  if (getCurrentProfileId() == profileId) {
+  else if (getCurrentProfileId() == profileId) {
     getInstance()->setCurrentProfileId(profiles.keys().first());
   }
 
