@@ -107,7 +107,7 @@ QList<QVariantMap> Versions::getDownloadedVersions() {
     if (QDir(JSON_PATH).exists()) {
       qDebug() << "Found version:" << VERSION;
       versions.append (
-          QJsonDocument::fromJson(System::read(JSON_PATH).toUtf8())
+          QJsonDocument::fromJson(FileSystem::read(JSON_PATH).toUtf8())
           .object()
           .toVariantMap()
       );

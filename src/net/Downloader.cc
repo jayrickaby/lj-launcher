@@ -4,7 +4,6 @@
 
 #include "Downloader.h"
 
-#include "System.h"
 #include "Versions.h"
 #include "minecraft/assets/AssetIndex.h"
 #include "minecraft/lib/LibraryIndex.h"
@@ -125,7 +124,7 @@ void Downloader::processDownload(QNetworkReply* reply) {
     qDebug() << "Calculated size:" << DATA.size() << "is meant to be:" << ITEM.size;
   }
 
-  const QByteArray DATA_HASH {System::getSha1Checksum(DATA)};
+  const QByteArray DATA_HASH {FileSystem::getSha1Checksum(DATA)};
 
   if (!ITEM.hash.isEmpty() and DATA_HASH != ITEM.hash) {
     qDebug() << "File:" << ITEM.path << "was corrupted! Redownloading...";
@@ -137,7 +136,7 @@ void Downloader::processDownload(QNetworkReply* reply) {
 
   FileSystem::makePath(FileSystem::getParentDirectory(ITEM.path));
 
-  if (!System::write(ITEM.path, DATA)) {
+  if (!FileSystem::write(ITEM.path, DATA)) {
     throw std::runtime_error("Unable to download required version file: " + ITEM.path.toStdString());
   };
 

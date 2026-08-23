@@ -231,7 +231,7 @@ void Profiles::dumpJson(const QVariantMap& data) {
     QJsonDocument::fromVariant(data).toJson()
   };
 
-  if (!System::write(JSON_PATH.toLocalFile(), RAW)) {
+  if (!FileSystem::write(JSON_PATH.toLocalFile(), RAW)) {
     throw std::runtime_error("Failed to write to JSON file!");
   }
 }
@@ -241,7 +241,7 @@ QVariantMap Profiles::getProfiles() {
 }
 
 QVariantMap Profiles::getJsonData() {
-  const QString DATA{System::read(JSON_PATH.toLocalFile())};
+  const QString DATA{FileSystem::read(JSON_PATH.toLocalFile())};
 
   const QJsonObject JSON {
     QJsonDocument::fromJson(DATA.toUtf8()).object()

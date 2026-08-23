@@ -5,5 +5,5 @@
 #include "JsonUtils.h"
 
 QJsonObject JsonUtils::readJson(const QString& path) {
-  return QJsonDocument::fromJson(System::read(path).toUtf8()).object();
+  return QJsonDocument::fromJson(FileSystem::read(path).toUtf8()).object();
 }

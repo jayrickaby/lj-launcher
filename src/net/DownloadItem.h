@@ -8,7 +8,6 @@
 #include <QString>
 
 #include "sys/io/FileSystem.h"
-#include "System.h"
 
 struct DownloadItem {
   QString hash {""};

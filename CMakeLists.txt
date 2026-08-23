@@ -18,8 +18,6 @@ qt_add_executable(lj_launcher
         src/Launcher.h
         src/Profiles.cc
         src/Profiles.h
-        src/System.cc
-        src/System.h
         src/net/Versions.cc
         src/net/Versions.h
         src/net/Authentication.cc
@@ -51,6 +49,8 @@ qt_add_executable(lj_launcher
         src/net/DownloadItem.h
         src/minecraft/profiles/ProfilesTable.cc
         src/minecraft/profiles/ProfilesTable.h
+        src/minecraft/profiles/ProfileManager.cc
+        src/minecraft/profiles/ProfileManager.h
 )
 
 qt_add_qml_module(lj_launcher

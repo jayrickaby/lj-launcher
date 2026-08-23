@@ -37,3 +37,4 @@ Settings* Settings::getInstance() {
   }
   return s_instance;
 }
+

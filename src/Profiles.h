@@ -16,7 +16,6 @@
 
 #include "Launcher.h"
 #include "net/Versions.h"
-#include "System.h"
 
 class Profiles : public QObject {
   Q_OBJECT

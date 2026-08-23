@@ -14,7 +14,6 @@
 
 #include "NetworkRequester.h"
 #include "../Launcher.h"
-#include "../System.h"
 
 enum class VersionType {
   RELEASE,

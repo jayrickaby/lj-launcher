@@ -24,7 +24,7 @@ bool DownloadItem::isDownloaded() const {
     return false;
   }
 
-  QString true_hash {System::getSha1Checksum(System::cat(path))};
+  QString true_hash {FileSystem::getSha1Checksum(FileSystem::cat(path))};
 
   if (!hash.isEmpty() and hash != true_hash) {
     qDebug() << "Item" << url << "does not have the correct checksum!";
