@@ -43,6 +43,12 @@ Item {
         editorLoader: profileEditorLoader
         profileId: profileChooser.currentValue
     }
+    EditProfileAction {
+        id: editProfileAction
+
+        editorLoader: profileEditorLoader
+        profileId: profileChooser.currentValue
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -188,16 +194,9 @@ Item {
                             Layout.preferredWidth: 85
                             Layout.preferredHeight: 21
 
-                            text: qsTr("Edit Profile")
+                            action: editProfileAction
 
                             enabled: authenticated && versionsGotten
-
-                            onClicked: {
-                                profileEditorLoader.active = true;
-                                let profile = Profiles.currentProfile;
-                                let profileId = Profiles.currentProfileId;
-                                profileEditorLoader.item.setProfile(profile, profileId);
-                            }
                         }
                     }
                 }
