@@ -60,19 +60,19 @@ void Profile::copy(const QVariantMap& data) {
     icon = data.value("icon").toString();
   }
 
-  if (data.contains("gameDir")) {
+  if (data.contains("gameDir") and !data.value("gameDir").isNull()) {
     gameDir = data.value("gameDir").toString();
   }
 
-  if (data.contains("javaDir")) {
+  if (data.contains("javaDir") and !data.value("javaDir").isNull()) {
     javaDir = data.value("javaDir").toString();
   }
 
-  if (data.contains("javaArgs")) {
+  if (data.contains("javaArgs") and !data.value("javaArgs").isNull()) {
     javaArgs = data.value("javaArgs").toString();
   }
 
-  if (data.contains("resolution")) {
+  if (data.contains("resolution") and !data.value("resolution").isNull()) {
     QVariantMap dataResolution {data.value("resolution").toMap()};
     if (dataResolution.contains("width") and dataResolution.contains("height")) {
       resolution = Resolution {
@@ -93,10 +93,12 @@ QVariantMap Profile::toMap() {
     case ProfileType::LATEST_RELEASE: {
       result["type"] = lastVersionId;
       result["lastVersionId"] = lastVersionId;
+      break;
     }
     case ProfileType::CUSTOM: {
       result["type"] = "custom";
       result["lastVersionId"] = lastVersionId;
+      break;
     }
   }
 

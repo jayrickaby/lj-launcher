@@ -83,6 +83,8 @@ ApplicationWindow {
                     Layout.fillWidth: true
 
                     TextField {
+                        id: resolutionWidth
+
                         Layout.fillWidth: true
                         Layout.preferredHeight: 21
 
@@ -99,6 +101,8 @@ ApplicationWindow {
                         font.pointSize: 8
                     }
                     TextField {
+                        id: resolutionHeight
+
                         Layout.fillWidth: true
                         Layout.preferredHeight: 21
 
@@ -312,9 +316,21 @@ ApplicationWindow {
             "lastVersionId": comboUseVersion.currentValue
         };
 
-        checkGameDir.checked ? json["gameDir"] = gameDir.text : json["gameDir"] = "";
-        checkJavaExecutable.checked ? json["javaDir"] = javaExecutable.text : json["javaDir"] = "";
-        checkJavaArguments.checked ? json["javaArgs"] = javaArguments.text : json["javaArgs"] = "";
+        if (checkGameDir.checked) {
+            json["gameDir"] = gameDir.text;
+        }
+        if (checkJavaExecutable.checked) {
+            json["javaDir"] = javaExecutable.text
+        }
+        if (checkJavaArguments.checked) {
+            json["javaArgs"] = javaArguments.text
+        }
+        if (checkResolution.checked) {
+            json["resolution"] = {
+                "width": resolutionWidth,
+                "height": resolutionHeight
+            }
+        }
 
         return json;
     }
