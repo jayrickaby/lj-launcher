@@ -37,6 +37,9 @@ TableViewDelegate {
         acceptedButtons: Qt.RightButton
 
         onClicked: {
+            let modelIndex = tableView.model.index(row, column)
+            tableView.selectionModel.setCurrentIndex(modelIndex, ItemSelectionModel.ClearAndSelect | ItemSelectionModel.Rows)
+
             if (contextMenu) {
                 contextMenu.targetUuid = model.uuid
                 contextMenu.popup()
