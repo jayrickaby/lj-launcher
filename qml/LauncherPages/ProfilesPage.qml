@@ -163,43 +163,8 @@ FocusScope {
         bottomRightHandle: null
     }
 
-    Menu {
+    ProfilesTableMenu {
         id: profilesMenu
-        property var targetUuid: null
-
-        MenuItem {
-            action: newProfileAction
-        }
-        MenuItem {
-            action: copyProfileAction
-        }
-        MenuItem {
-            action: deleteProfileAction
-        }
-        MenuItem {
-            action: openGameDirAction
-        }
-    }
-
-    NewProfileAction {
-        id: newProfileAction
-
-        editorLoader: profileEditorLoader
-        profileId: profilesMenu.targetUuid
-    }
-
-    CopyProfileAction {
-        id: copyProfileAction
-        profileId: profilesMenu.targetUuid
-    }
-
-    DeleteProfileAction {
-        id: deleteProfileAction
-        profileId: profilesMenu.targetUuid
-    }
-
-    OpenGameDirectoryAction {
-        id: openGameDirAction
-        profileId: profilesMenu.targetUuid
+        editorLoader: root.editorLoader
     }
 }

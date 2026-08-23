@@ -69,6 +69,7 @@ qt_add_qml_module(lj_launcher
         qml/LauncherPages/NewsPage.qml
         qml/LauncherPages/ProfilesPage.qml
         qml/LauncherPages/template/ProfileCellDelegate.qml
+        qml/LauncherPages/template/ProfilesTableMenu.qml
     RESOURCES
         assets/dirt.png
         assets/minecraft_logo.png

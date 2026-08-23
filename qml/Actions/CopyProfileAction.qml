@@ -6,7 +6,7 @@ import jayrickaby.lj_launcher
 Action {
     id: root
 
-    property var profileId: null
+    property var profileId
 
     text: qsTr("Copy Profile")
 

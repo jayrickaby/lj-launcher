@@ -115,7 +115,6 @@ void VersionManifest::refreshManifest() {
 }
 
 ManifestLatest VersionManifest::parseLatestVersions(const QVariantMap& latestData) {
-  qDebug() << "Parsing raw manifest data of latest ver...";
   return ManifestLatest {
     .release = latestData.value("release").toString(),
     .snapshot = latestData.value("snapshot").toString()
@@ -123,8 +122,6 @@ ManifestLatest VersionManifest::parseLatestVersions(const QVariantMap& latestDat
 }
 
 ManifestEntry VersionManifest::parseManifestEntry(const QVariantMap& entryData) {
-  qDebug() << "Parsing raw manifest data of a version entry...";
-
   const VersionType TYPE {
     Versions::convertToVersionType(entryData.value("type").toString())
   };

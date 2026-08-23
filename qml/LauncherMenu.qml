@@ -99,6 +99,8 @@ Item {
                 Layout.fillHeight: true
 
                 columnWidths: [0.5, 0.5]
+
+                editorLoader: profileEditorLoader
                 model: ProfilesTable {}
             }
         }

@@ -6,8 +6,8 @@ import jayrickaby.lj_launcher
 Action {
     id: root
 
-    property Loader editorLoader: null
-    property var profileId: null
+    property var editorLoader
+    property var profileId
 
     text: qsTr("Edit Profile")
 
