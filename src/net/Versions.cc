@@ -18,6 +18,13 @@ QList<QVariantMap> Versions::versionsList() {
 
   QList<QVariantMap> versions{};
 
+  versions.append(
+    QVariantMap{
+    {"id", "latest-release"},
+    {"name", "(Use Latest Release)"}
+    }
+  );
+
   for (const auto& version : AVAILABLE_VERSIONS) {
     QString type {convertFromVersionType(version.type)};
 

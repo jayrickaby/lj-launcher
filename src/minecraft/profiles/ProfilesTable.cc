@@ -61,7 +61,12 @@ QVariant ProfilesTable::data(const QModelIndex& index, int role) const {
 
     switch (index.column()) {
       case 0: return profile->getName();
-      case 1: return profile->getLastVersionId();
+      case 1: {
+        if (profile->getType() == ProfileEntry::ProfileType::LATEST_RELEASE) {
+          return "(Use Latest Release)";
+        }
+        return profile->getLastVersionId();
+      }
     }
   }
   return {};
