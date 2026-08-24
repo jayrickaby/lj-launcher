@@ -40,6 +40,7 @@ signals:
   void javaDirChanged();
   void javaArgsChanged();
   void resolutionChanged();
+  void profileUpdated();
 
 public:
   explicit Profile(QObject *parent = nullptr);

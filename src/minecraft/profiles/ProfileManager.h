@@ -14,6 +14,7 @@ class ProfileManager : public QObject {
 
 signals:
   void refreshedProfiles();
+  void profileUpdated(const QString& profileId);
   void savedProfiles();
 
 public:

@@ -9,8 +9,18 @@
 #include "Launcher.h"
 
 Profile::Profile(QObject* parent)
-  : QObject(parent)
-{}
+  : QObject(parent) {
+  connect(this, &Profile::nameChanged, &Profile::profileUpdated);
+  connect(this, &Profile::typeChanged, &Profile::profileUpdated);
+  connect(this, &Profile::createdChanged, &Profile::profileUpdated);
+  connect(this, &Profile::lastUsedChanged, &Profile::profileUpdated);
+  connect(this, &Profile::iconChanged, &Profile::profileUpdated);
+  connect(this, &Profile::lastVersionIdChanged, &Profile::profileUpdated);
+  connect(this, &Profile::gameDirChanged, &Profile::profileUpdated);
+  connect(this, &Profile::javaDirChanged, &Profile::profileUpdated);
+  connect(this, &Profile::javaArgsChanged, &Profile::profileUpdated);
+  connect(this, &Profile::resolutionChanged, &Profile::profileUpdated);
+}
 
 Profile::Profile(const QJsonObject& data, QObject *parent)
   : Profile(parent){

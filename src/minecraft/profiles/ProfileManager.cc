@@ -132,7 +132,14 @@ void ProfileManager::refreshProfiles() {
   for (const auto& profileId : entries.keys()) {
     auto profileData {entries.value(profileId).toMap()};
 
-    s_profiles.insert(profileId, QSharedPointer<Profile>::create(profileData));
+    auto profile {QSharedPointer<Profile>::create(profileData)};
+    auto instance {getInstance()};
+
+    connect(profile.get(), &Profile::profileUpdated, instance, [instance, profileId] {
+      emit instance->profileUpdated(profileId);
+    });
+
+    s_profiles.insert(profileId, profile);
   }
 
   emit getInstance()->refreshedProfiles();
