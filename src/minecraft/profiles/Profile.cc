@@ -41,21 +41,19 @@ void Profile::copy(const QVariantMap& data) {
     setName(data.value("name").toString());
   }
 
-  if (data.contains("type")) {
+  if (data.contains("lastVersionId")) {
     // can't mix and match latest type with random version
-    QString dataType {data.value("type").toString()};
-    if (dataType == "latest-release") {
+    QString lastVersionId {data.value("lastVersionId").toString()};
+    if (lastVersionId == "latest-release") {
       setType(ProfileType::LATEST_RELEASE);
-      setLastVersionId(dataType);
     }
-    else if (dataType == "latest-snapshot") {
+    else if (lastVersionId == "latest-snapshot") {
       setType(ProfileType::LATEST_SNAPSHOT);
-      setLastVersionId(dataType);
     }
     else {
       setType(ProfileType::CUSTOM);
-      setLastVersionId(data.value("lastVersionId").toString());
     }
+    setLastVersionId(lastVersionId);
   }
 
   if (data.contains("created")) {
