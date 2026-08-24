@@ -4,6 +4,9 @@
 
 #ifndef LJ_LAUNCHER_GAME_H_
 #define LJ_LAUNCHER_GAME_H_
+
+#include <QProcess>
+
 #include "minecraft/ver/ClientJson.h"
 
 
@@ -12,10 +15,11 @@ class Game : public QObject {
   Q_PROPERTY(GameState state MEMBER s_state NOTIFY stateChanged);
 signals:
   void stateChanged();
+  void assetsDownloaded();
 
 public:
   explicit Game(QObject* parent = nullptr);
-  static void launch(const ManifestEntry& version);
+  static void launch(const QSharedPointer<ProfileEntry>& profile);
   static Game* getInstance();
 
   enum class GameState {
@@ -29,13 +33,16 @@ public:
   Q_ENUM(GameState);
 
 private slots:
-  void refreshState();
+  void refreshDownloadState();
 
 private:
   static void prepareAssets(const ManifestEntry& version);
+  static QStringList prepareArguments();
+  static void prepareExecutable();
   static void setState(const GameState& state);
 
   static ClientJson* s_json;
+  static QSharedPointer<ProfileEntry> s_profile;
   static Game* s_instance;
   static GameState s_state;
 };

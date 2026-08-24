@@ -129,52 +129,52 @@ QJsonObject ProfileEntry::toJson() {
   return QJsonObject::fromVariantMap(toMap());
 }
 
-QString ProfileEntry::getName() {
+QString ProfileEntry::getName() const {
   return m_name;
 }
 
-ProfileEntry::ProfileType ProfileEntry::getType() {
+ProfileEntry::ProfileType ProfileEntry::getType() const {
   return m_type;
 }
 
-QString ProfileEntry::getCreated() {
+QString ProfileEntry::getCreated() const {
   return m_created;
 }
 
-QString ProfileEntry::getLastUsed() {
+QString ProfileEntry::getLastUsed() const {
   return m_lastUsed;
 }
 
-QString ProfileEntry::getIcon() {
+QString ProfileEntry::getIcon() const {
   return m_icon;
 }
 
-QString ProfileEntry::getLastVersionId() {
+QString ProfileEntry::getLastVersionId() const {
   return m_lastVersionId;
 }
 
-QVariant ProfileEntry::getGameDir() {
+QVariant ProfileEntry::getGameDir() const {
   if (m_gameDir.has_value()) {
     return m_gameDir.value();
   }
   return {};
 }
 
-QVariant ProfileEntry::getJavaDir() {
+QVariant ProfileEntry::getJavaDir() const {
   if (m_javaDir.has_value()) {
     return m_javaDir.value();
   }
   return {};
 }
 
-QVariant ProfileEntry::getJavaArgs() {
+QVariant ProfileEntry::getJavaArgs() const {
   if (m_javaArgs.has_value()) {
     return m_javaArgs.value();
   }
   return {};
 }
 
-QVariant ProfileEntry::getResolution() {
+QVariant ProfileEntry::getResolution() const {
   if (m_resolution.has_value()) {
     return QVariant::fromValue(m_resolution.value());
   }

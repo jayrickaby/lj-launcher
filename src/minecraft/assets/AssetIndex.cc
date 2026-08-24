@@ -4,6 +4,8 @@
 
 #include "AssetIndex.h"
 
+#include "minecraft/exec/JavaVirtualMachine.h"
+
 AssetIndex::AssetIndex(const QVariantMap& data, QObject *parent)
 : NetworkRequester(parent) {
   const QString INDEX_ID {data.value("id").toString()};
@@ -18,6 +20,9 @@ AssetIndex::AssetIndex(const QVariantMap& data, QObject *parent)
     .totalSize = data.value("totalSize").toULongLong(),
     .url = data.value("url").toString()
   };
+
+  JavaVirtualMachine::setVariable("assets_root", ASSETS_PATH);
+  JavaVirtualMachine::setVariable("assets_index_name", INDEX_ID);
 }
 
 void AssetIndex::refreshIndex() {

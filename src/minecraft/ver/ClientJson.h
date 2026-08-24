@@ -39,6 +39,12 @@ public:
 
   ClientState getState();
 
+  QString getMinecraftClass();
+  QStringList getValidJvmArguments();
+  QStringList getValidDefaultJvmArguments();
+  QStringList getValidGameArguments();
+
+
   void requestJar();
   void requestJson();
 
@@ -51,13 +57,15 @@ public:
   static Feature parseFeature(const QVariantMap& rawFeature);
   static OperatingSystem parseOs(const QVariantMap& rawOs);
   static Rule parseRule(const QVariantMap& rawRule);
-
 private slots:
   void refreshState();
 
 private:
-  DownloadItem parseClientJar(const QVariantMap& data);
   bool isJarDownloaded();
+
+  DownloadItem parseClientJar(const QVariantMap& data);
+
+  QStringList getValidArguments(const ArgumentBearer& bearer);
 
   void setState(const ClientState& state);
 

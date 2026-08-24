@@ -32,7 +32,7 @@ struct Rule {
 
 struct RuleBearer {
   QList<Rule> rules;
-  bool isUserSuitable(const OperatingSystem& user) const;
+  [[nodiscard]] bool isUserSuitable(const OperatingSystem& user) const;
 };
 
 #endif  // LJ_LAUNCHER_RULE_H_

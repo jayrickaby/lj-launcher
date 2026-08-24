@@ -5,6 +5,7 @@
 #include "Launcher.h"
 
 #include "minecraft/exec/Game.h"
+#include "minecraft/exec/JavaVirtualMachine.h"
 #include "minecraft/ver/ClientJson.h"
 #include "minecraft/ver/VersionManifest.h"
 
@@ -153,13 +154,11 @@ Launcher* Launcher::getInstance() {
 }
 
 void Launcher::play() {
-  const QString CURRENT_VER {
+  const auto profile {
     ProfileManager::getProfile(
       Profiles::getCurrentProfileId()
-    )->getLastVersionId()
+    )
   };
 
-  Game::launch(
-    VersionManifest::getVersion(CURRENT_VER)
-  );
+  Game::launch(profile);
 }

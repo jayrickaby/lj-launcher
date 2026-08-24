@@ -4,34 +4,114 @@
 
 #include "Game.h"
 
+#include "JavaVirtualMachine.h"
+
 Game* Game::s_instance {nullptr};
 Game::GameState Game::s_state {GameState::UNINITIALISED};
 ClientJson* Game::s_json {nullptr};
+QSharedPointer<ProfileEntry> Game::s_profile {nullptr};
 
 Game::Game(QObject* parent)
 : QObject(parent) {
   if (!s_instance) {
     s_instance = this;
   }
+
+  connect(this, &Game::assetsDownloaded, &Game::prepareExecutable);
 };
 
-void Game::launch(const ManifestEntry& version) {
+void Game::launch(const QSharedPointer<ProfileEntry>& profile) {
   if (s_state != GameState::UNINITIALISED) {
     qDebug() << "There is already a game instance running!";
     return;
   }
+
+  if (!profile) {
+    qDebug() << "Game Profile is invalid!";
+  }
+
+  s_profile = profile;
+
   setState(GameState::PREPARING);
-  prepareAssets(version);
+
+  QString profileVer{};
+  switch (profile->getType()) {
+    case ProfileEntry::ProfileType::LATEST_RELEASE:
+      profileVer = VersionManifest::getLatestVersions().release;
+      break;
+    case ProfileEntry::ProfileType::LATEST_SNAPSHOT:
+      profileVer = VersionManifest::getLatestVersions().snapshot;
+      break;
+    case ProfileEntry::ProfileType::CUSTOM:
+      profileVer = profile->getLastVersionId();
+  }
+  // TODO: Generate and store to clientId_v2.txt and grab from there instead
+  JavaVirtualMachine::setVariable("clientid", "3d99c47a1bfe4b50b651fb8429c3aad6");
+
+  prepareAssets(VersionManifest::getVersion(s_profile->getLastVersionId()));
 }
 
 void Game::prepareAssets(const ManifestEntry& version) {
+  JavaVirtualMachine::setVariable("version_name", version.item.id);
+  JavaVirtualMachine::setVariable("version_type", Versions::convertFromVersionType(version.type));
+
   s_json = new ClientJson(version);
 
   connect(s_json, &ClientJson::stateChanged,
-    getInstance(), &Game::refreshState);
+    getInstance(), &Game::refreshDownloadState);
 }
 
-void Game::refreshState() {
+void Game::prepareExecutable() {
+  qDebug() << "Preparing executable...";
+
+  QString gameDir = s_profile->getGameDir().isNull()
+                  ? Launcher::getGameDirectory().toLocalFile()
+                  : s_profile->getGameDir().toString();
+
+  JavaVirtualMachine::setVariable("game_directory", gameDir);
+
+  QString javaDir = s_profile->getJavaDir().isNull()
+                  ? Launcher::getJavaExecutable().toLocalFile()
+                  : s_profile->getJavaDir().toString();
+
+
+  QStringList args {prepareArguments()};
+
+  auto* process = new QProcess();
+
+  process->setWorkingDirectory(gameDir);
+  process->setProcessChannelMode(QProcess::MergedChannels);
+
+  connect(process, &QProcess::readyReadStandardOutput,
+    getInstance(), [process] {
+      qDebug() << process->readAllStandardOutput();
+    });
+
+  qDebug() << args;
+
+  process->start(javaDir, args);
+}
+
+QStringList Game::prepareArguments() {
+  QStringList arguments;
+
+  if (s_profile->getJavaArgs().isNull()) {
+    for (const auto& arg : s_json->getValidDefaultJvmArguments()) {
+      arguments.append(arg);
+    }
+  }
+  else {
+    arguments.append(s_profile->getJavaArgs().toStringList());
+  }
+
+  arguments.append(s_json->getValidJvmArguments());
+  arguments.append(s_json->getMinecraftClass());
+  arguments.append(s_json->getValidGameArguments());
+
+  return JavaVirtualMachine::resolveArguments(arguments);
+}
+
+void Game::refreshDownloadState() {
   if (!s_json) {
     return;
   }
@@ -52,10 +132,15 @@ void Game::refreshState() {
 }
 
 void Game::setState(const GameState& state) {
-  if (s_state != state) {
-    s_state = state;
-    emit getInstance()->stateChanged();
+  if (s_state == state) {
+    return;
   }
+  if (state == GameState::DOWNLOADED) {
+    emit getInstance()->assetsDownloaded();
+  }
+
+  s_state = state;
+  emit getInstance()->stateChanged();
 }
 
 Game* Game::getInstance() {

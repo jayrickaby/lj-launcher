@@ -4,6 +4,7 @@
 
 #include "LibraryIndex.h"
 
+#include "minecraft/exec/JavaVirtualMachine.h"
 #include "minecraft/ver/ClientJson.h"
 #include "sys/info/SystemInfo.h"
 
@@ -36,6 +37,7 @@ LibraryIndex::LibraryIndex(const QVariantList& data, QObject *parent)
       const QVariantMap RULE {rawRule.toMap()};
       library.rules.append(ClientJson::parseRule(RULE));
     }
+    JavaVirtualMachine::appendVariable("classpath", library.artifact.path, ":");
 
     m_libraries.enqueue(library);
   }

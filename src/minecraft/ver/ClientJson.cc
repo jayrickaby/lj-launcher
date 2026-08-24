@@ -4,7 +4,7 @@
 
 #include "ClientJson.h"
 
-
+#include "minecraft/exec/JavaVirtualMachine.h"
 
 ClientJson::ClientJson(QObject* parent)
   : NetworkRequester(parent)
@@ -25,6 +25,11 @@ ClientJson::ClientJson(const ManifestEntry& manifestEntry, QObject* parent)
 
 void ClientJson::refreshJson() {
   setState(ClientState::PREPARING);
+
+  QString nativesPath {FileSystem::joinPaths({CLIENT_PATH, "natives"})};
+  FileSystem::makePath(nativesPath);
+  JavaVirtualMachine::setVariable("natives_directory", nativesPath);
+
   const QVariantMap DATA {JsonUtils::readJson(m_clientJson.path).toVariantMap()};
 
   QVariantMap arguments {DATA.value("arguments").toMap()};
@@ -70,6 +75,7 @@ void ClientJson::refreshJson() {
       .value("client").toMap()
     )
   );
+  JavaVirtualMachine::appendVariable("classpath", m_clientJar.path, ":");
 }
 
 void ClientJson::requestJson() {
@@ -80,12 +86,12 @@ void ClientJson::requestJson() {
 }
 
 void ClientJson::requestJar() {
-  qDebug() << "Requesting client.jar file...";
-
   if (m_clientJar.isDownloaded()) {
     qDebug() << "Skipped client.jar as it was already downloaded!";
     return;
   }
+
+  qDebug() << "Requesting client.jar file...";
 
   // Don't add this as requester or else it will be an infinite loop of refresh -> request
   setState(ClientState::DOWNLOADING_OTHERS);
@@ -269,4 +275,35 @@ OperatingSystem ClientJson::parseOs(const QVariantMap& rawOs) {
 
 
   return operatingSystem;
+}
+
+QStringList ClientJson::getValidDefaultJvmArguments() {
+  return getValidArguments(defaultJvmArguments);
+}
+
+QStringList ClientJson::getValidJvmArguments() {
+  return getValidArguments(jvmArguments);
+}
+
+QStringList ClientJson::getValidGameArguments() {
+  return getValidArguments(gameArguments);
+}
+
+QStringList ClientJson::getValidArguments(const ArgumentBearer& bearer) {
+
+  QStringList validArgs {bearer.unconditionalArguments};
+
+  auto user {SystemInfo::getOperatingSystem()};
+
+  for (const auto& arg : bearer.conditionalArguments) {
+    if (arg.isUserSuitable(user)) {
+      validArgs.append(arg.values);
+    }
+  }
+
+  return validArgs;
+}
+
+QString ClientJson::getMinecraftClass() {
+  return m_mainClass;
 }

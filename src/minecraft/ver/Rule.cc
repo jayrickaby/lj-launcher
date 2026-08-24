@@ -9,11 +9,15 @@
 bool RuleBearer::isUserSuitable(const OperatingSystem& user) const {
   bool userSuitable{false};
 
-
   auto userVer {QVersionNumber::fromString(user.version)};
 
   for (const auto& rule : rules) {
     bool targetMatches {true};
+
+    // TODO: Skip features for now
+    if (rule.feature != Feature::NONE) {
+      return false;
+    }
 
     if (rule.os.name != SystemName::NONE and rule.os.name != user.name) {
       targetMatches = false;

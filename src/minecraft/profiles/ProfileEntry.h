@@ -62,16 +62,16 @@ public:
   void copy(const QJsonObject& data);
   void copy(const QVariantMap& data);
 
-  QString getName();
-  ProfileType getType();
-  QString getCreated();
-  QString getLastUsed();
-  QString getIcon();
-  QString getLastVersionId();
-  QVariant getGameDir();
-  QVariant getJavaDir();
-  QVariant getJavaArgs();
-  QVariant getResolution();
+  QString getName() const;
+  ProfileType getType() const;
+  QString getCreated() const;
+  QString getLastUsed() const;
+  QString getIcon() const;
+  QString getLastVersionId() const;
+  QVariant getGameDir() const;
+  QVariant getJavaDir() const;
+  QVariant getJavaArgs() const;
+  QVariant getResolution() const;
 
   void setName(const QString& name);
   void setType(const ProfileType& type);

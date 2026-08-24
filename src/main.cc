@@ -12,6 +12,7 @@
 #include "ProfilesTable.h"
 #include "Settings.h"
 #include "minecraft/exec/Game.h"
+#include "minecraft/exec/JavaVirtualMachine.h"
 #include "minecraft/ver/VersionManifest.h"
 #include "net/Authentication.h"
 #include "net/Downloader.h"
@@ -19,6 +20,9 @@
 
 int main(int argc, char *argv[]) {
   QGuiApplication app(argc, argv);
+
+  JavaVirtualMachine::setVariable("launcher_name", Application::getApplicationName());
+  JavaVirtualMachine::setVariable("launcher_version", Application::getApplicationVersion());
 
   QGuiApplication::setApplicationName(Application::getApplicationName());
   QGuiApplication::setOrganizationDomain(Application::getOrganisationDomain());

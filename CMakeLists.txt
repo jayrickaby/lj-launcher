@@ -55,6 +55,8 @@ qt_add_executable(lj_launcher
         src/minecraft/ver/Argument.h
         src/minecraft/ver/Rule.h
         src/minecraft/ver/Rule.cc
+        src/minecraft/exec/JavaVirtualMachine.cc
+        src/minecraft/exec/JavaVirtualMachine.h
 )
 
 qt_add_qml_module(lj_launcher

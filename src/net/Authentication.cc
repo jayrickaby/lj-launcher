@@ -5,6 +5,7 @@
 #include "Authentication.h"
 
 #include "Versions.h"
+#include "minecraft/exec/JavaVirtualMachine.h"
 
 Authentication* Authentication::s_instance {nullptr};
 Authentication::AuthState Authentication::s_authState {AuthState::UNAUTHENTICATED};
@@ -407,18 +408,24 @@ XboxServicesData Authentication::parseXboxServicesAuthData(const QJsonObject& js
   qDebug("Found requested Xbox user hash");
   data.userHash = XUI["uhs"].toString();
 
+  JavaVirtualMachine::setVariable("auth_xuid", data.userHash);
+
   return data;
 }
 
 QString Authentication::parseMinecraftToken(const QJsonObject& json) {
   if (!json.contains("access_token")
-    or !json["access_token"].isString()
-    or json["access_token"].toString().isEmpty()) {
+    or !json.value("access_token").isString()
+    or json.value("access_token").toString().isEmpty()) {
     throw std::runtime_error("No Minecraft access token returned!");
   }
 
+  auto accessToken = json.value("access_token").toString();
+
+  JavaVirtualMachine::setVariable("auth_access_token", accessToken);
+
   qDebug("Found Minecraft access token");
-  return json.value("access_token").toString();
+  return accessToken;
 }
 
 UserData Authentication::parseMinecraftProfile(const QJsonObject& json) {
@@ -432,14 +439,16 @@ UserData Authentication::parseMinecraftProfile(const QJsonObject& json) {
   }
 
   data.id = json["id"].toString();
+  JavaVirtualMachine::setVariable("auth_uuid", data.id);
 
   if (!json.contains("name")
     or !json["name"].isString()
     or json["name"].toString().isEmpty()) {
-    throw std::runtime_error("No Minecraft Profile UUID returned!");
+    throw std::runtime_error("No Minecraft Profile Username returned!");
   }
 
   data.name = json["name"].toString();
+  JavaVirtualMachine::setVariable("auth_player_name", data.name);
 
   qDebug("Found Minecraft Profile");
   qInfo() << "Hello," << data.name;
