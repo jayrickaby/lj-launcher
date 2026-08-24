@@ -61,7 +61,16 @@ QString ProfileManager::copyProfile(const QString& profileId) {
   auto profile {s_profiles.value(profileId)};
 
   if (profile) {
-    return createProfile(profile->toMap());
+    // Replicate original launcher behaviour.
+    // -> Profiles were stored via their name as their id.
+    // -> This, along with appending a number, allowed profiles to remain unique.
+    auto params = profile->toMap();
+
+    QString name {"Copy of %1"};
+    params["name"] = name.arg(profile->getName());
+    params["created"] = Launcher::getTime();
+
+    return createProfile(params);
   }
 
   return {};

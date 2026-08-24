@@ -8,16 +8,8 @@
 ProfilesTable::ProfilesTable(QObject* parent)
   : QAbstractTableModel(parent) {
 
-  connect(ProfileManager::getInstance(), &ProfileManager::profileUpdated,
-    this, [this](const QString &uuid) {
-      int row = m_uuidList.indexOf(uuid);
-        if (row != -1) {
-          auto topLeft {index(row, 0)};
-          auto bottomRight {index(row, columnCount() - 1)};
-          emit dataChanged(topLeft, bottomRight);
-      }
-    }
-  );
+  connect(ProfileManager::getInstance(), &ProfileManager::savedProfiles,
+    this, &ProfilesTable::refresh);
 
   refresh();
 }
