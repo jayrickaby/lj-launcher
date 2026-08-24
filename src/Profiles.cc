@@ -98,10 +98,9 @@ void Profiles::renameCurrentProfileIfDefault() {
 void Profiles::copyProfile(const QString& profileId, const QVariantMap& parameters) {
   ProfileManager::copyProfile(profileId);
 }
-void Profiles::createProfile(const QVariantMap& parameters) {
-  if (!parameters.contains("created")) {
-    parameters["created"] = Launcher::getTime();
-  }
+void Profiles::createProfile(QVariantMap parameters) {
+  parameters["created"] = Launcher::getTime();
+
   ProfileManager::createProfile(parameters);
 };
 void Profiles::deleteProfile(const QString& profileId) {

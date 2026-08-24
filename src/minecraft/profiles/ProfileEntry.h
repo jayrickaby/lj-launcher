@@ -59,7 +59,6 @@ public:
   ProfileEntry(const QJsonObject& data, QObject *parent = nullptr);
   ProfileEntry(const QVariantMap& data, QObject *parent = nullptr);
 
-
   void copy(const QJsonObject& data);
   void copy(const QVariantMap& data);
 

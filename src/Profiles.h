@@ -46,7 +46,7 @@ public:
 
 public slots:
   void copyProfile(const QString& profileId, const QVariantMap& parameters={});
-  void createProfile(const QVariantMap& parameters={});
+  void createProfile(QVariantMap parameters={});
   void deleteProfile(const QString& profileId);
   void editProfile(const QString& profileId, const QVariantMap& parameters={});
   ProfileEntry* getProfile(const QString& profileId);
