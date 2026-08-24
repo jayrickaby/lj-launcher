@@ -39,7 +39,7 @@ void ProfilesTable::refresh() {
     const auto PROFILE_A {ProfileManager::getProfile(a.toString())};
     const auto PROFILE_B {ProfileManager::getProfile(b.toString())};
 
-    return PROFILE_A->created < PROFILE_B->created;
+    return PROFILE_A->getCreated() < PROFILE_B->getCreated();
   });
 
   endResetModel();
@@ -60,8 +60,8 @@ QVariant ProfilesTable::data(const QModelIndex& index, int role) const {
     auto profile {ProfileManager::getProfile(UUID)};
 
     switch (index.column()) {
-      case 0: return profile->name;
-      case 1: return profile->lastVersionId;
+      case 0: return profile->getName();
+      case 1: return profile->getLastVersionId();
     }
   }
   return {};

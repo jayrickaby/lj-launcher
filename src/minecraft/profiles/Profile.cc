@@ -28,102 +28,92 @@ void Profile::copy(const QJsonObject& data) {
 
 void Profile::copy(const QVariantMap& data) {
   if (data.contains("name")) {
-    name = data.value("name").toString();
+    setName(data.value("name").toString());
   }
 
   if (data.contains("type")) {
     // can't mix and match latest type with random version
     QString dataType {data.value("type").toString()};
     if (dataType == "latest-release") {
-      type = ProfileType::LATEST_RELEASE;
-      lastVersionId = std::move(dataType);
+      setType(ProfileType::LATEST_RELEASE);
+      setLastVersionId(dataType);
     }
     else if (dataType == "latest-snapshot") {
-      type = ProfileType::LATEST_SNAPSHOT;
-      lastVersionId = std::move(dataType);
+      setType(ProfileType::LATEST_SNAPSHOT);
+      setLastVersionId(dataType);
     }
     else {
-      type = ProfileType::CUSTOM;
-      lastVersionId = data.value("lastVersionId").toString();
+      setType(ProfileType::CUSTOM);
+      setLastVersionId(data.value("lastVersionId").toString());
     }
   }
 
   if (data.contains("created")) {
-    created = data.value("created").toString();
+    setCreated(data.value("created").toString());
   }
 
   if (data.contains("lastUsed")) {
-    lastUsed = data.value("lastUsed").toString();
+    setLastUsed(data.value("lastUsed").toString());
   }
 
   if (data.contains("icon")) {
-    icon = data.value("icon").toString();
+    setIcon(data.value("icon").toString());
   }
 
-  if (data.contains("gameDir") and !data.value("gameDir").isNull()) {
-    gameDir = data.value("gameDir").toString();
+  if (data.contains("gameDir")) {
+    setGameDir(data.value("gameDir"));
   }
 
-  if (data.contains("javaDir") and !data.value("javaDir").isNull()) {
-    javaDir = data.value("javaDir").toString();
+  if (data.contains("javaDir")) {
+    setJavaDir(data.value("javaDir"));
   }
 
-  if (data.contains("javaArgs") and !data.value("javaArgs").isNull()) {
-    javaArgs = data.value("javaArgs").toString();
+  if (data.contains("javaArgs")) {
+    setJavaArgs(data.value("javaArgs"));
   }
 
-  if (data.contains("resolution") and !data.value("resolution").isNull()) {
-    QVariantMap dataResolution {data.value("resolution").toMap()};
-    if (dataResolution.contains("width") and dataResolution.contains("height")) {
-      resolution = Resolution {
-        .width = dataResolution.value("width").toUInt(),
-        .height = dataResolution.value("height").toUInt()
-      };
-    }
+  if (data.contains("resolution")) {
+    setResolution(data.value("resolution"));
   }
 }
 
 QVariantMap Profile::toMap() {
   QVariantMap result;
-  result["name"] = name;
+  result["name"] = getName();
 
   // can't mix and match latest type with random version
-  switch (type) {
+  switch (getType()) {
     case ProfileType::LATEST_SNAPSHOT:
     case ProfileType::LATEST_RELEASE: {
-      result["type"] = lastVersionId;
-      result["lastVersionId"] = lastVersionId;
+      result["type"] = getLastVersionId();
+      result["lastVersionId"] = getLastVersionId();
       break;
     }
     case ProfileType::CUSTOM: {
       result["type"] = "custom";
-      result["lastVersionId"] = lastVersionId;
+      result["lastVersionId"] = getLastVersionId();
       break;
     }
   }
 
-  result["created"] = created;
-  result["lastUsed"] = lastUsed;
-  result["icon"] = icon;
+  result["created"] = m_created;
+  result["lastUsed"] = m_lastUsed;
+  result["icon"] = m_icon;
 
-  if (gameDir.has_value()) {
-    result["gameDir"] = gameDir.value();
+  if (m_gameDir.has_value()) {
+    result["gameDir"] = getGameDir();
   }
 
-  if (javaDir.has_value()) {
-    result["javaDir"] = javaDir.value();
+  if (m_javaDir.has_value()) {
+    result["javaDir"] = getJavaDir();
   }
 
-  if (javaArgs.has_value()) {
-    result["javaArgs"] = javaArgs.value();
+  if (m_javaArgs.has_value()) {
+    result["javaArgs"] = getJavaArgs();
   }
 
-  if (resolution.has_value()) {
-    result["resolution"] = QVariantMap({
-        {"width", resolution.value().width},
-        {"height", resolution.value().height},
-      }
-    );
+  if (m_resolution.has_value()) {
+    result["resolution"] = getResolution();
   }
   return result;
 }
@@ -132,30 +122,131 @@ QJsonObject Profile::toJson() {
   return QJsonObject::fromVariantMap(toMap());
 }
 
+QString Profile::getName() {
+  return m_name;
+}
+
+Profile::ProfileType Profile::getType() {
+  return m_type;
+}
+
+QString Profile::getCreated() {
+  return m_created;
+}
+
+QString Profile::getLastUsed() {
+  return m_lastUsed;
+}
+
+QString Profile::getIcon() {
+  return m_icon;
+}
+
+QString Profile::getLastVersionId() {
+  return m_lastVersionId;
+}
+
 QVariant Profile::getGameDir() {
-  if (gameDir.has_value()) {
-    return gameDir.value();
+  if (m_gameDir.has_value()) {
+    return m_gameDir.value();
   }
   return {};
 }
 
 QVariant Profile::getJavaDir() {
-  if (javaDir.has_value()) {
-    return javaDir.value();
+  if (m_javaDir.has_value()) {
+    return m_javaDir.value();
   }
   return {};
 }
 
 QVariant Profile::getJavaArgs() {
-  if (javaArgs.has_value()) {
-    return javaArgs.value();
+  if (m_javaArgs.has_value()) {
+    return m_javaArgs.value();
   }
   return {};
 }
 
 QVariant Profile::getResolution() {
-  if (resolution.has_value()) {
-    return QVariant::fromValue(resolution.value());
+  if (m_resolution.has_value()) {
+    return QVariant::fromValue(m_resolution.value());
   }
   return {};
+}
+
+void Profile::setName(const QString& name) {
+  if (m_name != name) {
+    m_name = name;
+    emit nameChanged();
+  }
+}
+
+void Profile::setType(const ProfileType& type) {
+  if (m_type != type) {
+    m_type = type;
+    emit typeChanged();
+  }
+}
+
+void Profile::setCreated(const QString& created) {
+  if (m_created != created) {
+    m_created = created;
+    emit createdChanged();
+  }
+}
+
+void Profile::setLastUsed(const QString& lastUsed) {
+  if (m_lastUsed != lastUsed) {
+    m_lastUsed = lastUsed;
+    emit lastUsedChanged();
+  }
+}
+
+void Profile::setIcon(const QString& icon) {
+  if (m_icon != icon) {
+    m_icon = icon;
+    emit iconChanged();
+  }
+}
+
+void Profile::setLastVersionId(const QString& lastVersionId) {
+  if (m_lastVersionId != lastVersionId) {
+    m_lastVersionId = lastVersionId;
+    emit lastVersionIdChanged();
+  }
+}
+
+void Profile::setGameDir(const QVariant& gameDir) {
+  auto str {gameDir.toString()};
+  if (gameDir.isValid() and !gameDir.isNull() and m_gameDir != str) {
+    m_gameDir = str;
+    emit gameDirChanged();
+  }
+}
+
+void Profile::setJavaDir(const QVariant& javaDir) {
+  auto str {javaDir.toString()};
+  if (javaDir.isValid() and !javaDir.isNull() and m_javaDir != str) {
+    m_javaDir = str;
+    emit javaDirChanged();
+  }
+}
+
+void Profile::setJavaArgs(const QVariant& javaArgs) {
+  auto str {javaArgs.toString()};
+  if (javaArgs.isValid() and !javaArgs.isNull() and m_javaArgs != str) {
+    m_javaArgs = str;
+    emit javaArgsChanged();
+  }
+}
+
+void Profile::setResolution(const QVariant& resolution) {
+  auto res = resolution.value<Resolution>();
+  if (resolution.isValid()
+    and !resolution.isNull()
+    and (m_resolution->width != res.width
+    and m_resolution->height != res.height)) {
+    m_resolution = res;
+    emit resolutionChanged();
+  }
 }

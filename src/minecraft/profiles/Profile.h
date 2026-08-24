@@ -18,16 +18,28 @@ public:
 
 class Profile : public QObject {
   Q_OBJECT
-  Q_PROPERTY(QString name MEMBER name)
-  Q_PROPERTY(ProfileType type MEMBER type)
-  Q_PROPERTY(QString created MEMBER created)
-  Q_PROPERTY(QString lastUsed MEMBER lastUsed)
-  Q_PROPERTY(QString icon MEMBER icon)
-  Q_PROPERTY(QString lastVersionId MEMBER lastVersionId)
-  Q_PROPERTY(QVariant gameDir READ getGameDir)
-  Q_PROPERTY(QVariant javaDir READ getJavaDir)
-  Q_PROPERTY(QVariant javaArgs READ getJavaArgs)
-  Q_PROPERTY(QVariant resolution READ getResolution)
+  Q_PROPERTY(QString name READ getName NOTIFY nameChanged)
+  Q_PROPERTY(ProfileType type READ getType NOTIFY typeChanged)
+  Q_PROPERTY(QString created READ getCreated NOTIFY createdChanged)
+  Q_PROPERTY(QString lastUsed READ getLastUsed NOTIFY lastUsedChanged)
+  Q_PROPERTY(QString icon READ getIcon NOTIFY iconChanged)
+  Q_PROPERTY(QString lastVersionId READ getLastVersionId NOTIFY lastVersionIdChanged)
+  Q_PROPERTY(QVariant gameDir READ getGameDir NOTIFY gameDirChanged)
+  Q_PROPERTY(QVariant javaDir READ getJavaDir NOTIFY javaDirChanged)
+  Q_PROPERTY(QVariant javaArgs READ getJavaArgs NOTIFY javaArgsChanged)
+  Q_PROPERTY(QVariant resolution READ getResolution NOTIFY resolutionChanged)
+
+signals:
+  void nameChanged();
+  void typeChanged();
+  void createdChanged();
+  void lastUsedChanged();
+  void iconChanged();
+  void lastVersionIdChanged();
+  void gameDirChanged();
+  void javaDirChanged();
+  void javaArgsChanged();
+  void resolutionChanged();
 
 public:
   explicit Profile(QObject *parent = nullptr);
@@ -48,22 +60,27 @@ public:
   void copy(const QJsonObject& data);
   void copy(const QVariantMap& data);
 
+  QString getName();
+  ProfileType getType();
+  QString getCreated();
+  QString getLastUsed();
+  QString getIcon();
+  QString getLastVersionId();
   QVariant getGameDir();
   QVariant getJavaDir();
   QVariant getJavaArgs();
   QVariant getResolution();
 
-
-  QString name {"(Default)"};
-  ProfileType type {ProfileType::LATEST_RELEASE};
-  QString created {"1970-01-01T00:00:00.000Z"};
-  QString lastUsed {"1970-01-01T00:00:00.000Z"};
-  QString icon {"grass"};
-  QString lastVersionId {"latest-release"};
-  std::optional<QString> gameDir {std::nullopt};
-  std::optional<QString> javaDir {std::nullopt};
-  std::optional<QString> javaArgs {std::nullopt};
-  std::optional<Resolution> resolution {std::nullopt};
+  void setName(const QString& name);
+  void setType(const ProfileType& type);
+  void setCreated(const QString& created);
+  void setLastUsed(const QString& lastUsed);
+  void setIcon(const QString& icon);
+  void setLastVersionId(const QString& lastVersionId);
+  void setGameDir(const QVariant& gameDir);
+  void setJavaDir(const QVariant& javaDir);
+  void setJavaArgs(const QVariant& javaArgs);
+  void setResolution(const QVariant& resolution);
 
   inline static const Resolution defaultResolution {
     .width = 854,
@@ -71,6 +88,18 @@ public:
   };
 
   inline static const QString defaultJavaArgs {"-Xms2G -Xmx4G -XX:+UseCompactObjectHeaders -XX:+AlwaysPreTouch -XX:+UseStringDeduplication"};
+
+private:
+  QString m_name {"(Default)"};
+  ProfileType m_type {ProfileType::LATEST_RELEASE};
+  QString m_created {"1970-01-01T00:00:00.000Z"};
+  QString m_lastUsed {"1970-01-01T00:00:00.000Z"};
+  QString m_icon {"grass"};
+  QString m_lastVersionId {"latest-release"};
+  std::optional<QString> m_gameDir {std::nullopt};
+  std::optional<QString> m_javaDir {std::nullopt};
+  std::optional<QString> m_javaArgs {std::nullopt};
+  std::optional<Resolution> m_resolution {std::nullopt};
 };
 
 #endif  // LJ_LAUNCHER_PROFILE_H_

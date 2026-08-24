@@ -51,7 +51,7 @@ QString Launcher::userMessage() {
   QString version {
     ProfileManager::getProfile(
       Profiles::getCurrentProfileId()
-    )->lastVersionId
+    )->getLastVersionId()
   };
   if (version == "latest-release") {
     version = VersionManifest::getLatestVersions().release;
@@ -156,7 +156,7 @@ void Launcher::play() {
   const QString CURRENT_VER {
     ProfileManager::getProfile(
       Profiles::getCurrentProfileId()
-    )->lastVersionId
+    )->getLastVersionId()
   };
 
   Game::launch(

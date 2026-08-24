@@ -50,8 +50,8 @@ QList<QVariantMap> Profiles::profiles() {
     profilesList.append(
       QVariantMap{
       {"id", profileId},
-      {"name", profile->name},
-      {"created", profile->created}
+      {"name", profile->getName()},
+      {"created", profile->getCreated()},
       }
     );
   }
@@ -84,8 +84,8 @@ void Profiles::renameCurrentProfileIfDefault() {
   }
 
   const QString DEFAULT_DATE {Launcher::getTime(true)};
-  const QString PROFILE_DATE {ProfileManager::getProfile(s_currentProfileId)->created};
-  const QString PROFILE_NAME {ProfileManager::getProfile(s_currentProfileId)->name};
+  const QString PROFILE_DATE {ProfileManager::getProfile(s_currentProfileId)->getCreated()};
+  const QString PROFILE_NAME {ProfileManager::getProfile(s_currentProfileId)->getName()};
 
   if (PROFILE_DATE == DEFAULT_DATE and PROFILE_NAME == "(Default)") {
     const QString USERNAME {Launcher::getUsername()};
