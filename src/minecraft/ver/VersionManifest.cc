@@ -56,7 +56,14 @@ void VersionManifest::onNetworkReply(QNetworkReply* reply) {
   setState(ManifestState::PRESENT);
 }
 
-ManifestEntry VersionManifest::getVersion(const QString& versionId) {
+ManifestEntry VersionManifest::getVersion(QString versionId) {
+  if (versionId == "latest-release") {
+    versionId = getLatestVersions().release;
+  }
+  else if (versionId == "latest-snapshot") {
+    versionId = getLatestVersions().snapshot;
+  }
+
   qDebug() << "Getting manifest version:" << versionId;
   for (const auto& version: s_versions ) {
     if (version.item.id == versionId) {

@@ -48,7 +48,7 @@ public:
   static VersionManifest* getInstance();
   static ManifestLatest getLatestVersions();
   static ManifestState getManifestState();
-  static ManifestEntry getVersion(const QString& versionId);
+  static ManifestEntry getVersion(QString versionId);
   static QList<ManifestEntry> getVersions(const QList<VersionType>& types);
 
   static void requestManifest();
