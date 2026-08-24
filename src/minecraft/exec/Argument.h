@@ -7,9 +7,8 @@
 
 #include "Rule.h"
 
-struct Argument {
+struct Argument : public RuleBearer {
   QStringList values;
-  QList<Rule> rules;
 };
 
 #endif  // LJ_LAUNCHER_ARGUMENT_H_

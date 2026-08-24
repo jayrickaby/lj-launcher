@@ -34,7 +34,6 @@ qt_add_executable(lj_launcher
         src/sys/info/OperatingSystem.h
         src/minecraft/lib/LibraryIndex.cc
         src/minecraft/lib/LibraryIndex.h
-        src/minecraft/lib/Library.cc
         src/sys/info/SystemInfo.cc
         src/sys/info/SystemInfo.h
         src/minecraft/ver/VersionManifest.cc
@@ -55,6 +54,7 @@ qt_add_executable(lj_launcher
         src/minecraft/profiles/ProfileEntry.h
         src/minecraft/exec/Argument.h
         src/minecraft/exec/Rule.h
+        src/minecraft/exec/Rule.cc
 )
 
 qt_add_qml_module(lj_launcher

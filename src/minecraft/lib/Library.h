@@ -9,12 +9,10 @@
 #include "net/Downloader.h"
 #include "sys/info/OperatingSystem.h"
 
-struct Library {
+struct Library : public RuleBearer{
   DownloadItem artifact {};
-  QList<Rule> rules;
 
   bool isDownloaded() const;
-  bool isUserSuitable(const OperatingSystem& user) const;
 };
 
 #endif  // LJ_LAUNCHER_LIBRARY_H_

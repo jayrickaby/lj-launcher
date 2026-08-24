@@ -1,11 +1,10 @@
 //
-// Created by jay on 21/08/2026.
+// Created by jay on 24/08/2026.
 //
 
-#include "Library.h"
+#include "Rule.h"
 
-
-bool Library::isUserSuitable(const OperatingSystem& user) const {
+bool RuleBearer::isUserSuitable(const OperatingSystem& user) const {
   bool userSuitable{true};
 
   for (const auto& rule : rules) {
@@ -24,16 +23,13 @@ bool Library::isUserSuitable(const OperatingSystem& user) const {
         break;
       }
       case Action::DISALLOW: {
-        userSuitable = !targetMatches;
+        // early return as user explicitly disallowed
+        if (targetMatches) {
+          return false;
+        };
         break;
       }
-      default: {
-        userSuitable = true;
-        break;
-      };
-    }
-    if (!userSuitable) {
-      break;
+      default:;
     }
   }
   return userSuitable;
