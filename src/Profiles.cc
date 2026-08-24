@@ -110,7 +110,7 @@ void Profiles::deleteProfile(const QString& profileId) {
 void Profiles::editProfile(const QString& profileId, const QVariantMap& parameters) {
   ProfileManager::editProfile(s_currentProfileId, parameters);
 };
-Profile* Profiles::getProfile(const QString& profileId) {
+ProfileEntry* Profiles::getProfile(const QString& profileId) {
   if (!ProfileManager::isProfile(profileId)) {
     return nullptr;
   }

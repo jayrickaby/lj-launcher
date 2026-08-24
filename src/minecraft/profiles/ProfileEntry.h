@@ -16,7 +16,7 @@ public:
   uint height;
 };
 
-class Profile : public QObject {
+class ProfileEntry : public QObject {
   Q_OBJECT
   Q_PROPERTY(QString name READ getName NOTIFY nameChanged)
   Q_PROPERTY(ProfileType type READ getType NOTIFY typeChanged)
@@ -43,7 +43,7 @@ signals:
   void profileUpdated();
 
 public:
-  explicit Profile(QObject *parent = nullptr);
+  explicit ProfileEntry(QObject *parent = nullptr);
 
   enum class ProfileType {
     CUSTOM,
@@ -52,8 +52,8 @@ public:
   };
   Q_ENUM(ProfileType);
 
-  Profile(const QJsonObject& data, QObject *parent = nullptr);
-  Profile(const QVariantMap& data, QObject *parent = nullptr);
+  ProfileEntry(const QJsonObject& data, QObject *parent = nullptr);
+  ProfileEntry(const QVariantMap& data, QObject *parent = nullptr);
 
   [[nodiscard]] QJsonObject toJson();
   [[nodiscard]] QVariantMap toMap();

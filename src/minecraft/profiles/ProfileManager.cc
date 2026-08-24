@@ -8,7 +8,7 @@
 #include "sys/io/JsonUtils.h"
 
 ProfileManager* ProfileManager::s_instance {nullptr};
-QHash<QString, QSharedPointer<Profile>> ProfileManager::s_profiles;
+QHash<QString, QSharedPointer<ProfileEntry>> ProfileManager::s_profiles;
 
 ProfileManager::ProfileManager(QObject* parent)
 :QObject(parent) {
@@ -74,7 +74,7 @@ QString ProfileManager::createProfile() {
 QString ProfileManager::createProfile(const QVariantMap& parameters) {
   QString uuid {generateUuid()};
 
-  s_profiles.insert(uuid, QSharedPointer<Profile>::create(parameters));
+  s_profiles.insert(uuid, QSharedPointer<ProfileEntry>::create(parameters));
   saveProfiles();
   return uuid;
 }
@@ -91,9 +91,9 @@ QString ProfileManager::getProfilesPath() {
   return PROFILES_PATH;
 }
 
-QSharedPointer<Profile> ProfileManager::getProfile(const QString& profileId) {
+QSharedPointer<ProfileEntry> ProfileManager::getProfile(const QString& profileId) {
   if (!s_profiles.contains(profileId)) {
-    return QSharedPointer<Profile>::create();
+    return QSharedPointer<ProfileEntry>::create();
   }
 
   return s_profiles.value(profileId);
@@ -107,7 +107,7 @@ ProfileManager* ProfileManager::getInstance() {
   return s_instance;
 }
 
-QHash<QString, QSharedPointer<Profile>> ProfileManager::getProfiles() {
+QHash<QString, QSharedPointer<ProfileEntry>> ProfileManager::getProfiles() {
   return s_profiles;
 }
 
@@ -132,10 +132,10 @@ void ProfileManager::refreshProfiles() {
   for (const auto& profileId : entries.keys()) {
     auto profileData {entries.value(profileId).toMap()};
 
-    auto profile {QSharedPointer<Profile>::create(profileData)};
+    auto profile {QSharedPointer<ProfileEntry>::create(profileData)};
     auto instance {getInstance()};
 
-    connect(profile.get(), &Profile::profileUpdated, instance, [instance, profileId] {
+    connect(profile.get(), &ProfileEntry::profileUpdated, instance, [instance, profileId] {
       emit instance->profileUpdated(profileId);
     });
 

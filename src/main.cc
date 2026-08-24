@@ -7,7 +7,7 @@
 #include <QQmlApplicationEngine>
 
 #include "Application.h"
-#include "Profile.h"
+#include "ProfileEntry.h"
 #include "Profiles.h"
 #include "ProfilesTable.h"
 #include "Settings.h"
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "VersionManifest", VersionManifest::getInstance());
 
   qmlRegisterType<ProfilesTable>("jayrickaby.lj_launcher", 1, 0, "ProfilesTable");
-  // qmlRegisterType<Profile>("jayrickaby.lj_launcher", 1, 0, "Profile");
+  // qmlRegisterType<ProfileEntry>("jayrickaby.lj_launcher", 1, 0, "ProfileEntry");
 
   QQmlApplicationEngine engine;
   QObject::connect(

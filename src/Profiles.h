@@ -34,8 +34,8 @@ public:
 
   QList<QVariantMap> profiles();
   QString currentProfileId() {return s_currentProfileId; };
-  QString defaultJavaArgs() {return Profile::defaultJavaArgs; };
-  Resolution defaultResolution() {return Profile::defaultResolution; };
+  QString defaultJavaArgs() {return ProfileEntry::defaultJavaArgs; };
+  Resolution defaultResolution() {return ProfileEntry::defaultResolution; };
 
   static QString getCurrentProfileId() {return s_currentProfileId; };
 
@@ -49,7 +49,7 @@ public slots:
   void createProfile(const QVariantMap& parameters={});
   void deleteProfile(const QString& profileId);
   void editProfile(const QString& profileId, const QVariantMap& parameters={});
-  Profile* getProfile(const QString& profileId);
+  ProfileEntry* getProfile(const QString& profileId);
   void setCurrentProfileId(const QString& profileId);
 
 private:

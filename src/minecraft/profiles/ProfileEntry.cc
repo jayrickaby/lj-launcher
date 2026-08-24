@@ -2,41 +2,40 @@
 // Created by jay on 23/08/2026.
 //
 
-#include "Profile.h"
-
 #include <QJsonObject>
 
 #include "Launcher.h"
+#include "ProfileEntry.h"
 
-Profile::Profile(QObject* parent)
+ProfileEntry::ProfileEntry(QObject* parent)
   : QObject(parent) {
-  connect(this, &Profile::nameChanged, &Profile::profileUpdated);
-  connect(this, &Profile::typeChanged, &Profile::profileUpdated);
-  connect(this, &Profile::createdChanged, &Profile::profileUpdated);
-  connect(this, &Profile::lastUsedChanged, &Profile::profileUpdated);
-  connect(this, &Profile::iconChanged, &Profile::profileUpdated);
-  connect(this, &Profile::lastVersionIdChanged, &Profile::profileUpdated);
-  connect(this, &Profile::gameDirChanged, &Profile::profileUpdated);
-  connect(this, &Profile::javaDirChanged, &Profile::profileUpdated);
-  connect(this, &Profile::javaArgsChanged, &Profile::profileUpdated);
-  connect(this, &Profile::resolutionChanged, &Profile::profileUpdated);
+  connect(this, &ProfileEntry::nameChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::typeChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::createdChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::lastUsedChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::iconChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::lastVersionIdChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::gameDirChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::javaDirChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::javaArgsChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::resolutionChanged, &ProfileEntry::profileUpdated);
 }
 
-Profile::Profile(const QJsonObject& data, QObject *parent)
-  : Profile(parent){
+ProfileEntry::ProfileEntry(const QJsonObject& data, QObject *parent)
+  : ProfileEntry(parent){
   copy(data);
 }
 
-Profile::Profile(const QVariantMap& data, QObject *parent)
-  : Profile(parent){
+ProfileEntry::ProfileEntry(const QVariantMap& data, QObject *parent)
+  : ProfileEntry(parent){
   copy(data);
 }
 
-void Profile::copy(const QJsonObject& data) {
+void ProfileEntry::copy(const QJsonObject& data) {
   copy(data.toVariantMap());
 }
 
-void Profile::copy(const QVariantMap& data) {
+void ProfileEntry::copy(const QVariantMap& data) {
   if (data.contains("name")) {
     setName(data.value("name").toString());
   }
@@ -85,7 +84,7 @@ void Profile::copy(const QVariantMap& data) {
   }
 }
 
-QVariantMap Profile::toMap() {
+QVariantMap ProfileEntry::toMap() {
   QVariantMap result;
   result["name"] = getName();
 
@@ -126,105 +125,105 @@ QVariantMap Profile::toMap() {
   return result;
 }
 
-QJsonObject Profile::toJson() {
+QJsonObject ProfileEntry::toJson() {
   return QJsonObject::fromVariantMap(toMap());
 }
 
-QString Profile::getName() {
+QString ProfileEntry::getName() {
   return m_name;
 }
 
-Profile::ProfileType Profile::getType() {
+ProfileEntry::ProfileType ProfileEntry::getType() {
   return m_type;
 }
 
-QString Profile::getCreated() {
+QString ProfileEntry::getCreated() {
   return m_created;
 }
 
-QString Profile::getLastUsed() {
+QString ProfileEntry::getLastUsed() {
   return m_lastUsed;
 }
 
-QString Profile::getIcon() {
+QString ProfileEntry::getIcon() {
   return m_icon;
 }
 
-QString Profile::getLastVersionId() {
+QString ProfileEntry::getLastVersionId() {
   return m_lastVersionId;
 }
 
-QVariant Profile::getGameDir() {
+QVariant ProfileEntry::getGameDir() {
   if (m_gameDir.has_value()) {
     return m_gameDir.value();
   }
   return {};
 }
 
-QVariant Profile::getJavaDir() {
+QVariant ProfileEntry::getJavaDir() {
   if (m_javaDir.has_value()) {
     return m_javaDir.value();
   }
   return {};
 }
 
-QVariant Profile::getJavaArgs() {
+QVariant ProfileEntry::getJavaArgs() {
   if (m_javaArgs.has_value()) {
     return m_javaArgs.value();
   }
   return {};
 }
 
-QVariant Profile::getResolution() {
+QVariant ProfileEntry::getResolution() {
   if (m_resolution.has_value()) {
     return QVariant::fromValue(m_resolution.value());
   }
   return {};
 }
 
-void Profile::setName(const QString& name) {
+void ProfileEntry::setName(const QString& name) {
   if (m_name != name) {
     m_name = name;
     emit nameChanged();
   }
 }
 
-void Profile::setType(const ProfileType& type) {
+void ProfileEntry::setType(const ProfileType& type) {
   if (m_type != type) {
     m_type = type;
     emit typeChanged();
   }
 }
 
-void Profile::setCreated(const QString& created) {
+void ProfileEntry::setCreated(const QString& created) {
   if (m_created != created) {
     m_created = created;
     emit createdChanged();
   }
 }
 
-void Profile::setLastUsed(const QString& lastUsed) {
+void ProfileEntry::setLastUsed(const QString& lastUsed) {
   if (m_lastUsed != lastUsed) {
     m_lastUsed = lastUsed;
     emit lastUsedChanged();
   }
 }
 
-void Profile::setIcon(const QString& icon) {
+void ProfileEntry::setIcon(const QString& icon) {
   if (m_icon != icon) {
     m_icon = icon;
     emit iconChanged();
   }
 }
 
-void Profile::setLastVersionId(const QString& lastVersionId) {
+void ProfileEntry::setLastVersionId(const QString& lastVersionId) {
   if (m_lastVersionId != lastVersionId) {
     m_lastVersionId = lastVersionId;
     emit lastVersionIdChanged();
   }
 }
 
-void Profile::setGameDir(const QVariant& gameDir) {
+void ProfileEntry::setGameDir(const QVariant& gameDir) {
   auto str {gameDir.toString()};
   if (gameDir.isValid() and !gameDir.isNull() and m_gameDir != str) {
     m_gameDir = str;
@@ -232,7 +231,7 @@ void Profile::setGameDir(const QVariant& gameDir) {
   }
 }
 
-void Profile::setJavaDir(const QVariant& javaDir) {
+void ProfileEntry::setJavaDir(const QVariant& javaDir) {
   auto str {javaDir.toString()};
   if (javaDir.isValid() and !javaDir.isNull() and m_javaDir != str) {
     m_javaDir = str;
@@ -240,7 +239,7 @@ void Profile::setJavaDir(const QVariant& javaDir) {
   }
 }
 
-void Profile::setJavaArgs(const QVariant& javaArgs) {
+void ProfileEntry::setJavaArgs(const QVariant& javaArgs) {
   auto str {javaArgs.toString()};
   if (javaArgs.isValid() and !javaArgs.isNull() and m_javaArgs != str) {
     m_javaArgs = str;
@@ -248,7 +247,7 @@ void Profile::setJavaArgs(const QVariant& javaArgs) {
   }
 }
 
-void Profile::setResolution(const QVariant& resolution) {
+void ProfileEntry::setResolution(const QVariant& resolution) {
   auto res = resolution.value<Resolution>();
   if (resolution.isValid()
     and !resolution.isNull()

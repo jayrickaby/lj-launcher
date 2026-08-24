@@ -7,7 +7,7 @@
 #include <QObject>
 #include <QString>
 
-#include "Profile.h"
+#include "ProfileEntry.h"
 
 class ProfileManager : public QObject {
   Q_OBJECT
@@ -28,11 +28,11 @@ public:
   static QString createProfile(const QVariantMap& parameters);
   static QString getProfilesPath();
 
-  static QSharedPointer<Profile> getProfile(const QString& profileId);
+  static QSharedPointer<ProfileEntry> getProfile(const QString& profileId);
 
   static ProfileManager* getInstance();
 
-  static QHash<QString, QSharedPointer<Profile>> getProfiles();
+  static QHash<QString, QSharedPointer<ProfileEntry>> getProfiles();
 
   static void refreshProfiles();
 
@@ -43,7 +43,7 @@ private:
   static void saveProfiles();
 
   static ProfileManager* s_instance;
-  static QHash<QString, QSharedPointer<Profile>> s_profiles;
+  static QHash<QString, QSharedPointer<ProfileEntry>> s_profiles;
   inline static const QString PROFILES_PATH {findProfilesPath()};
 };
 
