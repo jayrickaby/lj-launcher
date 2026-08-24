@@ -12,12 +12,37 @@
 #   vcpkg's Binary Caching backed by GH Action cache is being used. It will be a no-op if 
 #   the dependencies are restored from GH Action cache.
 # - Finally builds the sources with Ninja.
-name: hosted-ninja_multi-vcpkg_submod-triplet-cacheoff
-on: [push, workflow_dispatch]
+#name: hosted-ninja_multi-vcpkg_submod-triplet-cacheoff
+name: post-push actions
+on:
+  push:
+    branches:
+      - main
+    workflow_dispatch:
 
 jobs:
-  job:
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+
+
+  build:
     name: ${{ matrix.os }}-${{ github.workflow }}
+    needs: release
+    if: needs.release.outputs.new_release_published == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -69,3 +94,36 @@ jobs:
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE
         shell: bash
+
+      - name: Upload Binaries
+        uses: actions/upload-artifact@v7
+        with:
+          name: binary-${{ matrix.os }}
+          path: build/bin/Release/*
+
+  upload-assets:
+    name: Upload Assets
+    needs: [release, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Win Binary
+        uses: actions/download-artifact@v7
+        with:
+          name: windows-bin-latest
+          path: dist/
+
+      - name: Download Linux Binary
+        uses: actions/download-artifact@v7
+        with:
+          name: linux-bin-latest
+          path: dist/
+
+      - name: Publish
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: v${{ steps.semantic.outputs.new_release_version }}
+          working_directory: dist
+          files: |
+            *
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
