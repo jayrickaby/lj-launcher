@@ -229,5 +229,10 @@ OperatingSystem ClientJson::parseOs(const QVariantMap& rawOs) {
     operatingSystem.arch = SystemArchitecture::NONE;
   }
 
+  const auto RAW_VERSION_RANGE {rawOs.value("versionRange").toMap()};
+  operatingSystem.versionRange.min = RAW_VERSION_RANGE.value("min").toString();
+  operatingSystem.versionRange.max = RAW_VERSION_RANGE.value("max").toString();
+
+
   return operatingSystem;
 }

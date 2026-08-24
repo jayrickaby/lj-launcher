@@ -17,9 +17,15 @@ enum class SystemArchitecture {
   NONE
 };
 
+struct VersionRange {
+  QString min {""};
+  QString max {""};
+};
+
 struct OperatingSystem {
   SystemArchitecture arch {SystemArchitecture::NONE};
   SystemName name {SystemName::NONE};
+  VersionRange versionRange;
 };
 
 
