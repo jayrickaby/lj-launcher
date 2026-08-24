@@ -25,6 +25,7 @@ struct VersionRange {
 struct OperatingSystem {
   SystemArchitecture arch {SystemArchitecture::NONE};
   SystemName name {SystemName::NONE};
+  QString version {QSysInfo::kernelVersion()};
   VersionRange versionRange;
 };
 
