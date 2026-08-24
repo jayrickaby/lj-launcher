@@ -4,6 +4,7 @@
 
 #include "LibraryIndex.h"
 
+#include "minecraft/ver/ClientJson.h"
 #include "sys/info/SystemInfo.h"
 
 LibraryIndex::LibraryIndex(const QVariantList& data, QObject *parent)
@@ -33,7 +34,7 @@ LibraryIndex::LibraryIndex(const QVariantList& data, QObject *parent)
     const QVariantList RAW_RULES (RAW_LIBRARY.value("rules").toList());
     for (const auto& rawRule : RAW_RULES) {
       const QVariantMap RULE {rawRule.toMap()};
-      library.rules.append(parseRule(RULE));
+      library.rules.append(ClientJson::parseRule(RULE));
     }
 
     m_libraries.enqueue(library);
@@ -101,62 +102,6 @@ DownloadItem LibraryIndex::parseArtifact(const QVariantMap& rawArtifact) {
     .totalSize = 0,
     .url = rawArtifact.value("url").toString()
   };
-}
-
-Rule LibraryIndex::parseRule(const QVariantMap& rawRule) {
-  if (rawRule.isEmpty()) {
-    return {};
-  }
-
-  Rule rule;
-
-  const QString RAW_ACTION {rawRule.value("action").toString()};
-  rule.action = parseAction(RAW_ACTION);
-
-  const QVariantMap RAW_OS {rawRule.value("os").toMap()};
-  rule.os = parseOs(RAW_OS);
-
-  return rule;
-}
-
-Action LibraryIndex::parseAction(const QString& rawAction) {
-  if (rawAction == "allow") {
-    return Action::ALLOW;
-  }
-  if (rawAction == "disallow") {
-    return Action::DISALLOW;
-  }
-  return Action::NONE;
-}
-
-OperatingSystem LibraryIndex::parseOs(const QVariantMap& rawOs) {
-  OperatingSystem operatingSystem;
-
-  const QString RAW_OS_NAME {rawOs.value("name").toString()};
-
-  if (RAW_OS_NAME == "windows") {
-    operatingSystem.name = SystemName::WINDOWS;
-  }
-  else if (RAW_OS_NAME == "linux") {
-    operatingSystem.name = SystemName::LINUX;
-  }
-  else if (RAW_OS_NAME == "osx") {
-    operatingSystem.name = SystemName::OSX;
-  }
-  else {
-    operatingSystem.name = SystemName::NONE;
-  }
-
-  const QString RAW_OS_ARCHITECTURE {rawOs.value("arch").toString()};
-
-  if (RAW_OS_ARCHITECTURE == "x86") {
-    operatingSystem.arch = SystemArchitecture::X86;
-  }
-  else {
-    operatingSystem.arch = SystemArchitecture::NONE;
-  }
-
-  return operatingSystem;
 }
 
 QString LibraryIndex::getLibraryPath() {

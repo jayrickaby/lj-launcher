@@ -6,6 +6,7 @@
 #define LJ_LAUNCHER_CLIENTJSON_H_
 #include <QVariant>
 
+#include "Argument.h"
 #include "VersionManifest.h"
 #include "minecraft/assets/AssetIndex.h"
 #include "minecraft/lib/LibraryIndex.h"
@@ -19,6 +20,10 @@ enum class ClientState {
   DOWNLOADING_OTHERS,
   DOWNLOADED_OTHERS,
   INITIALISED
+};
+struct ArgumentBearer {
+  QStringList unconditionalArguments;
+  QList<Argument> conditionalArguments;
 };
 
 class ClientJson : public NetworkRequester {
@@ -41,6 +46,11 @@ public:
 
   void onNetworkReply(QNetworkReply* reply) override;
 
+  static Action parseAction(const QString& rawAction);
+  static Argument parseArgument(const QVariantMap& rawArgument);
+  static OperatingSystem parseOs(const QVariantMap& rawOs);
+  static Rule parseRule(const QVariantMap& rawRule);
+
 private slots:
   void refreshState();
 
@@ -58,6 +68,10 @@ private:
   bool m_libraryReady {false};
 
   ClientState m_state {ClientState::UNINITIALISED};
+
+  ArgumentBearer defaultJvmArguments;
+  ArgumentBearer jvmArguments;
+  ArgumentBearer gameArguments;
 
   DownloadItem m_clientJson {};
   DownloadItem m_clientJar {};

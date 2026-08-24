@@ -38,9 +38,6 @@ public:
 
 private:
   DownloadItem parseArtifact(const QVariantMap& rawArtifact);
-  Rule parseRule(const QVariantMap& rawRule);
-  Action parseAction(const QString& rawAction);
-  OperatingSystem parseOs(const QVariantMap& rawOs);
   void setState(const LibraryIndexState& state);
 
   quint64 expectedLibraryReplies {0};

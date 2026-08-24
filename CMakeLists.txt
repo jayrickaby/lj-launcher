@@ -52,9 +52,9 @@ qt_add_executable(lj_launcher
         src/minecraft/profiles/ProfileManager.h
         src/minecraft/profiles/ProfileEntry.cc
         src/minecraft/profiles/ProfileEntry.h
-        src/minecraft/exec/Argument.h
-        src/minecraft/exec/Rule.h
-        src/minecraft/exec/Rule.cc
+        src/minecraft/ver/Argument.h
+        src/minecraft/ver/Rule.h
+        src/minecraft/ver/Rule.cc
 )
 
 qt_add_qml_module(lj_launcher

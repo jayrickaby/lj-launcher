@@ -4,6 +4,8 @@
 
 #include "ClientJson.h"
 
+
+
 ClientJson::ClientJson(QObject* parent)
   : NetworkRequester(parent)
 {}
@@ -24,6 +26,35 @@ ClientJson::ClientJson(const ManifestEntry& manifestEntry, QObject* parent)
 void ClientJson::refreshJson() {
   setState(ClientState::PREPARING);
   const QVariantMap DATA {JsonUtils::readJson(m_clientJson.path).toVariantMap()};
+
+  QVariantMap arguments {DATA.value("arguments").toMap()};
+  for (const auto& rawDefaultJvmArg : arguments.value("default-user-jvm").toList()) {
+    if (rawDefaultJvmArg.metaType().id() == QMetaType::QString) {
+      defaultJvmArguments.unconditionalArguments.append(rawDefaultJvmArg.toString());
+    }
+    else {
+      defaultJvmArguments.conditionalArguments.append(parseArgument(rawDefaultJvmArg.toMap()));
+    }
+  }
+
+  for (const auto& rawGameArg : arguments.value("game").toList()) {
+    if (rawGameArg.metaType().id() == QMetaType::QString) {
+      gameArguments.unconditionalArguments.append(rawGameArg.toString());
+    }
+    else {
+      gameArguments.conditionalArguments.append(parseArgument(rawGameArg.toMap()));
+    }
+  }
+
+  for (const auto& rawJvmArg : arguments.value("jvm").toList()) {
+    if (rawJvmArg.metaType().id() == QMetaType::QString) {
+      jvmArguments.unconditionalArguments.append(rawJvmArg.toString());
+    }
+    else {
+      jvmArguments.conditionalArguments.append(parseArgument(rawJvmArg.toMap()));
+    }
+  }
+
   m_assetIndex = new AssetIndex(DATA.value("assetIndex").toMap());
   m_libraryIndex = new LibraryIndex(DATA.value("libraries").toList());
 
@@ -121,4 +152,82 @@ void ClientJson::refreshState() {
     setState(ClientState::DOWNLOADED_OTHERS);
     setState(ClientState::INITIALISED);
   }
+}
+
+Argument ClientJson::parseArgument(const QVariantMap& rawArgument) {
+  Argument argument;
+
+  for (const auto& rawRule : rawArgument["rules"].toList()) {
+    if (!rawRule.isValid() or rawRule.isNull() or rawRule.toMap().isEmpty()) {
+      continue;
+    }
+
+    argument.rules.append(parseRule(rawRule.toMap()));
+  }
+
+  for (const auto& rawValue : rawArgument["value"].toList()) {
+    if (!rawValue.isValid() or rawValue.isNull() or rawValue.toString().isEmpty()) {
+      continue;
+    }
+
+    argument.values.append(rawValue.toString());
+  }
+
+  return argument;
+}
+
+Rule ClientJson::parseRule(const QVariantMap& rawRule) {
+  if (rawRule.isEmpty()) {
+    return {};
+  }
+
+  Rule rule;
+
+  const QString RAW_ACTION {rawRule.value("action").toString()};
+  rule.action = parseAction(RAW_ACTION);
+
+  const QVariantMap RAW_OS {rawRule.value("os").toMap()};
+  rule.os = parseOs(RAW_OS);
+
+  return rule;
+}
+
+Action ClientJson::parseAction(const QString& rawAction) {
+  if (rawAction == "allow") {
+    return Action::ALLOW;
+  }
+  if (rawAction == "disallow") {
+    return Action::DISALLOW;
+  }
+  return Action::NONE;
+}
+
+OperatingSystem ClientJson::parseOs(const QVariantMap& rawOs) {
+  OperatingSystem operatingSystem;
+
+  const QString RAW_OS_NAME {rawOs.value("name").toString()};
+
+  if (RAW_OS_NAME == "windows") {
+    operatingSystem.name = SystemName::WINDOWS;
+  }
+  else if (RAW_OS_NAME == "linux") {
+    operatingSystem.name = SystemName::LINUX;
+  }
+  else if (RAW_OS_NAME == "osx") {
+    operatingSystem.name = SystemName::OSX;
+  }
+  else {
+    operatingSystem.name = SystemName::NONE;
+  }
+
+  const QString RAW_OS_ARCHITECTURE {rawOs.value("arch").toString()};
+
+  if (RAW_OS_ARCHITECTURE == "x86") {
+    operatingSystem.arch = SystemArchitecture::X86;
+  }
+  else {
+    operatingSystem.arch = SystemArchitecture::NONE;
+  }
+
+  return operatingSystem;
 }
