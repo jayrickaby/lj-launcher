@@ -42,6 +42,10 @@ signals:
   void resolutionChanged();
   void profileUpdated();
 
+public slots:
+  [[nodiscard]] QJsonObject toJson();
+  [[nodiscard]] QVariantMap toMap();
+
 public:
   explicit ProfileEntry(QObject *parent = nullptr);
 
@@ -55,8 +59,6 @@ public:
   ProfileEntry(const QJsonObject& data, QObject *parent = nullptr);
   ProfileEntry(const QVariantMap& data, QObject *parent = nullptr);
 
-  [[nodiscard]] QJsonObject toJson();
-  [[nodiscard]] QVariantMap toMap();
 
   void copy(const QJsonObject& data);
   void copy(const QVariantMap& data);

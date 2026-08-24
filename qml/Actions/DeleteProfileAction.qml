@@ -13,6 +13,6 @@ Action {
     onTriggered: {
         if (!profileId) return;
 
-        Profiles.deleteProfileById(profileId);
+        Profiles.deleteProfile(profileId);
     }
 }
