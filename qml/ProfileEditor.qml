@@ -221,7 +221,7 @@ ApplicationWindow {
                         let selectedItem = model[index]
 
                         if (selectedItem) {
-                            console.log("Current ID changed to:", selectedItem.id);
+                            console.log("Current version changed to:", selectedItem.id);
                         }
                     }
                 }
