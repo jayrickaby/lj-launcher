@@ -154,26 +154,57 @@ void ClientJson::refreshState() {
   }
 }
 
-Argument ClientJson::parseArgument(const QVariantMap& rawArgument) {
-  Argument argument;
+  Argument ClientJson::parseArgument(const QVariantMap& rawArgument) {
+    Argument argument;
 
-  for (const auto& rawRule : rawArgument["rules"].toList()) {
-    if (!rawRule.isValid() or rawRule.isNull() or rawRule.toMap().isEmpty()) {
-      continue;
+    for (const auto& rawRule : rawArgument["rules"].toList()) {
+      if (!rawRule.isValid() or rawRule.isNull() or rawRule.toMap().isEmpty()) {
+        continue;
+      }
+
+      argument.rules.append(parseRule(rawRule.toMap()));
     }
 
-    argument.rules.append(parseRule(rawRule.toMap()));
-  }
+    const auto rawValue {rawArgument.value("value")};
 
-  for (const auto& rawValue : rawArgument["value"].toList()) {
-    if (!rawValue.isValid() or rawValue.isNull() or rawValue.toString().isEmpty()) {
-      continue;
+    // Ensures strings aren't split
+    if (rawValue.metaType().id() == QMetaType::QString) {
+      auto value = rawValue.toString();
+      if (!value.isEmpty()) {
+        argument.values.append(value);
+      }
+    }
+    else if (rawValue.canConvert<QVariantList>()) {
+      for (const auto& rawValue : rawValue.toList()) {
+        if (rawValue.isValid() and !rawValue.isNull() and !rawValue.toString().isEmpty()) {
+          argument.values.append(rawValue.toString());
+        }
+      }
     }
 
-    argument.values.append(rawValue.toString());
+    return argument;
   }
 
-  return argument;
+Feature ClientJson::parseFeature(const QVariantMap& rawFeature) {
+  if (rawFeature.value("is_demo_user").toBool()) {
+    return Feature::IS_DEMO_USER;
+  }
+  if (rawFeature.value("has_custom_resolution").toBool()) {
+    return Feature::HAS_CUSTOM_RESOLUTION;
+  }
+  if (rawFeature.value("has_quick_plays_support").toBool()) {
+    return Feature::HAS_QUICK_PLAYS_SUPPORT;
+  }
+  if (rawFeature.value("is_quick_play_singleplayer").toBool()) {
+    return Feature::IS_QUICK_PLAY_SINGLEPLAYER;
+  }
+  if (rawFeature.value("is_quick_play_multiplayer").toBool()) {
+    return Feature::IS_QUICK_PLAY_MULTIPLAYER;
+  }
+  if (rawFeature.value("is_quick_play_realms").toBool()) {
+    return Feature::IS_QUICK_PLAY_REALMS;
+  }
+  return Feature::NONE;
 }
 
 Rule ClientJson::parseRule(const QVariantMap& rawRule) {
@@ -188,6 +219,9 @@ Rule ClientJson::parseRule(const QVariantMap& rawRule) {
 
   const QVariantMap RAW_OS {rawRule.value("os").toMap()};
   rule.os = parseOs(RAW_OS);
+
+  const QVariantMap RAW_FEATURE {rawRule.value("features").toMap()};
+  rule.feature = parseFeature(RAW_FEATURE);
 
   return rule;
 }

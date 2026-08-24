@@ -48,6 +48,7 @@ public:
 
   static Action parseAction(const QString& rawAction);
   static Argument parseArgument(const QVariantMap& rawArgument);
+  static Feature parseFeature(const QVariantMap& rawFeature);
   static OperatingSystem parseOs(const QVariantMap& rawOs);
   static Rule parseRule(const QVariantMap& rawRule);
 

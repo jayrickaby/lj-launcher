@@ -14,8 +14,19 @@ enum class Action {
   NONE
 };
 
+enum class Feature {
+  IS_DEMO_USER,
+  HAS_CUSTOM_RESOLUTION,
+  HAS_QUICK_PLAYS_SUPPORT,
+  IS_QUICK_PLAY_SINGLEPLAYER,
+  IS_QUICK_PLAY_MULTIPLAYER,
+  IS_QUICK_PLAY_REALMS,
+  NONE
+};
+
 struct Rule {
   Action action {Action::NONE};
+  Feature feature {Feature::NONE};
   OperatingSystem os {};
 };
 
