@@ -6,6 +6,8 @@ Menu {
     property var editorLoader
     property var targetUuid: null
 
+    signal deleteActionPrompted()
+
     MenuItem {
         action: NewProfileAction {
             editorLoader: root.editorLoader
@@ -18,9 +20,8 @@ Menu {
         }
     }
     MenuItem {
-        action: DeleteProfileAction {
-            profileId: targetUuid
-        }
+        text: "Delete Profile"
+        onTriggered: root.deleteActionPrompted()
     }
     MenuItem {
         action: OpenGameDirectoryAction {

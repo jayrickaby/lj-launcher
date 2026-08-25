@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Dialogs
 import QtQuick.Layouts
 
 import "./template"
@@ -164,5 +165,24 @@ FocusScope {
     ProfilesTableMenu {
         id: profilesMenu
         editorLoader: root.editorLoader
+
+        onDeleteActionPrompted: deleteConfirmation.open();
+    }
+
+    MessageDialog {
+        id: deleteConfirmation
+
+        title: "Profile Confirmation"
+        text: "Are you sure you want to delete this profile?"
+        // Yes should be "Delete Profile"
+        buttons: MessageDialog.Yes | MessageDialog.Cancel
+
+        onAccepted: deleteProfileAction.trigger()
+        onRejected: close()
+    }
+
+    DeleteProfileAction {
+        id: deleteProfileAction
+        profileId: profilesMenu.targetUuid
     }
 }
