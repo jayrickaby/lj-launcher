@@ -22,6 +22,9 @@ Profiles::Profiles(QObject *parent)
   connect(this, &Profiles::currentProfileIdChanged,
   this, &Profiles::renameCurrentProfileIfDefault);
 
+  connect (ProfileManager::getInstance(), &ProfileManager::savedProfiles,
+    this, &Profiles::profilesChanged);
+
   // Current profile on startup should be first
   setCurrentProfileId(ProfileManager::getProfiles().keys().first());
   renameCurrentProfileIfDefault();
@@ -65,6 +68,10 @@ QList<QVariantMap> Profiles::profiles() {
 
     return aCreated < bCreated;
   });
+
+  if (!profiles.contains(s_currentProfileId)) {
+    setCurrentProfileId(profilesList.first().value("id").toString());
+  }
 
   return profilesList;
 }
