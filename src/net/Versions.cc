@@ -12,6 +12,15 @@ Versions::Versions(QObject *parent)
   : NetworkRequester(parent) {}
 
 QList<QVariantMap> Versions::getVersionsList(bool snapshot, bool beta, bool alpha) const {
+  QList<QVariantMap> versions{};
+
+  versions.append(
+    QVariantMap{
+    {"id", "latest-release"},
+    {"name", "Use Latest Release"}
+    }
+  );
+
   QList<VersionType> typesToGet {VersionType::RELEASE};
 
   if (alpha) {
@@ -24,20 +33,17 @@ QList<QVariantMap> Versions::getVersionsList(bool snapshot, bool beta, bool alph
 
   if (snapshot) {
     typesToGet.append(VersionType::SNAPSHOT);
+    versions.append(
+      QVariantMap {
+      {"id", "latest-snapshot"},
+      {"name", "Use Latest Snapshot"}
+    }
+    );
   }
 
   const auto AVAILABLE_VERSIONS{
     VersionManifest::getVersions(typesToGet)
   };
-
-  QList<QVariantMap> versions{};
-
-  versions.append(
-    QVariantMap{
-    {"id", "latest-release"},
-    {"name", "Use Latest Release"}
-    }
-  );
 
   for (const auto& version : AVAILABLE_VERSIONS) {
     QString type {convertFromVersionType(version.type)};

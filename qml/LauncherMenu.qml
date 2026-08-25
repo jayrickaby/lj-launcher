@@ -23,9 +23,12 @@ Item {
     property bool gameDownloaded: Game.state === Game.GameState.DOWNLOADED
     property bool gameLaunching: Game.state === Game.GameState.LAUNCHING
 
-    ProfileEditor {
-        id: profileEditor
-        visible: false
+    property alias profileEditor: profileEditorLoader
+
+    Loader {
+        id: profileEditorLoader
+        active: false
+        sourceComponent: ProfileEditor{}
     }
 
     NewProfileAction {

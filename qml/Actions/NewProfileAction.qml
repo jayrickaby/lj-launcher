@@ -15,9 +15,14 @@ Action {
         if (!editor) return;
         if (!profileId) return;
 
-        editor.show();
+        // reset all parameters
+        editor.active = false;
+        editor.active = true;
+
         let profile = Profiles.getProfile(profileId).toMap();
         profile["name"] = `Copy of ${profile["name"]}`;
-        editor.setProfile(profile, null);
+        editor.item.setProfile(profile, null);
+
+        editor.item.show();
     }
 }

@@ -15,8 +15,13 @@ Action {
         if (!editor) return;
         if (!profileId) return;
 
-        editor.show();
+        // reset all parameters
+        editor.active = false;
+        editor.active = true;
+
         let profile = Profiles.getProfile(profileId);
-        editor.setProfile(profile, profileId);
+        editor.item.setProfile(profile, profileId);
+
+        editor.item.show();
     }
 }
