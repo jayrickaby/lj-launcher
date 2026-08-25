@@ -54,8 +54,6 @@ FocusScope {
         boundsBehavior: Flickable.StopAtBounds
         flickableDirection: Flickable.VerticalFlick
 
-        model: ["Versions name", "Versions"]
-
         onResize: (column, width) => {
             tableView.setColumnWidth(column, width)
         }
