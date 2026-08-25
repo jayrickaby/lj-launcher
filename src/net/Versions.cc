@@ -9,25 +9,20 @@
 Versions* Versions::s_instance {nullptr};
 
 Versions::Versions(QObject *parent)
-  : NetworkRequester(parent) {
-  connect(ProfileManager::getInstance(), &ProfileManager::profileUpdated,
-    this, &Versions::versionsListChanged);
-}
+  : NetworkRequester(parent) {}
 
-QList<QVariantMap> Versions::versionsList() {
+QList<QVariantMap> Versions::getVersionsList(bool snapshot, bool beta, bool alpha) const {
   QList<VersionType> typesToGet {VersionType::RELEASE};
 
-  auto profile {ProfileManager::getProfile(Profiles::getCurrentProfileId())};
-
-  if (profile->getShowAlphaVersions()) {
+  if (alpha) {
     typesToGet.append(VersionType::OLD_ALPHA);
   }
 
-  if (profile->getShowBetaVersions()) {
+  if (beta) {
     typesToGet.append(VersionType::OLD_BETA);
   }
 
-  if (profile->getShowSnapshotVersions()) {
+  if (snapshot) {
     typesToGet.append(VersionType::SNAPSHOT);
   }
 
@@ -130,7 +125,7 @@ QList<QVariantMap> Versions::getDownloadedVersions() {
       )
     };
 
-    if (QDir(JSON_PATH).exists()) {
+    if (FileSystem::isFile(JSON_PATH)) {
       qDebug() << "Found version:" << VERSION;
       versions.append (
           QJsonDocument::fromJson(FileSystem::read(JSON_PATH).toUtf8())

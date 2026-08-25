@@ -13,6 +13,10 @@ ApplicationWindow {
 
     property var currentProfile: null
     property var currentProfileId: null
+
+    property bool showSnapshots: checkShowSnapshotVersions.checked
+    property bool showAlphas: checkShowAlphaVersions.checked
+    property bool showBetas: checkShowBetaVersions.checked
     
     leftPadding: 8; topPadding: 8; rightPadding: 8; bottomPadding: 8;
 
@@ -179,9 +183,6 @@ ApplicationWindow {
                     text: qsTr("Enable experimental development versions (\"snapshots\")")
 
                     checked: currentProfile.showSnapshotVersions
-                    onCheckedChanged: {
-                        currentProfile.showSnapshotVersions = checked;
-                    }
                 }
                 CheckBox{
                     id: checkShowBetaVersions
@@ -189,9 +190,6 @@ ApplicationWindow {
                     text: qsTr("Allow use of old \"Beta\" Minecraft ver (From 2010-2011)")
 
                     checked: currentProfile.showBetaVersions
-                    onCheckedChanged: {
-                        currentProfile.showBetaVersions = checked;
-                    }
                 }
                 CheckBox{
                     id: checkShowAlphaVersions
@@ -199,9 +197,6 @@ ApplicationWindow {
                     text: qsTr("Allow use of old \"Alpha\" Minecraft ver (From 2010)")
 
                     checked: currentProfile.showAlphaVersions
-                    onCheckedChanged: {
-                        currentProfile.showAlphaVersions = checked;
-                    }
                 }
 
                 Text {
@@ -217,7 +212,7 @@ ApplicationWindow {
                     textRole: "name"
 
                     model: control.visible
-                        ? Versions.versionsList
+                        ? Versions.getVersionsList(showSnapshots, showBetas, showAlphas)
                         : []
                     currentValue: currentProfile.lastVersionId
 
@@ -349,9 +344,9 @@ ApplicationWindow {
             }
         }
 
-        currentProfile.showAlphaVersions = checkShowAlphaVersions.checked;
-        currentProfile.showBetaVersions = checkShowBetaVersions.checked;
-        currentProfile.showSnapshotVersions =checkShowSnapshotVersions.checked;
+        currentProfile.showAlphaVersions = showAlphas;
+        currentProfile.showBetaVersions = showBetas;
+        currentProfile.showSnapshotVersions = showSnapshots;
 
         return json;
     }
