@@ -89,6 +89,7 @@ void Game::prepareExecutable() {
 
   qDebug() << args;
 
+  setState(GameState::LAUNCHING);
   process->start(javaDir, args);
 }
 
@@ -135,12 +136,13 @@ void Game::setState(const GameState& state) {
   if (s_state == state) {
     return;
   }
-  if (state == GameState::DOWNLOADED) {
-    emit getInstance()->assetsDownloaded();
-  }
 
   s_state = state;
   emit getInstance()->stateChanged();
+
+  if (state == GameState::DOWNLOADED) {
+    emit getInstance()->assetsDownloaded();
+  }
 }
 
 Game* Game::getInstance() {
