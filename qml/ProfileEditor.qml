@@ -20,6 +20,7 @@ ApplicationWindow {
     ColumnLayout {
         id: content
         anchors.fill: parent
+        spacing: 0
 
         // Profile Info
         GroupBox {
@@ -280,11 +281,19 @@ ApplicationWindow {
 
         // Buttons
         RowLayout {
+            Layout.fillWidth: true
+
             Button {
                 text: qsTr("Cancel")
 
                 onClicked: control.close()
             }
+
+            // TODO: Better alternative than a spacer item?
+            Item {
+                Layout.fillWidth: true
+            }
+
             Button {
                 text: qsTr("Open Game Dir")
 
@@ -327,8 +336,8 @@ ApplicationWindow {
         }
         if (checkResolution.checked) {
             json["resolution"] = {
-                "width": resolutionWidth,
-                "height": resolutionHeight
+                "width": resolutionWidth.text,
+                "height": resolutionHeight.text
             }
         }
 
