@@ -16,11 +16,11 @@
 #include <QNetworkRequest>
 #include <QObject>
 #include <QRandomGenerator>
+#include <QSettings>
 #include <QUrlQuery>
 #include <QVariantList>
 
 #include "../Launcher.h"
-#include "../Settings.h"
 #include "NetworkRequester.h"
 
 struct PkceData {
@@ -115,6 +115,10 @@ private:
 
   void requestMinecraftProfile(const QString& accessToken);
   UserData parseMinecraftProfile(const QJsonObject& json);
+
+  void clearRefreshToken();
+  void setRefreshToken(const QString& refreshToken);
+  QVariant getRefreshToken() const;
 
   void setState(const AuthState& state);
 

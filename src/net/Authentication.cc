@@ -25,8 +25,20 @@ void Authentication::tryStoredRefreshToken() {
     return;
   }
 
-  QString const TOKEN {Settings::getRefreshToken().toString()};
+  QString const TOKEN {getRefreshToken().toString()};
   requestMicrosoftAuthViaRefresh(TOKEN);
+}
+
+QVariant Authentication::getRefreshToken() const {
+  QSettings settings;
+  settings.beginGroup("Account");
+  return settings.value("refreshToken");
+}
+
+void Authentication::setRefreshToken(const QString& refreshToken) {
+  QSettings settings;
+  settings.beginGroup("Account");
+  settings.setValue("refreshToken", refreshToken);
 }
 
 LoginData Authentication::getLoginData() const{
@@ -42,15 +54,16 @@ LoginData Authentication::getLoginData() const{
   return data;
 }
 
-bool Authentication::hasRefreshToken() const {
-  if (Settings::getRefreshToken().canConvert<QString>()
-    and !Settings::getRefreshToken().toString().isEmpty()) {
-    qDebug("Stored refresh token found!");
-    return true;
-  }
+void Authentication::clearRefreshToken() {
+  QSettings settings;
+  settings.beginGroup("Account");
+  settings.remove("refreshToken");
+}
 
-  qDebug("No stored refresh token found!");
-  return false;
+bool Authentication::hasRefreshToken() const {
+  QSettings settings;
+  settings.beginGroup("Account");
+  return settings.contains("refreshToken");
 }
 
 QString Authentication::generateSafeToken(int length) const {
@@ -327,7 +340,7 @@ void Authentication::onNetworkReply(QNetworkReply* reply) {
     Launcher::sendError(message);
 
     // Redundant to keep if potentially invalid
-    Settings::clearRefreshToken();
+    clearRefreshToken();
   }
 }
 
@@ -350,7 +363,7 @@ QString Authentication::parseMicrosoftTokens(const QJsonObject& json) {
   qDebug("Found requested Refresh Token");
 
   // Save to avoid manual login next time
-  Settings::setRefreshToken(json["refresh_token"].toString());
+  setRefreshToken(json["refresh_token"].toString());
   return json["access_token"].toString();
 }
 

@@ -12,8 +12,6 @@ qt_add_executable(lj_launcher
     src/main.cc
         src/Application.cc
         src/Application.h
-        src/Settings.cc
-        src/Settings.h
         src/Launcher.cc
         src/Launcher.h
         src/Profiles.cc
