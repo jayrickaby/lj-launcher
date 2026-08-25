@@ -174,33 +174,35 @@ ApplicationWindow {
                 rowSpacing: 4
 
                 CheckBox{
+                    id: checkShowSnapshotVersions
                     Layout.columnSpan: 2
                     text: qsTr("Enable experimental development versions (\"snapshots\")")
 
-                    checked: Launcher.settings.enableSnapshots
-
-                    onCheckedChanged: Launcher.set_setting("enableSnapshots", checked)
+                    checked: currentProfile.showSnapshotVersions
+                    onCheckedChanged: {
+                        currentProfile.showSnapshotVersions = checked;
+                    }
                 }
-                // TODO: Find some way to store alpha and beta individually
                 CheckBox{
+                    id: checkShowBetaVersions
                     Layout.columnSpan: 2
-                    text: qsTr("Allow use of old \"Alpha\" and \"Beta\" Minecraft versions (From 2010-2011)")
+                    text: qsTr("Allow use of old \"Beta\" Minecraft ver (From 2010-2011)")
 
-                    checked: Launcher.settings.enableHistorical
-
-                    onCheckedChanged: Launcher.set_setting("enableHistorical", checked)
+                    checked: currentProfile.showBetaVersions
+                    onCheckedChanged: {
+                        currentProfile.showBetaVersions = checked;
+                    }
                 }
-                //
-                // CheckBox{
-                //     text: qsTr("Allow use of old \"Beta\" Minecraft ver (From 2010-2011)")
-                //
-                //     checked: Launcher.settings.enableHistorical
-                // }
-                // CheckBox{
-                //     text: qsTr("Allow use of old \"Alpha\" Minecraft ver (From 2010)")
-                //
-                //     checked: Launcher.settings.enableHistorical
-                // }
+                CheckBox{
+                    id: checkShowAlphaVersions
+                    Layout.columnSpan: 2
+                    text: qsTr("Allow use of old \"Alpha\" Minecraft ver (From 2010)")
+
+                    checked: currentProfile.showAlphaVersions
+                    onCheckedChanged: {
+                        currentProfile.showAlphaVersions = checked;
+                    }
+                }
 
                 Text {
                     text: qsTr("Use version:");
@@ -214,7 +216,9 @@ ApplicationWindow {
                     valueRole: "id"
                     textRole: "name"
 
-                    model: Versions.versionsList
+                    model: control.visible
+                        ? Versions.versionsList
+                        : []
                     currentValue: currentProfile.lastVersionId
 
                     onActivated: (index) => {
@@ -222,6 +226,11 @@ ApplicationWindow {
 
                         if (selectedItem) {
                             console.log("Current version changed to:", selectedItem.id);
+                        }
+                    }
+                    onCurrentIndexChanged: {
+                        if (control.visible && currentIndex === -1) {
+                            currentIndex = 0;
                         }
                     }
                 }
@@ -339,6 +348,10 @@ ApplicationWindow {
                 "height": resolutionHeight.text
             }
         }
+
+        currentProfile.showAlphaVersions = checkShowAlphaVersions.checked;
+        currentProfile.showBetaVersions = checkShowBetaVersions.checked;
+        currentProfile.showSnapshotVersions =checkShowSnapshotVersions.checked;
 
         return json;
     }

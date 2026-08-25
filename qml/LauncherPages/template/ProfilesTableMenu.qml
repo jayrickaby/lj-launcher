@@ -3,14 +3,14 @@ import QtQuick.Controls
 
 Menu {
     id: root
-    property var editorLoader
+    property var editor
     property var targetUuid: null
 
     signal deleteActionPrompted()
 
     MenuItem {
         action: NewProfileAction {
-            editorLoader: root.editorLoader
+            editor: root.editor
             profileId: targetUuid
         }
     }

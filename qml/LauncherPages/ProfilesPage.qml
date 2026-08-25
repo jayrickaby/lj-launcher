@@ -11,7 +11,7 @@ FocusScope {
     id: root
 
     property var model
-    property var editorLoader
+    property var editor
     property alias view: tableView
 
     // From plasma-systemmonitor/src/table/BaseTableView.qml:
@@ -164,7 +164,7 @@ FocusScope {
 
     ProfilesTableMenu {
         id: profilesMenu
-        editorLoader: root.editorLoader
+        editor: root.editor
 
         onDeleteActionPrompted: deleteConfirmation.open();
     }

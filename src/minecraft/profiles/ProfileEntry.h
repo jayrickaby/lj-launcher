@@ -28,6 +28,9 @@ class ProfileEntry : public QObject {
   Q_PROPERTY(QVariant javaDir READ getJavaDir NOTIFY javaDirChanged)
   Q_PROPERTY(QVariant javaArgs READ getJavaArgs NOTIFY javaArgsChanged)
   Q_PROPERTY(QVariant resolution READ getResolution NOTIFY resolutionChanged)
+  Q_PROPERTY(bool showAlphaVersions READ getShowAlphaVersions WRITE setShowAlphaVersions NOTIFY showAlphaVersionsUpdated)
+  Q_PROPERTY(bool showBetaVersions READ getShowBetaVersions WRITE setShowBetaVersions NOTIFY showBetaVersionsUpdated)
+  Q_PROPERTY(bool showSnapshotVersions READ getShowSnapshotVersions WRITE setShowSnapshotVersions NOTIFY showSnapshotVersionsUpdated)
 
 signals:
   void nameChanged();
@@ -41,13 +44,16 @@ signals:
   void javaArgsChanged();
   void resolutionChanged();
   void profileUpdated();
+  void showAlphaVersionsUpdated();
+  void showBetaVersionsUpdated();
+  void showSnapshotVersionsUpdated();
 
 public slots:
   [[nodiscard]] QJsonObject toJson();
   [[nodiscard]] QVariantMap toMap();
 
 public:
-  explicit ProfileEntry(QObject *parent = nullptr);
+  explicit ProfileEntry(const QString& uuid, QObject *parent = nullptr);
 
   enum class ProfileType {
     CUSTOM,
@@ -56,8 +62,8 @@ public:
   };
   Q_ENUM(ProfileType);
 
-  ProfileEntry(const QJsonObject& data, QObject *parent = nullptr);
-  ProfileEntry(const QVariantMap& data, QObject *parent = nullptr);
+  ProfileEntry(const QString& uuid, const QJsonObject& data, QObject *parent = nullptr);
+  ProfileEntry(const QString& uuid, const QVariantMap& data, QObject *parent = nullptr);
 
   void copy(const QJsonObject& data);
   void copy(const QVariantMap& data);
@@ -72,6 +78,9 @@ public:
   QVariant getJavaDir() const;
   QVariant getJavaArgs() const;
   QVariant getResolution() const;
+  bool getShowAlphaVersions() const;
+  bool getShowBetaVersions() const;
+  bool getShowSnapshotVersions() const;
 
   void setName(const QString& name);
   void setType(const ProfileType& type);
@@ -83,6 +92,9 @@ public:
   void setJavaDir(const QVariant& javaDir);
   void setJavaArgs(const QVariant& javaArgs);
   void setResolution(const QVariant& resolution);
+  void setShowAlphaVersions(bool showAlphaVersions);
+  void setShowBetaVersions(bool showBetaVersions);
+  void setShowSnapshotVersions(bool showSnapshotVersions);
 
   inline static const Resolution defaultResolution {
     .width = 854,
@@ -102,6 +114,8 @@ private:
   std::optional<QString> m_javaDir {std::nullopt};
   std::optional<QString> m_javaArgs {std::nullopt};
   std::optional<Resolution> m_resolution {std::nullopt};
+
+  const QString UUID;
 };
 
 #endif  // LJ_LAUNCHER_PROFILE_H_

@@ -88,12 +88,12 @@ void VersionManifest::setState(const ManifestState& state) {
 }
 
 ManifestLatest VersionManifest::getLatestVersions() {
-  qDebug() << "Retrieving latest manifest ver...";
+  qDebug() << "Retrieving latest manifest versions...";
   return s_latestVersions;
 }
 
 QList<ManifestEntry> VersionManifest::getVersions(const QList<VersionType>& types) {
-  qDebug() << "Retrieving manifest ver...";
+  qDebug() << "Retrieving manifest versions...";
   QList<ManifestEntry> versions;
   for (const auto& version: s_versions ) {
     if (types.contains(version.type)) {

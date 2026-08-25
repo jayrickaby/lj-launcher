@@ -6,17 +6,17 @@ import jayrickaby.lj_launcher
 Action {
     id: root
 
-    property var editorLoader
+    property var editor
     property var profileId
 
     text: qsTr("Edit Profile")
 
     onTriggered: {
-        if (!editorLoader) return;
+        if (!editor) return;
         if (!profileId) return;
 
-        editorLoader.active = true;
+        editor.show();
         let profile = Profiles.getProfile(profileId);
-        editorLoader.item.setProfile(profile, profileId);
+        editor.setProfile(profile, profileId);
     }
 }

@@ -9,11 +9,30 @@
 Versions* Versions::s_instance {nullptr};
 
 Versions::Versions(QObject *parent)
-  : NetworkRequester(parent) {}
+  : NetworkRequester(parent) {
+  connect(ProfileManager::getInstance(), &ProfileManager::profileUpdated,
+    this, &Versions::versionsListChanged);
+}
 
 QList<QVariantMap> Versions::versionsList() {
+  QList<VersionType> typesToGet {VersionType::RELEASE};
+
+  auto profile {ProfileManager::getProfile(Profiles::getCurrentProfileId())};
+
+  if (profile->getShowAlphaVersions()) {
+    typesToGet.append(VersionType::OLD_ALPHA);
+  }
+
+  if (profile->getShowBetaVersions()) {
+    typesToGet.append(VersionType::OLD_BETA);
+  }
+
+  if (profile->getShowSnapshotVersions()) {
+    typesToGet.append(VersionType::SNAPSHOT);
+  }
+
   const auto AVAILABLE_VERSIONS{
-    VersionManifest::getVersions({VersionType::RELEASE})
+    VersionManifest::getVersions(typesToGet)
   };
 
   QList<QVariantMap> versions{};

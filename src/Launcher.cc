@@ -79,7 +79,7 @@ QString Launcher::userMessage() {
     message.append(READY_MESSAGE.arg(DOWNLOAD_MESSAGE, version));
   }
   else {
-    message.append("Loading ver...");
+    message.append("Loading versions...");
   }
 
   return message;

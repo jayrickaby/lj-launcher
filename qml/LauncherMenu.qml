@@ -23,30 +23,21 @@ Item {
     property bool gameDownloaded: Game.state === Game.GameState.DOWNLOADED
     property bool gameLaunching: Game.state === Game.GameState.LAUNCHING
 
-    Loader {
-        id: profileEditorLoader
-        source: "ProfileEditor.qml"
-        active: false
-
-        onLoaded: {
-            item.show();
-            item.closing.connect(function() {
-                profileEditorLoader.active = false;
-            });
-        }
+    ProfileEditor {
+        id: profileEditor
+        visible: false
     }
-
 
     NewProfileAction {
         id: newProfileAction
 
-        editorLoader: profileEditorLoader
+        editor: profileEditor
         profileId: profileChooser.currentValue
     }
     EditProfileAction {
         id: editProfileAction
 
-        editorLoader: profileEditorLoader
+        editor: profileEditor
         profileId: profileChooser.currentValue
     }
 
@@ -100,7 +91,7 @@ Item {
 
                 columnWidths: [0.5, 0.5]
 
-                editorLoader: profileEditorLoader
+                editor: profileEditor
                 model: ProfilesTable {}
             }
         }

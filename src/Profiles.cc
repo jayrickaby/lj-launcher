@@ -4,6 +4,8 @@
 
 #include "Profiles.h"
 
+#include <qqmlengine.h>
+
 #include "minecraft/ver/VersionManifest.h"
 
 QString Profiles::s_currentProfileId;
@@ -25,8 +27,8 @@ Profiles::Profiles(QObject *parent)
   connect (ProfileManager::getInstance(), &ProfileManager::savedProfiles,
     this, &Profiles::profilesChanged);
 
-  // Current profile on startup should be first
-  setCurrentProfileId(ProfileManager::getProfiles().keys().first());
+  // Current profile on startup should be first created
+  setCurrentProfileId(Profiles::profiles().first().value("id").toString());
   renameCurrentProfileIfDefault();
 }
 
@@ -121,5 +123,8 @@ ProfileEntry* Profiles::getProfile(const QString& profileId) {
     return nullptr;
   }
 
-  return ProfileManager::getProfile(profileId).data();
+  // Mark as CPP ownership so qml doesnt delete data
+  auto profile {ProfileManager::getProfile(profileId)};
+  QQmlEngine::setObjectOwnership(profile.data(), QQmlEngine::CppOwnership);
+  return profile.data();
 };

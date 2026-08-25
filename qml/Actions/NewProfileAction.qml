@@ -6,18 +6,18 @@ import jayrickaby.lj_launcher
 Action {
     id: root
 
-    property Loader editorLoader: null
-    property var profileId: null
+    property var editor
+    property var profileId
 
     text: qsTr("New Profile")
 
     onTriggered: {
-        if (!editorLoader) return;
+        if (!editor) return;
         if (!profileId) return;
 
-        editorLoader.active = true;
+        editor.show();
         let profile = Profiles.getProfile(profileId).toMap();
         profile["name"] = `Copy of ${profile["name"]}`;
-        editorLoader.item.setProfile(profile, null);
+        editor.setProfile(profile, null);
     }
 }

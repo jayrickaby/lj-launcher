@@ -83,7 +83,7 @@ QString ProfileManager::createProfile() {
 QString ProfileManager::createProfile(const QVariantMap& parameters) {
   QString uuid {generateUuid()};
 
-  s_profiles.insert(uuid, QSharedPointer<ProfileEntry>::create(parameters));
+  s_profiles.insert(uuid, QSharedPointer<ProfileEntry>::create(uuid, parameters));
   saveProfiles();
   return uuid;
 }
@@ -102,7 +102,7 @@ QString ProfileManager::getProfilesPath() {
 
 QSharedPointer<ProfileEntry> ProfileManager::getProfile(const QString& profileId) {
   if (!s_profiles.contains(profileId)) {
-    return QSharedPointer<ProfileEntry>::create();
+    return QSharedPointer<ProfileEntry>::create(profileId);
   }
 
   return s_profiles.value(profileId);
@@ -138,10 +138,10 @@ void ProfileManager::refreshProfiles() {
   s_profiles.clear();
   s_profiles.reserve(entries.count());
 
-  for (const auto& profileId : entries.keys()) {
-    auto profileData {entries.value(profileId).toMap()};
+  for (const auto& [profileId, profileData] : entries.asKeyValueRange()) {
+    auto map {profileData.toMap()};
 
-    auto profile {QSharedPointer<ProfileEntry>::create(profileData)};
+    auto profile {QSharedPointer<ProfileEntry>::create(profileId, map)};
     auto instance {getInstance()};
 
     connect(profile.get(), &ProfileEntry::profileUpdated, instance, [instance, profileId] {
@@ -155,14 +155,30 @@ void ProfileManager::refreshProfiles() {
 }
 
 void ProfileManager::saveProfiles() {
-  QVariantMap profiles {};
+  QVariantMap localProfiles {};
 
-  for (const auto& profileId : s_profiles.keys()) {
-    profiles[profileId] = getProfile(profileId)->toMap();
+  QSettings settings;
+  settings.beginGroup("Profiles");
+  for (auto profileId : settings.childGroups()) {
+    if (!s_profiles.contains(profileId)) {
+      settings.remove(profileId);
+    }
   }
 
+  // properly save non-parity settings
+  for (const auto& [profileId, profile] : s_profiles.asKeyValueRange()) {
+    settings.beginGroup(profileId);
+    QVariantMap data {profile->toMap()};
+    data.remove("showAlphaVersions");
+    data.remove("showBetaVersions");
+    data.remove("showSnapshotVersions");
+
+    localProfiles.insert(profileId, data);
+  }
+
+  settings.endGroup();
   auto data {JsonUtils::readJson(PROFILES_PATH).toVariantMap()};
-  data["profiles"] = QVariant::fromValue(profiles);
+  data["profiles"] = QVariant::fromValue(localProfiles);
   JsonUtils::writeJson(PROFILES_PATH, data);
 
   emit getInstance()->savedProfiles();

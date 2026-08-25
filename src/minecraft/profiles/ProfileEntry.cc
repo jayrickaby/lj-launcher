@@ -2,13 +2,16 @@
 // Created by jay on 23/08/2026.
 //
 
+#include "ProfileEntry.h"
+
 #include <QJsonObject>
 
 #include "Launcher.h"
-#include "ProfileEntry.h"
+#include "minecraft/ver/VersionManifest.h"
 
-ProfileEntry::ProfileEntry(QObject* parent)
-  : QObject(parent) {
+ProfileEntry::ProfileEntry(const QString& uuid, QObject* parent)
+  : QObject(parent),
+    UUID(uuid) {
   connect(this, &ProfileEntry::nameChanged, &ProfileEntry::profileUpdated);
   connect(this, &ProfileEntry::typeChanged, &ProfileEntry::profileUpdated);
   connect(this, &ProfileEntry::createdChanged, &ProfileEntry::profileUpdated);
@@ -19,15 +22,18 @@ ProfileEntry::ProfileEntry(QObject* parent)
   connect(this, &ProfileEntry::javaDirChanged, &ProfileEntry::profileUpdated);
   connect(this, &ProfileEntry::javaArgsChanged, &ProfileEntry::profileUpdated);
   connect(this, &ProfileEntry::resolutionChanged, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::showAlphaVersionsUpdated, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::showBetaVersionsUpdated, &ProfileEntry::profileUpdated);
+  connect(this, &ProfileEntry::showSnapshotVersionsUpdated, &ProfileEntry::profileUpdated);
 }
 
-ProfileEntry::ProfileEntry(const QJsonObject& data, QObject *parent)
-  : ProfileEntry(parent){
+ProfileEntry::ProfileEntry(const QString& uuid, const QJsonObject& data, QObject *parent)
+  : ProfileEntry(uuid, parent){
   copy(data);
 }
 
-ProfileEntry::ProfileEntry(const QVariantMap& data, QObject *parent)
-  : ProfileEntry(parent){
+ProfileEntry::ProfileEntry(const QString& uuid, const QVariantMap& data, QObject *parent)
+  : ProfileEntry(uuid, parent){
   copy(data);
 }
 
@@ -51,8 +57,8 @@ void ProfileEntry::copy(const QVariantMap& data) {
     }
     else {
       setType(ProfileType::CUSTOM);
+      setLastVersionId(lastVersionId);
     }
-    setLastVersionId(lastVersionId);
   }
 
   if (data.contains("created")) {
@@ -81,6 +87,18 @@ void ProfileEntry::copy(const QVariantMap& data) {
 
   if (data.contains("resolution")) {
     setResolution(data.value("resolution"));
+  }
+
+  if (data.contains("showAlphaVersions")) {
+    setShowAlphaVersions(data.value("showAlphaVersions").toBool());
+  }
+
+  if (data.contains("showBetaVersions")) {
+    setShowBetaVersions(data.value("showBetaVersions").toBool());
+  }
+
+  if (data.contains("showSnapshotVersions")) {
+    setShowSnapshotVersions(data.value("showSnapshotVersions").toBool());
   }
 }
 
@@ -122,6 +140,11 @@ QVariantMap ProfileEntry::toMap() {
   if (m_resolution.has_value()) {
     result["resolution"] = getResolution();
   }
+
+  result["showAlphaVersions"] = getShowAlphaVersions();
+  result["showBetaVersions"] = getShowBetaVersions();
+  result["showSnapshotVersions"] = getShowSnapshotVersions();
+
   return result;
 }
 
@@ -181,6 +204,33 @@ QVariant ProfileEntry::getResolution() const {
   return {};
 }
 
+bool ProfileEntry::getShowAlphaVersions() const {
+  QSettings settings;
+  settings.beginGroup("Profiles");
+  settings.beginGroup(UUID);
+
+  qDebug() << "Settings file path:" << settings.fileName();
+
+  return settings.value("showAlphaVersions", false).toBool();
+}
+
+bool ProfileEntry::getShowBetaVersions() const {
+  QSettings settings;
+  settings.beginGroup("Profiles");
+  settings.beginGroup(UUID);
+
+
+  return settings.value("showBetaVersions", false).toBool();
+}
+
+bool ProfileEntry::getShowSnapshotVersions() const {
+  QSettings settings;
+  settings.beginGroup("Profiles");
+  settings.beginGroup(UUID);
+
+  return settings.value("showSnapshotVersions", false).toBool();
+}
+
 void ProfileEntry::setName(const QString& name) {
   if (m_name != name) {
     m_name = name;
@@ -189,9 +239,22 @@ void ProfileEntry::setName(const QString& name) {
 }
 
 void ProfileEntry::setType(const ProfileType& type) {
-  if (m_type != type) {
+  if (m_type == type) {
+    return;
+  }
+
     m_type = type;
     emit typeChanged();
+
+  switch (m_type) {
+    case ProfileType::LATEST_RELEASE:
+      setLastVersionId("latest-release");
+      break;
+    case ProfileType::LATEST_SNAPSHOT:
+      setLastVersionId("latest-snapshot");
+      break;
+    case ProfileType::CUSTOM:
+      setLastVersionId(VersionManifest::getLatestVersions().release);
   }
 }
 
@@ -255,5 +318,38 @@ void ProfileEntry::setResolution(const QVariant& resolution) {
     and m_resolution->height != res.height)) {
     m_resolution = res;
     emit resolutionChanged();
+  }
+}
+
+void ProfileEntry::setShowAlphaVersions(bool showAlphaVersions) {
+  QSettings settings;
+  settings.beginGroup("Profiles");
+  settings.beginGroup(UUID);
+
+  if (getShowAlphaVersions() != showAlphaVersions) {
+    settings.setValue("showAlphaVersions", showAlphaVersions);
+    emit showAlphaVersionsUpdated();
+  }
+}
+
+void ProfileEntry::setShowBetaVersions(bool showBetaVersions) {
+  QSettings settings;
+  settings.beginGroup("Profiles");
+  settings.beginGroup(UUID);
+
+  if (getShowBetaVersions() != showBetaVersions) {
+    settings.setValue("showBetaVersions", showBetaVersions);
+    emit showBetaVersionsUpdated();
+  }
+}
+
+void ProfileEntry::setShowSnapshotVersions(bool showSnapshotVersions) {
+  QSettings settings;
+  settings.beginGroup("Profiles");
+  settings.beginGroup(UUID);
+
+  if (getShowSnapshotVersions() != showSnapshotVersions) {
+    settings.setValue("showSnapshotVersions", showSnapshotVersions);
+    emit showSnapshotVersionsUpdated();
   }
 }
