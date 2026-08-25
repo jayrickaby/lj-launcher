@@ -5,6 +5,7 @@
 #include <QIcon>
 #include <QLoggingCategory>
 #include <QQmlApplicationEngine>
+#include <QQuickStyle>
 
 #include "Application.h"
 #include "ProfileEntry.h"
@@ -19,9 +20,11 @@
 #include "net/Versions.h"
 
 int main(int argc, char *argv[]) {
-  qputenv("QT_QUICK_CONTROLS_STYLE", "Default");
-
   QGuiApplication app(argc, argv);
+  // Default to org.kde.desktop style unless the user forces another style
+  if (qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {
+    QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
+  }
 
   JavaVirtualMachine::setVariable("launcher_name", Application::getApplicationName());
   JavaVirtualMachine::setVariable("launcher_version", Application::getApplicationVersion());
