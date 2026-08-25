@@ -19,6 +19,8 @@
 #include "net/Versions.h"
 
 int main(int argc, char *argv[]) {
+  qputenv("QT_QUICK_CONTROLS_STYLE", "Default");
+
   QGuiApplication app(argc, argv);
 
   JavaVirtualMachine::setVariable("launcher_name", Application::getApplicationName());
