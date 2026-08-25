@@ -175,7 +175,7 @@ ApplicationWindow {
 
                 CheckBox{
                     Layout.columnSpan: 2
-                    text: qsTr("Enable experimental development ver (\"snapshots\")")
+                    text: qsTr("Enable experimental development versions (\"snapshots\")")
 
                     checked: Launcher.settings.enableSnapshots
 
@@ -184,7 +184,7 @@ ApplicationWindow {
                 // TODO: Find some way to store alpha and beta individually
                 CheckBox{
                     Layout.columnSpan: 2
-                    text: qsTr("Allow use of old \"Alpha\" and \"Beta\" Minecraft ver (From 2010-2011)")
+                    text: qsTr("Allow use of old \"Alpha\" and \"Beta\" Minecraft versions (From 2010-2011)")
 
                     checked: Launcher.settings.enableHistorical
 

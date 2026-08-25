@@ -15,7 +15,7 @@ VersionManifest::VersionManifest(QObject* parent)
 }
 
 void VersionManifest::requestManifest() {
-  qDebug() << "Requesting ver manifest";
+  qDebug() << "Requesting versions manifest";
 
   setState(ManifestState::DOWNLOADING);
 
@@ -48,7 +48,7 @@ void VersionManifest::onNetworkReply(QNetworkReply* reply) {
 
   if (reply->error()) {
     qDebug() << "Error: " << reply->errorString();
-    throw std::runtime_error("Couldn't obtain ver manifest!");
+    throw std::runtime_error("Couldn't obtain versions manifest!");
     return;
   }
 
