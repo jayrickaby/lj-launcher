@@ -21,7 +21,7 @@ QList<QVariantMap> Versions::versionsList() {
   versions.append(
     QVariantMap{
     {"id", "latest-release"},
-    {"name", "(Use Latest Release)"}
+    {"name", "Use Latest Release"}
     }
   );
 
