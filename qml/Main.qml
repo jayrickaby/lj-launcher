@@ -9,7 +9,7 @@ ApplicationWindow {
     width: 900
     height: 580
 
-    title: Application.defaultTitle
+    title: `${Application.defaultTitle} ${Application.version}`
 
     visible: true
 

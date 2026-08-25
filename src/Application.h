@@ -15,12 +15,14 @@ class Application : public QObject {
   Q_OBJECT
   Q_PROPERTY(QString defaultIcon READ defaultIcon CONSTANT)
   Q_PROPERTY(QString defaultTitle READ defaultTitle CONSTANT)
+  Q_PROPERTY(QString version READ version CONSTANT)
 
 public:
   explicit Application(QObject *parent = nullptr);
 
   [[nodiscard]] QString defaultIcon() const { return DEFAULT_ICON; };
   [[nodiscard]] QString defaultTitle() const { return DEFAULT_TITLE; };
+  [[nodiscard]] QString version() const { return APPLICATION_VERSION; };
 
   [[nodiscard]] static QString getDefaultIcon() { return DEFAULT_ICON; }
   [[nodiscard]] static QString getDefaultTitle() { return DEFAULT_TITLE; }
@@ -34,7 +36,7 @@ public:
 
 private:
   inline static const QString DEFAULT_ICON {":/jayrickaby/lj_launcher/assets/icons/icon.png"};
-  inline static const QString DEFAULT_TITLE {"LJ Launcher"};
+  inline static const QString DEFAULT_TITLE {"LegacyJava Launcher"};
 
   inline static const QString APPLICATION_NAME {"LJ-Launcher"};
   inline static const QString APPLICATION_VERSION {"v0.5.0a"};
