@@ -46,7 +46,6 @@ LibraryIndex::LibraryIndex(const QVariantList& data, QObject *parent)
 
 void LibraryIndex::requestLibraries() {
   qDebug() << "Requesting libraries";
-  setState(LibraryIndexState::DOWNLOADING);
 
   const OperatingSystem USER_OS {SystemInfo::getOperatingSystem()};
 
@@ -70,6 +69,9 @@ void LibraryIndex::requestLibraries() {
   if (expectedLibraryReplies == 0) {
     setState(LibraryIndexState::DOWNLOADED);
     setState(LibraryIndexState::INITIALISED);
+  }
+  else {
+    setState(LibraryIndexState::DOWNLOADING);
   }
 }
 
