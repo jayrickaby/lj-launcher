@@ -108,6 +108,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         id: runvcpkgLinux
         with:
+          vcpkgGitCommitId: 'ddd0023b0eee70986e42ed49d9d4afb8098f212e'
           vcpkgJsonGlob: '**/vcpkg.json'
 
       - name: Setup vcpkg [Windows]
@@ -116,6 +117,7 @@ jobs:
         id: runvcpkgWindows
         with:
           vcpkgDirectory: 'C:/vcpkg'
+          vcpkgGitCommitId: 'ddd0023b0eee70986e42ed49d9d4afb8098f212e'
           vcpkgJsonGlob: '**/vcpkg.json'
           
       - name: List $RUNNER_WORKSPACE before build
