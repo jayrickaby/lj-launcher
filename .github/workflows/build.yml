@@ -15,10 +15,10 @@
 #name: hosted-ninja_multi-vcpkg_submod-triplet-cacheoff
 name: post-push actions
 on:
-  push:
-    branches:
-      - main
-    workflow_dispatch:
+#  push:
+#    branches:
+#      - main
+  workflow_dispatch:
 
 jobs:
   release:
