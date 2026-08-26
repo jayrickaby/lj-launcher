@@ -129,11 +129,19 @@ jobs:
         run: find $RUNNER_WORKSPACE
         shell: bash
 
-      - name: Upload Binaries
+      - name: Upload Binaries [Windows]
+      - if: runner.os == 'Windows'
         uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.os }}
-          path: 'build/bin/Release/*'
+          path: 'builds/ninja-multi-vcpkg/Release/lj_launcher.exe'
+
+      - name: Upload Binaries [Linux]
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v7
+        with:
+          name: binary-${{ matrix.os }}
+          path: 'builds/ninja-multi-vcpkg/Release/lj_launcher'
 
   upload-assets:
     name: Upload Assets
@@ -149,7 +157,7 @@ jobs:
       - name: Download Linux Binary
         uses: actions/download-artifact@v7
         with:
-          name: binary-linux-latest
+          name: binary-ubuntu-latest
           path: dist/
 
       - name: Publish
