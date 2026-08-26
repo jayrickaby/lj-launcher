@@ -331,11 +331,20 @@ ApplicationWindow {
         if (checkGameDir.checked) {
             json["gameDir"] = gameDir.text;
         }
+        else {
+            json["gameDir"] = null;
+        }
         if (checkJavaExecutable.checked) {
             json["javaDir"] = javaExecutable.text
         }
+        else {
+            json["javaDir"] = null;
+        }
         if (checkJavaArguments.checked) {
             json["javaArgs"] = javaArguments.text
+        }
+        else {
+            json["javaArgs"] = null
         }
         if (checkResolution.checked) {
             json["resolution"] = {
@@ -343,10 +352,13 @@ ApplicationWindow {
                 "height": resolutionHeight.text
             }
         }
+        else {
+            json["resolution"] = null
+        }
 
-        currentProfile.showAlphaVersions = showAlphas;
-        currentProfile.showBetaVersions = showBetas;
-        currentProfile.showSnapshotVersions = showSnapshots;
+        json["showAlphaVersions"] = showAlphas;
+        json["showBetaVersions"] = showBetas;
+        json["showSnapshotVersions"] = showSnapshots;
 
         return json;
     }

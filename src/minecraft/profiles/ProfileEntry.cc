@@ -243,8 +243,8 @@ void ProfileEntry::setType(const ProfileType& type) {
     return;
   }
 
-    m_type = type;
-    emit typeChanged();
+  m_type = type;
+  emit typeChanged();
 
   switch (m_type) {
     case ProfileType::LATEST_RELEASE:
@@ -287,30 +287,54 @@ void ProfileEntry::setLastVersionId(const QString& lastVersionId) {
 }
 
 void ProfileEntry::setGameDir(const QVariant& gameDir) {
+  if (gameDir.isNull() or !gameDir.isValid()) {
+    m_gameDir = std::nullopt;
+    emit gameDirChanged();
+    return;
+  }
+
   auto str {gameDir.toString()};
-  if (gameDir.isValid() and !gameDir.isNull() and m_gameDir != str) {
+  if (m_gameDir != str) {
     m_gameDir = str;
     emit gameDirChanged();
   }
 }
 
 void ProfileEntry::setJavaDir(const QVariant& javaDir) {
+  if (javaDir.isNull() or !javaDir.isValid()) {
+    m_javaDir = std::nullopt;
+    emit javaDirChanged();
+    return;
+  }
+
   auto str {javaDir.toString()};
-  if (javaDir.isValid() and !javaDir.isNull() and m_javaDir != str) {
+  if (m_javaDir != str) {
     m_javaDir = str;
     emit javaDirChanged();
   }
 }
 
 void ProfileEntry::setJavaArgs(const QVariant& javaArgs) {
+  if (javaArgs.isNull() or !javaArgs.isValid()) {
+    m_javaArgs = std::nullopt;
+    emit javaArgsChanged();
+    return;
+  }
+
   auto str {javaArgs.toString()};
-  if (javaArgs.isValid() and !javaArgs.isNull() and m_javaArgs != str) {
+  if (m_javaArgs != str) {
     m_javaArgs = str;
     emit javaArgsChanged();
   }
 }
 
 void ProfileEntry::setResolution(const QVariant& resolution) {
+  if (resolution.isNull() or !resolution.isValid()) {
+    m_resolution = std::nullopt;
+    emit resolutionChanged();
+    return;
+  }
+
   auto res = resolution.value<Resolution>();
   if (resolution.isValid()
     and !resolution.isNull()
