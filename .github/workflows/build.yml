@@ -79,7 +79,6 @@ jobs:
         if: runner.os == 'Linux'
         with:
           version: '6.11.1'
-          modules: 'qtdeclarative'
 
       - uses: lukka/get-cmake@latest
       - name: dir
