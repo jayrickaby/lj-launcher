@@ -130,7 +130,7 @@ jobs:
         shell: bash
 
       - name: Upload Binaries [Windows]
-      - if: runner.os == 'Windows'
+        if: runner.os == 'Windows'
         uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.os }}
