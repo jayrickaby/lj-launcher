@@ -129,7 +129,7 @@ jobs:
 
 
       - name: List $RUNNER_WORKSPACE before build
-        if: runner.os == ['Linux']
+        if: runner.os == 'Linux'
         run: find $RUNNER_WORKSPACE
         shell: bash
       - name: Prints output of run-vcpkg's action.
