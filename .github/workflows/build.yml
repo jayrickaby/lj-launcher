@@ -73,6 +73,7 @@ jobs:
           version: '6.11.2'
           arch: 'win64_msvc2022_64'
           aqtsource: 'git+https://github.com/miurahr/aqtinstall.git@master'
+          py7zrversion: '==1.1.0'
 
       - name: Install Qt [Linux]
         uses: jurplel/install-qt-action@v4.3.1
