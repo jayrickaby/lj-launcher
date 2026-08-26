@@ -84,7 +84,6 @@ jobs:
         with:
           # This one is not needed, as it is the default value anyway.
           # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgDirectory: 'C:/vcpkg'
           vcpkgJsonGlob: '**/vcpkg.json'
 
       - name: List $RUNNER_WORKSPACE before build
