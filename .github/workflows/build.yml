@@ -88,12 +88,7 @@ jobs:
             libgles2-mesa-dev \
             libx11-dev \
             libx11-xcb-dev \
-            libxcb-randr0-dev \
-            libxcb-xtest0-dev \
-            libxcb-xinerama0-dev \
-            libxcb-shape0-dev \
-            libxcb-xfixes0-dev \
-            libxcb-util-dev \
+            '^libxcb.*-dev' \
             libxkbcommon-dev \
             libxkbcommon-x11-dev \
             libfontconfig1-dev \
