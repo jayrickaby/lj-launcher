@@ -4,6 +4,8 @@
 
 #include "Game.h"
 
+#include <qcoreapplication.h>
+
 #include "JavaVirtualMachine.h"
 
 Game* Game::s_instance {nullptr};
@@ -87,10 +89,15 @@ void Game::prepareExecutable() {
       qDebug() << process->readAllStandardOutput();
     });
 
-  qDebug() << args;
-
   setState(GameState::LAUNCHING);
-  process->start(javaDir, args);
+
+  qDebug() << QStringList({javaDir, args.join(" ")}).join(" ");
+
+  if (process->startDetached(javaDir, args)) {
+    setState(GameState::LAUNCHED);
+    QCoreApplication::quit();
+  }
+  setState(GameState::UNINITIALISED);
 }
 
 QStringList Game::prepareArguments() {
