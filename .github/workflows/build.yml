@@ -92,7 +92,9 @@ jobs:
             libxkbcommon-dev \
             libxkbcommon-x11-dev \
             libfontconfig1-dev \
-            libdbus-1-dev
+            libdbus-1-dev \
+            libsm-dev \
+            libice-dev
 
       - uses: lukka/get-cmake@latest
       - name: dir
