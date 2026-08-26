@@ -66,6 +66,12 @@ jobs:
         with:
           submodules: true
 
+      - name: Install linux build deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf autoconf-archive automake libtool
+
       - uses: lukka/get-cmake@latest
       - name: dir
         run: find $RUNNER_WORKSPACE
