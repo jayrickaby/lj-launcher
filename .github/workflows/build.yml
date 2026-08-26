@@ -66,7 +66,13 @@ jobs:
         with:
           submodules: true
 
-      - name: Install linux build deps
+      - name: Setup subst drive [Windows]
+        if: runner.os == 'Windows'
+        run: |
+          subst S: "${{ github.workspace }}"
+        shell: pwsh
+
+      - name: Install build deps [Linux]
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
@@ -77,7 +83,8 @@ jobs:
         run: find $RUNNER_WORKSPACE
         shell: bash
 
-      - name: Setup vcpkg
+      - name: Setup vcpkg [Linux]
+        if: runner.os == 'Linux'
         uses: lukka/run-vcpkg@v11
         id: runvcpkg
         with:
@@ -85,12 +92,22 @@ jobs:
           # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgJsonGlob: '**/vcpkg.json'
 
+      - name: Setup vcpkg [Windows]
+        if: runner.os == 'Windows'
+        uses: lukka/run-vcpkg@v11
+        id: runvcpkg
+        with:
+          vcpkgDirectory: 'S:/vcpkg'
+          vcpkgJsonGlob: '**/vcpkg.json'
+
       - name: List $RUNNER_WORKSPACE before build
         run: find $RUNNER_WORKSPACE
         shell: bash
       - name: Prints output of run-vcpkg's action.
         run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
-      - name: Run CMake+vcpkg+NinjaMulti-Config (Release configuration)
+
+      - name: Run CMake+vcpkg+NinjaMulti-Config (Release configuration) [Linux]
+        if: runner.os == 'Linux'
         uses: lukka/run-cmake@v10
         id: runcmake
         with:
@@ -98,16 +115,34 @@ jobs:
           configurePreset: 'ninja-multi-vcpkg'
           buildPreset: 'ninja-multi-vcpkg'
           buildPresetAdditionalArgs: '[`--config Release`]'
+
+      - name: Run CMake+vcpkg+NinjaMulti-Config (Release configuration) [Windows]
+        if: runner.os == 'Windows'
+        uses: lukka/run-cmake@v10
+        id: runcmake
+        with:
+          cmakeListsTxtPath: 'S:/CMakeLists.txt'
+          configurePreset: 'ninja-multi-vcpkg'
+          buildPreset: 'ninja-multi-vcpkg'
+          buildPresetAdditionalArgs: '[`--config Release`]'
+
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE
         shell: bash
 
-      - name: Upload Binaries
+      - name: Upload Binaries [Windows]
+        if: runner.os == 'Windows'
         uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.os }}
-          path: build/bin/Release/*
+          path: 'S:/build/bin/Release/*'
 
+      - name: Upload Binaries [Linux]
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@v7
+        with:
+          name: binary-${{ matrix.os }}
+          path: 'build/bin/Release/*'
   upload-assets:
     name: Upload Assets
     needs: [release, build]
