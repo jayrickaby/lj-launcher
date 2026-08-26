@@ -7,6 +7,10 @@
 #include <qversionnumber.h>
 
 bool RuleBearer::isUserSuitable(const OperatingSystem& user) const {
+  if (rules.empty()) {
+    return true;
+  }
+
   bool userSuitable{false};
 
   auto userVer {QVersionNumber::fromString(user.version)};
