@@ -65,6 +65,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           submodules: true
+          path: c
 
       - name: Install linux build deps
         if: runner.os == 'Linux'
@@ -83,6 +84,7 @@ jobs:
         with:
           # This one is not needed, as it is the default value anyway.
           # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgDirectory: 'C:/vcpkg'
           vcpkgJsonGlob: '**/vcpkg.json'
 
       - name: List $RUNNER_WORKSPACE before build
