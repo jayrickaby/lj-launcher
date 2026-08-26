@@ -1,8 +1,5 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
-  "dependencies": [
-    "qtbase",
-    "qtdeclarative"
-  ],
+  "dependencies": [],
   "builtin-baseline": "ddd0023b0eee70986e42ed49d9d4afb8098f212e"
 }
