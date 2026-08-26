@@ -11,7 +11,6 @@
 #include "ProfileEntry.h"
 #include "Profiles.h"
 #include "ProfilesTable.h"
-#include "Settings.h"
 #include "minecraft/exec/Game.h"
 #include "minecraft/exec/JavaVirtualMachine.h"
 #include "minecraft/ver/VersionManifest.h"
@@ -43,12 +42,10 @@ int main(int argc, char *argv[]) {
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Game", Game::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Launcher", Launcher::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Profiles", Profiles::getInstance());
-  qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Settings", Settings::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Versions", Versions::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "VersionManifest", VersionManifest::getInstance());
 
   qmlRegisterType<ProfilesTable>("jayrickaby.lj_launcher", 1, 0, "ProfilesTable");
-  // qmlRegisterType<ProfileEntry>("jayrickaby.lj_launcher", 1, 0, "ProfileEntry");
 
   QQmlApplicationEngine engine;
   QObject::connect(
