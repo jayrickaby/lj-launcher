@@ -66,11 +66,11 @@ jobs:
         with:
           submodules: true
 
-      - name: Setup subst drive [Windows]
-        if: runner.os == 'Windows'
-        run: |
-          subst S: "${{ github.workspace }}"
-        shell: pwsh
+      # - name: Setup subst drive [Windows]
+      #   if: runner.os == 'Windows'
+      #   run: |
+      #     subst S: "${{ github.workspace }}"
+      #   shell: pwsh
 
       - name: Install build deps [Linux]
         if: runner.os == 'Linux'
@@ -102,14 +102,12 @@ jobs:
       - name: dir
         run: find $RUNNER_WORKSPACE
         shell: bash
-
+      
       - name: Setup vcpkg [Linux]
         if: runner.os == 'Linux'
         uses: lukka/run-vcpkg@v11
         id: runvcpkgLinux
         with:
-          # This one is not needed, as it is the default value anyway.
-          # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
           vcpkgJsonGlob: '**/vcpkg.json'
 
       - name: Setup vcpkg [Windows]
@@ -117,40 +115,28 @@ jobs:
         uses: lukka/run-vcpkg@v11
         id: runvcpkgWindows
         with:
-          vcpkgDirectory: 'S:/vcpkg'
+          vcpkgDirectory: 'C:/vcpkg'
           vcpkgJsonGlob: '**/vcpkg.json'
-
-      - name: List $RUNNER_WORKSPACE before build [Windows]
+          
+      - name: List $RUNNER_WORKSPACE before build
         if: runner.os == 'Windows'
         run: find $RUNNER_WORKSPACE
         shell: bash
       - name: Prints output of run-vcpkg's action.
         run: echo "root='${{ steps.runvcpkgWindows.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkgWindows.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
-
-
+          
       - name: List $RUNNER_WORKSPACE before build
         if: runner.os == 'Linux'
         run: find $RUNNER_WORKSPACE
         shell: bash
       - name: Prints output of run-vcpkg's action.
         run: echo "root='${{ steps.runvcpkgLinux.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkgLinux.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
-
-      - name: Run CMake+vcpkg+NinjaMulti-Config (Release configuration) [Linux]
-        if: runner.os == 'Linux'
+        
+      - name: Run CMake+vcpkg+NinjaMulti-Config (Release configuration)
         uses: lukka/run-cmake@v10
-        id: runcmakeLinux
+        id: runcmake
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: 'ninja-multi-vcpkg'
-          buildPreset: 'ninja-multi-vcpkg'
-          buildPresetAdditionalArgs: '[`--config Release`]'
-
-      - name: Run CMake+vcpkg+NinjaMulti-Config (Release configuration) [Windows]
-        if: runner.os == 'Windows'
-        uses: lukka/run-cmake@v10
-        id: runcmakeWindows
-        with:
-          cmakeListsTxtPath: 'S:/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'
           buildPreset: 'ninja-multi-vcpkg'
           buildPresetAdditionalArgs: '[`--config Release`]'
@@ -159,15 +145,7 @@ jobs:
         run: find $RUNNER_WORKSPACE
         shell: bash
 
-      - name: Upload Binaries [Windows]
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v7
-        with:
-          name: binary-${{ matrix.os }}
-          path: 'S:/build/bin/Release/*'
-
-      - name: Upload Binaries [Linux]
-        if: runner.os == 'Linux'
+      - name: Upload Binaries
         uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.os }}
