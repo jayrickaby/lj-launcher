@@ -7,7 +7,12 @@
         "@semantic-release/commit-analyzer",
         "@semantic-release/release-notes-generator",
         "@semantic-release/github",
-        "@semantic-release/changelog",
+        [
+            "@semantic-release/changelog",
+            {
+                "changelogTitle": "# CHANGELOG\n\nAll notable changes to this project will be documented in this file."
+            }
+        ],
         "@semantic-release/git"
     ]
 }
