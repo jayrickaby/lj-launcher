@@ -71,7 +71,6 @@ jobs:
         if: runner.os == 'Windows'
         with:
           version: '6.11.2'
-          modules: 'qtdeclarative'
           arch: 'win64_msvc2022_64'
 
       - name: Install Qt [Linux]
