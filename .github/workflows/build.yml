@@ -70,7 +70,7 @@ jobs:
         uses: jurplel/install-qt-action@v4.3.1
         if: runner.os == 'Windows'
         with:
-          version: '6.11.1'
+          version: '6.11.2'
           modules: 'qtdeclarative'
           arch: 'win64_msvc2022_64'
 
@@ -78,7 +78,7 @@ jobs:
         uses: jurplel/install-qt-action@v4.3.1
         if: runner.os == 'Linux'
         with:
-          version: '6.11.1'
+          version: '6.11.2'
 
       - uses: lukka/get-cmake@latest
       - name: dir
