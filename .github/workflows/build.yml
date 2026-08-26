@@ -93,6 +93,7 @@ jobs:
             libxcb-xinerama0-dev \
             libxcb-shape0-dev \
             libxcb-xfixes0-dev \
+            libxcb-util-dev \
             libxkbcommon-dev \
             libxkbcommon-x11-dev \
             libfontconfig1-dev \
