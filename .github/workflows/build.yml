@@ -106,7 +106,7 @@ jobs:
       - name: Setup vcpkg [Linux]
         if: runner.os == 'Linux'
         uses: lukka/run-vcpkg@v11
-        id: runvcpkg
+        id: runvcpkgLinux
         with:
           # This one is not needed, as it is the default value anyway.
           # vcpkgDirectory: '${{ github.workspace }}/vcpkg'
@@ -115,21 +115,30 @@ jobs:
       - name: Setup vcpkg [Windows]
         if: runner.os == 'Windows'
         uses: lukka/run-vcpkg@v11
-        id: runvcpkg
+        id: runvcpkgWindows
         with:
           vcpkgDirectory: 'S:/vcpkg'
           vcpkgJsonGlob: '**/vcpkg.json'
 
-      - name: List $RUNNER_WORKSPACE before build
+      - name: List $RUNNER_WORKSPACE before build [Windows]
+        if: runner.os == 'Windows'
         run: find $RUNNER_WORKSPACE
         shell: bash
       - name: Prints output of run-vcpkg's action.
-        run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
+        run: echo "root='${{ steps.runvcpkgWindows.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkgWindows.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
+
+
+      - name: List $RUNNER_WORKSPACE before build
+        if: runner.os == ['Linux']
+        run: find $RUNNER_WORKSPACE
+        shell: bash
+      - name: Prints output of run-vcpkg's action.
+        run: echo "root='${{ steps.runvcpkgLinux.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkgLinux.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
 
       - name: Run CMake+vcpkg+NinjaMulti-Config (Release configuration) [Linux]
         if: runner.os == 'Linux'
         uses: lukka/run-cmake@v10
-        id: runcmake
+        id: runcmakeLinux
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'
@@ -139,7 +148,7 @@ jobs:
       - name: Run CMake+vcpkg+NinjaMulti-Config (Release configuration) [Windows]
         if: runner.os == 'Windows'
         uses: lukka/run-cmake@v10
-        id: runcmake
+        id: runcmakeWindows
         with:
           cmakeListsTxtPath: 'S:/CMakeLists.txt'
           configurePreset: 'ninja-multi-vcpkg'
@@ -163,6 +172,7 @@ jobs:
         with:
           name: binary-${{ matrix.os }}
           path: 'build/bin/Release/*'
+
   upload-assets:
     name: Upload Assets
     needs: [release, build]
