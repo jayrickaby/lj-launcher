@@ -1,3 +1,11 @@
+# [0.5.0](https://github.com/jayrickaby/lj-launcher/compare/v0.4.0...v0.5.0) (2026-08-26)
+
+
+### Features
+
+* **backend:** rewrite backend in cpp and add profile management ([df8d9dd](https://github.com/jayrickaby/lj-launcher/commit/df8d9dda247a2e1f27d824e97f1720ed76dcd8a1))
+* **profile:** add wip profile editing to prepare for cpp migration ([e66c23c](https://github.com/jayrickaby/lj-launcher/commit/e66c23c60f49a978b03e5561f1dfb6022648bd98))
+
 # CHANGELOG
 
 <!-- version list -->
