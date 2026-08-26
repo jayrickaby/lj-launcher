@@ -96,14 +96,18 @@ void Launcher::sendError(ErrorMessage& message) {
 }
 
 QUrl Launcher::findGameDirectory() {
+  OperatingSystem user {SystemInfo::getOperatingSystem()};
+
   QString rootPath;
-#ifdef _WIN32
-  rootPath = {QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
-#elifdef __linux__
-  rootPath = {QStandardPaths::writableLocation(QStandardPaths::HomeLocation)};
-#else
-  throw std::runtime_error("Unknown platform.");
-#endif
+  if (user.name == SystemName::WINDOWS) {
+    rootPath = {QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)};
+  }
+  else if (user.name == SystemName::LINUX) {
+    rootPath = {QStandardPaths::writableLocation(QStandardPaths::HomeLocation)};
+  }
+  else {
+    throw std::runtime_error("Unknown platform.");
+  }
   QString const FULL_PATH {QDir(rootPath).filePath(".minecraft")};
 
   QDir const GAME_DIR(FULL_PATH);
