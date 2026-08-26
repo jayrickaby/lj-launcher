@@ -65,7 +65,6 @@ jobs:
       - uses: actions/checkout@v7
         with:
           submodules: true
-          path: c
 
       - name: Install linux build deps
         if: runner.os == 'Linux'
