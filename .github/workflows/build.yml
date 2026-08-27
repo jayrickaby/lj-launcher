@@ -155,16 +155,16 @@ jobs:
     needs: [release, build]
     runs-on: ubuntu-latest
     steps:
-      - name: Download Win Binary
+      - name: Download Windows Binary
         uses: actions/download-artifact@v7
         with:
-          name: 'lj-launcher-${{ matrix.os }}.zip'
+          name: 'lj-launcher-windows.zip'
           path: dist/
 
       - name: Download Linux Binary
         uses: actions/download-artifact@v7
         with:
-          name: 'lj-launcher-${{ matrix.os }}.zip'
+          name: 'lj-launcher-linux.zip'
           path: dist/
 
       - name: Publish
