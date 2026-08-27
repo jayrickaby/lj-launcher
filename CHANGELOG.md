@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.1](https://github.com/jayrickaby/lj-launcher/compare/v0.6.0...v0.6.1) (2026-08-27)
+
+
+### Bug Fixes
+
+* package qt library stuff with releases ([bca6acc](https://github.com/jayrickaby/lj-launcher/commit/bca6acc4d125af9faaa9d25c6756992b89550522))
+
 # [0.6.0](https://github.com/jayrickaby/lj-launcher/compare/v0.5.0...v0.6.0) (2026-08-27)
 
 
