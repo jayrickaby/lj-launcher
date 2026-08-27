@@ -148,7 +148,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.os }}
-          path: 'lj-launcher-${{ matrix.os }}.zip'
+          path: 'dist/lj-launcher-${{ matrix.os }}.zip'
 
   upload-assets:
     name: Upload Assets
