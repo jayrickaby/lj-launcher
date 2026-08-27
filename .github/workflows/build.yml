@@ -158,13 +158,13 @@ jobs:
       - name: Download Win Binary
         uses: actions/download-artifact@v7
         with:
-          name: binary-windows-latest
+          name: 'lj-launcher-${{ matrix.os }}.zip'
           path: dist/
 
       - name: Download Linux Binary
         uses: actions/download-artifact@v7
         with:
-          name: binary-ubuntu-latest
+          name: 'lj-launcher-${{ matrix.os }}.zip'
           path: dist/
 
       - name: Publish
