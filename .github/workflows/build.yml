@@ -158,13 +158,13 @@ jobs:
       - name: Download Windows Binary
         uses: actions/download-artifact@v7
         with:
-          name: 'lj-launcher-windows.zip'
+          name: 'binary-windows-latest.zip'
           path: dist/
 
       - name: Download Linux Binary
         uses: actions/download-artifact@v7
         with:
-          name: 'lj-launcher-linux.zip'
+          name: 'binary-linux-latest.zip'
           path: dist/
 
       - name: Publish
