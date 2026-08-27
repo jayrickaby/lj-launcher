@@ -137,19 +137,18 @@ jobs:
         run: find $RUNNER_WORKSPACE
         shell: bash
 
-      - name: Upload Binaries [Windows]
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v7
+      - name: Zip Release
+        uses: TheDoctor0/zip-release@0.7.6
         with:
-          name: binary-${{ matrix.os }}
-          path: 'builds/ninja-multi-vcpkg/Release/lj_launcher.exe'
+          type: 'zip'
+          directory: 'dist'
+          filename: 'lj-launcher-${{ matrix.os }}.zip'
 
-      - name: Upload Binaries [Linux]
-        if: runner.os == 'Linux'
+      - name: Upload Binaries
         uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.os }}
-          path: 'builds/ninja-multi-vcpkg/Release/lj_launcher'
+          path: 'lj-launcher-${{ matrix.os }}.zip'
 
   upload-assets:
     name: Upload Assets
