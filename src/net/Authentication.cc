@@ -574,3 +574,10 @@ Authentication* Authentication::getInstance() {
   }
   return s_instance;
 }
+
+void Authentication::logOut() {
+  QSettings settings;
+  settings.beginGroup("Account");
+  settings.remove("refreshToken");
+  setState(AuthState::UNAUTHENTICATED);
+}

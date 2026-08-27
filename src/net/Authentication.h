@@ -78,16 +78,16 @@ public:
   static Authentication* getInstance();
 
   void onNetworkReply(QNetworkReply* reply) override;
-
 signals:
   void authStateChanged();
 
 public slots:
   [[nodiscard]] bool hasRefreshToken() const;
   [[nodiscard]] bool isUrlLocalhost(const QUrl &url) const;
+
+  void logOut();
   void parseLocalhost(const QUrl &url);
   void tryStoredRefreshToken();
-
 
 private:
   [[nodiscard]] PkceData generatePkceData() const;

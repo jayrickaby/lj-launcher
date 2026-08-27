@@ -248,6 +248,8 @@ Item {
                         text: qsTr("Switch User")
 
                         enabled: authenticated
+
+                        onClicked: Authentication.logOut();
                     }
                 }
             }
