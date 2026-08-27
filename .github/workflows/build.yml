@@ -129,39 +129,42 @@ jobs:
           configurePreset: 'ninja-multi-vcpkg'
           buildPreset: 'ninja-vcpkg-release'
 
+      - name: Deploy Qt
+        run: cmake --install builds/ninja-multi-vcpkg --config Release --prefix dist
+        shell: bash
+
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE
         shell: bash
 
-      - name: Upload Binaries [Windows]
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v7
+      - name: Zip Release
+        uses: TheDoctor0/zip-release@0.7.6
         with:
-          name: binary-${{ matrix.os }}
-          path: 'builds/ninja-multi-vcpkg/Release/lj_launcher.exe'
+          type: 'zip'
+          directory: 'dist'
+          filename: 'lj-launcher-${{ matrix.os }}.zip'
 
-      - name: Upload Binaries [Linux]
-        if: runner.os == 'Linux'
+      - name: Upload Binaries
         uses: actions/upload-artifact@v7
         with:
           name: binary-${{ matrix.os }}
-          path: 'builds/ninja-multi-vcpkg/Release/lj_launcher'
+          path: 'dist/lj-launcher-${{ matrix.os }}.zip'
 
   upload-assets:
     name: Upload Assets
     needs: [release, build]
     runs-on: ubuntu-latest
     steps:
-      - name: Download Win Binary
+      - name: Download Windows Binary
         uses: actions/download-artifact@v7
         with:
-          name: binary-windows-latest
+          name: 'binary-windows-latest'
           path: dist/
 
       - name: Download Linux Binary
         uses: actions/download-artifact@v7
         with:
-          name: binary-ubuntu-latest
+          name: 'binary-ubuntu-latest'
           path: dist/
 
       - name: Publish
