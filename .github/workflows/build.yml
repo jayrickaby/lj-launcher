@@ -158,13 +158,13 @@ jobs:
       - name: Download Windows Binary
         uses: actions/download-artifact@v7
         with:
-          name: 'binary-windows-latest.zip'
+          name: 'binary-windows-latest'
           path: dist/
 
       - name: Download Linux Binary
         uses: actions/download-artifact@v7
         with:
-          name: 'binary-linux-latest.zip'
+          name: 'binary-ubuntu-latest'
           path: dist/
 
       - name: Publish
