@@ -3,6 +3,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 import jayrickaby.lj_launcher
+import "./ProfileEditor"
 
 ApplicationWindow {
     id: control
@@ -19,6 +20,28 @@ ApplicationWindow {
     property bool showBetas: checkShowBetaVersions.checked
     
     leftPadding: 8; topPadding: 8; rightPadding: 8; bottomPadding: 8;
+
+    CheckBoxPopup {
+        id: alphasPopup
+
+        hasAcknowledged: currentProfile.showAlphaVersions
+        text: "These versions are very out of date and may be unstable. Any bugs, crashes, missing features or\nother nasties you may find will never be fixed in these versions.\nIt is strongly recommended you play these in separate directories to avoid corruption.\nWe are not responsible for the damage to your nostalgia or your save files!"
+        checkBox: checkShowAlphaVersions
+    }
+    CheckBoxPopup {
+        id: betasPopup
+
+        hasAcknowledged: currentProfile.showBetaVersions
+        text: "These versions are very out of date and may be unstable. Any bugs, crashes, missing features or\nother nasties you may find will never be fixed in these versions.\nIt is strongly recommended you play these in separate directories to avoid corruption.\nWe are not responsible for the damage to your nostalgia or your save files!"
+        checkBox: checkShowBetaVersions
+    }
+    CheckBoxPopup {
+        id: snapshotsPopup
+
+        hasAcknowledged: currentProfile.showSnapshotVersions
+        text: "Are you sure you want to enable development builds?\nThey are not guaranteed to be stable and may corrupt your world.\nYou are advised to run this in a separate directory or run regular backups."
+        checkBox: checkShowSnapshotVersions
+    }
 
     ColumnLayout {
         id: content
@@ -183,6 +206,11 @@ ApplicationWindow {
                     text: qsTr("Enable experimental development versions (\"snapshots\")")
 
                     checked: currentProfile.showSnapshotVersions
+                    onCheckedChanged: {
+                        if (checked && !snapshotsPopup.hasAcknowledged) {
+                            snapshotsPopup.open();
+                        }
+                    }
                 }
                 CheckBox{
                     id: checkShowBetaVersions
@@ -190,6 +218,11 @@ ApplicationWindow {
                     text: qsTr("Allow use of old \"Beta\" Minecraft ver (From 2010-2011)")
 
                     checked: currentProfile.showBetaVersions
+                    onCheckedChanged: {
+                        if (checked && !betasPopup.hasAcknowledged) {
+                            betasPopup.open();
+                        }
+                    }
                 }
                 CheckBox{
                     id: checkShowAlphaVersions
@@ -197,6 +230,11 @@ ApplicationWindow {
                     text: qsTr("Allow use of old \"Alpha\" Minecraft ver (From 2010)")
 
                     checked: currentProfile.showAlphaVersions
+                    onCheckedChanged: {
+                        if (checked && !alphasPopup.hasAcknowledged) {
+                            alphasPopup.open();
+                        }
+                    }
                 }
 
                 Text {
@@ -377,4 +415,6 @@ ApplicationWindow {
         }
         currentProfile = profile;
     }
+
+
 }

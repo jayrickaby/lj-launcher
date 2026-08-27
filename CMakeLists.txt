@@ -75,6 +75,7 @@ qt_add_qml_module(lj_launcher
         qml/LauncherPages/ProfilesPage.qml
         qml/LauncherPages/template/ProfileCellDelegate.qml
         qml/LauncherPages/template/ProfilesTableMenu.qml
+        qml/ProfileEditor/CheckBoxPopup.qml
     RESOURCES
         assets/dirt.png
         assets/minecraft_logo.png
