@@ -129,6 +129,10 @@ jobs:
           configurePreset: 'ninja-multi-vcpkg'
           buildPreset: 'ninja-vcpkg-release'
 
+      - name: Deploy Qt
+        run: cmake --install builds/ninja-multivcpkg --config Release --prefix ${{ github.workspace }}/dist
+        shell: bash
+
       - name: List $RUNNER_WORKSPACE after build
         run: find $RUNNER_WORKSPACE
         shell: bash
