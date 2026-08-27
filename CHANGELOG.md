@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+# [0.6.0](https://github.com/jayrickaby/lj-launcher/compare/v0.5.0...v0.6.0) (2026-08-27)
+
+
+### Features
+
+* **launcher:** let user switch user profile ([a83e91d](https://github.com/jayrickaby/lj-launcher/commit/a83e91d084f791af24a5aec776c1ad5bd1f89822))
+* **profile:** add alpha/beta/snapshot warnings to profile editor ([f8cd992](https://github.com/jayrickaby/lj-launcher/commit/f8cd992abed957590598fbd6aada90a28d63ffbf))
+
 # [0.5.0](https://github.com/jayrickaby/lj-launcher/compare/v0.4.0...v0.5.0) (2026-08-26)
 
 
