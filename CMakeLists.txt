@@ -12,6 +12,7 @@ find_package(Qt6 REQUIRED COMPONENTS
         Qml
         Quick
         QuickControls2
+        WebEngineQuick
 )
 
 qt_standard_project_setup(REQUIRES 6.10)
@@ -102,13 +103,14 @@ set_target_properties(lj_launcher PROPERTIES
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
     MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
     MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
+#    WIN32_EXECUTABLE TRUE
 )
 
 target_link_libraries(lj_launcher
     PRIVATE Qt6::Qml
     PRIVATE Qt6::Quick
     PRIVATE Qt6::QuickControls2
+    PRIVATE Qt6::WebEngineQuick
 )
 
 install(TARGETS lj_launcher
