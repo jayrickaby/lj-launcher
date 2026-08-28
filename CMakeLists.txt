@@ -125,3 +125,5 @@ qt_generate_deploy_qml_app_script(
     NO_TRANSLATIONS
 )
 install(SCRIPT ${deploy_script})
+install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/jayrickaby/
+DESTINATION ${CMAKE_INSTALL_BINDIR}/jayrickaby/)
