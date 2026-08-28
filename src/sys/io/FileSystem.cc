@@ -8,7 +8,11 @@
 QString FileSystem::joinPaths(const QStringList& paths) {
   QString result {};
   for (const QString& path : paths) {
-    result += "/" + path;
+    if (result.isEmpty()) {
+      result = path;
+    } else {
+      result = QDir(result).filePath(path);
+    }
   }
   return QDir::cleanPath(result);
 }
@@ -20,11 +24,6 @@ QString FileSystem::getParentDirectory(const QString& path) {
 }
 
 bool FileSystem::makePath(const QString& path) {
-  QFileInfo info(path);
-  if (info.isFile() or !info.suffix().isEmpty()) {
-    return QDir().mkpath(info.absolutePath());
-  }
-
   return QDir().mkpath(path);
 }
 
