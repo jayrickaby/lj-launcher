@@ -16,6 +16,13 @@ All notable changes to this project will be documented in this file.
 
 * add webenginequick as a required package ([6696bf1](https://github.com/jayrickaby/lj-launcher/commit/6696bf1aa773f62fac5b0f9343f4cdde0cc08cd9))
 
+## [0.6.2](https://github.com/jayrickaby/lj-launcher/compare/v0.6.1...v0.6.2) (2026-08-28)
+
+
+### Bug Fixes
+
+* add webenginequick as a required package ([6696bf1](https://github.com/jayrickaby/lj-launcher/commit/6696bf1aa773f62fac5b0f9343f4cdde0cc08cd9))
+
 ## [0.6.1](https://github.com/jayrickaby/lj-launcher/compare/v0.6.0...v0.6.1) (2026-08-27)
 
 
