@@ -14,6 +14,18 @@ All notable changes to this project will be documented in this file.
 
 * forcibly set linux style to fusion ([0b4e448](https://github.com/jayrickaby/lj-launcher/commit/0b4e448a35270beacb395aea98a54532f8a21491))
 
+# [0.7.0](https://github.com/jayrickaby/lj-launcher/compare/v0.6.2...v0.7.0) (2026-08-28)
+
+
+### Bug Fixes
+
+* **config:** move qml files to alongside the executable ([ff42eed](https://github.com/jayrickaby/lj-launcher/commit/ff42eed679773a1220699714526626807d6d3146))
+
+
+### Features
+
+* forcibly set linux style to fusion ([0b4e448](https://github.com/jayrickaby/lj-launcher/commit/0b4e448a35270beacb395aea98a54532f8a21491))
+
 ## [0.6.2](https://github.com/jayrickaby/lj-launcher/compare/v0.6.1...v0.6.2) (2026-08-28)
 
 
