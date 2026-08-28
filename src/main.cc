@@ -21,11 +21,12 @@
   int main(int argc, char *argv[]) {
     qputenv("QT_FORCE_STDERR_LOGGING", "1");
     QGuiApplication app(argc, argv);
+
     // Default to org.kde.desktop style unless the user forces another style
     auto system {SystemInfo::getOperatingSystem()};
-
     if (system.name == SystemName::LINUX and qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {
-      QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
+      // QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
+      QQuickStyle::setStyle("Fusion");
     }
 
     JavaVirtualMachine::setVariable("launcher_name", Application::getApplicationName());
