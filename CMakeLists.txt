@@ -5,10 +5,14 @@ project(lj_launcher VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/dist" CACHE PATH "Default install path" FORCE)
+
+
 find_package(Qt6 REQUIRED COMPONENTS
         Qml
         Quick
         QuickControls2
+        WebEngineQuick
 )
 
 qt_standard_project_setup(REQUIRES 6.10)
@@ -106,6 +110,7 @@ target_link_libraries(lj_launcher
     PRIVATE Qt6::Qml
     PRIVATE Qt6::Quick
     PRIVATE Qt6::QuickControls2
+    PRIVATE Qt6::WebEngineQuick
 )
 
 install(TARGETS lj_launcher
