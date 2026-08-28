@@ -5,6 +5,9 @@ project(lj_launcher VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/dist" CACHE PATH "Default install path" FORCE)
+
+
 find_package(Qt6 REQUIRED COMPONENTS
         Qml
         Quick
