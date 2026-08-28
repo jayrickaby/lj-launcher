@@ -135,16 +135,16 @@ jobs:
         run: cmake --install builds/ninja-multi-vcpkg --config Release --prefix dist
         shell: bash
 
-      - name: List $RUNNER_WORKSPACE after build
-        run: find $RUNNER_WORKSPACE
-        shell: bash
-
       - name: Zip Release
         uses: TheDoctor0/zip-release@0.7.6
         with:
           type: 'zip'
           directory: 'dist'
           filename: 'lj-launcher-${{ matrix.os }}.zip'
+
+      - name: List $RUNNER_WORKSPACE after build
+        run: find $RUNNER_WORKSPACE
+        shell: bash
 
       - name: Upload Binaries
         uses: actions/upload-artifact@v7
