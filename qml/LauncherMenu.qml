@@ -81,10 +81,14 @@ Item {
             }
 
             // Launcher Log
-            Rectangle {
+            ListView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                color: "blue"
+
+                model: Launcher.logs
+                delegate: Text {
+                    text: modelData
+                }
             }
 
             // Profile Editor
