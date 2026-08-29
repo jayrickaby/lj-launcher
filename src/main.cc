@@ -29,6 +29,15 @@ int main(int argc, char *argv[]) {
     QQuickStyle::setStyle("Fusion");
   }
 
+  Launcher::addLog(
+    QString("%1 %2 started on %3...")
+    .arg(
+      Application::getApplicationName(),
+      Application::getApplicationVersion(),
+      QSysInfo::productType()
+    )
+  );
+
   JavaVirtualMachine::setVariable("launcher_name", Application::getApplicationName());
   JavaVirtualMachine::setVariable("launcher_version", Application::getApplicationVersion());
 
