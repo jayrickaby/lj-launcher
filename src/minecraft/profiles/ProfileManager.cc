@@ -117,6 +117,9 @@ ProfileManager* ProfileManager::getInstance() {
 }
 
 QHash<QString, QSharedPointer<ProfileEntry>> ProfileManager::getProfiles() {
+  if (s_profiles.empty()) {
+    refreshProfiles();
+  }
   return s_profiles;
 }
 

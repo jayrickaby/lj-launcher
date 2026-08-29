@@ -47,8 +47,6 @@ int main(int argc, char *argv[]) {
 
   QGuiApplication::setWindowIcon(QIcon(Application::getDefaultIcon()));
 
-  ProfileManager::refreshProfiles();
-
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Application", Application::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Authentication", Authentication::getInstance());
   qmlRegisterSingletonInstance("jayrickaby.lj_launcher", 1, 0, "Downloader", Downloader::getInstance());
