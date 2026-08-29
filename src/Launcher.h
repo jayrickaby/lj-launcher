@@ -33,10 +33,12 @@ class Launcher : public QObject {
   Q_OBJECT
   Q_PROPERTY(QString gameDirectory READ gameDirectory CONSTANT)
   Q_PROPERTY(QString javaExecutable READ javaExecutable CONSTANT)
+  Q_PROPERTY(QStringList logs READ logs NOTIFY logsChanged)
   Q_PROPERTY(QString userMessage READ userMessage NOTIFY userMessageChanged)
 
 signals:
   void launcherError(const ErrorMessage &message);
+  void logsChanged();
   void userMessageChanged();
   void usernameChanged();
 
@@ -45,8 +47,10 @@ public:
 
   QString gameDirectory() { return getGameDirectory().toLocalFile(); };
   QString javaExecutable() { return getJavaExecutable().toLocalFile(); };
+  QStringList logs() { return s_logs; };
   QString userMessage();
 
+  static void addLog(const QString& message);
   static void sendError(ErrorMessage &message);
 
   static QUrl getGameDirectory();
@@ -65,6 +69,7 @@ private:
   static QUrl findGameDirectory();
 
   static QString s_username;
+  static QStringList s_logs;
   static QUrl s_gameDirectory;
   static QUrl s_javaExecutable;
 

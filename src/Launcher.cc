@@ -162,3 +162,17 @@ void Launcher::play() {
 
   Game::launch(profile);
 }
+
+void Launcher::addLog(const QString& message) {
+  QString log {
+    QString("[%1 %2] %3")
+    .arg(
+      QTime::currentTime().toString(),
+      "INFO",
+      message
+    )
+  };
+  s_logs.append(log);
+
+  emit getInstance()->logsChanged();
+}
