@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.1](https://github.com/jayrickaby/lj-launcher/compare/v0.7.0...v0.7.1) (2026-08-29)
+
+
+### Bug Fixes
+
+* add check for missing java ([4e6ec66](https://github.com/jayrickaby/lj-launcher/commit/4e6ec6621b5a83dfe33e4c73b4ebca32d5f77946))
+
 # [0.7.0](https://github.com/jayrickaby/lj-launcher/compare/v0.6.2...v0.7.0) (2026-08-28)
 
 
