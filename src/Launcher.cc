@@ -37,10 +37,6 @@ Launcher::Launcher(QObject *parent)
 }
 
 QUrl Launcher::getJavaExecutable() {
-  if (s_javaExecutable.isEmpty() or !s_javaExecutable.isValid()) {
-    throw std::runtime_error("Java path could not be found. Are you sure Java is installed?");
-  }
-
   return s_javaExecutable;
 }
 
