@@ -12,6 +12,7 @@
 Launcher* Launcher::s_instance {nullptr};
 QUrl Launcher::s_gameDirectory;
 QUrl Launcher::s_javaExecutable {QUrl::fromLocalFile(FileSystem::which("java"))}; // stores properly
+QStringList Launcher::s_logs {};
 QString Launcher::s_username;
 
 Launcher::Launcher(QObject *parent)
