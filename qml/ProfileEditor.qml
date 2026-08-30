@@ -398,8 +398,8 @@ ApplicationWindow {
         }
         if (checkResolution.checked) {
             json["resolution"] = {
-                "width": resolutionWidth.text,
-                "height": resolutionHeight.text
+                "width": Number(resolutionWidth.text),
+                "height": Number(resolutionHeight.text)
             }
         }
         else {

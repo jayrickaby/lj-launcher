@@ -335,11 +335,16 @@ void ProfileEntry::setResolution(const QVariant& resolution) {
     return;
   }
 
-  auto res = resolution.value<Resolution>();
-  if (resolution.isValid()
-    and !resolution.isNull()
-    and (m_resolution->width != res.width
-    and m_resolution->height != res.height)) {
+  auto data {resolution.toMap()};
+
+  Resolution res {
+    .width = data.value("width").toUInt(),
+    .height = data.value("height").toUInt()
+  };
+
+  if (!m_resolution.has_value()
+    or m_resolution.value().width != res.width
+    or m_resolution.value().height != res.height) {
     m_resolution = res;
     emit resolutionChanged();
   }
