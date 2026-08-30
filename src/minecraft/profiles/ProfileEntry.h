@@ -6,15 +6,7 @@
 #define LJ_LAUNCHER_PROFILE_H_
 #include <QVariantMap>
 
-struct Resolution {
-  Q_GADGET
-  Q_PROPERTY(uint width MEMBER width)
-  Q_PROPERTY(uint height MEMBER height)
-
-public:
-  uint width;
-  uint height;
-};
+#include "Resolution.h"
 
 class ProfileEntry : public QObject {
   Q_OBJECT
@@ -96,10 +88,7 @@ public:
   void setShowBetaVersions(bool showBetaVersions);
   void setShowSnapshotVersions(bool showSnapshotVersions);
 
-  inline static const Resolution defaultResolution {
-    .width = 854,
-    .height = 480,
-  };
+  inline static const Resolution defaultResolution {854, 480};
 
   inline static const QString defaultJavaArgs {"-Xms2G -Xmx4G -XX:+UseCompactObjectHeaders -XX:+AlwaysPreTouch -XX:+UseStringDeduplication"};
 

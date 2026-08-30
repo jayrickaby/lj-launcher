@@ -7,6 +7,7 @@
 #include <QJsonObject>
 
 #include "Launcher.h"
+#include "Resolution.h"
 #include "minecraft/ver/VersionManifest.h"
 
 ProfileEntry::ProfileEntry(const QString& uuid, QObject* parent)
@@ -138,7 +139,7 @@ QVariantMap ProfileEntry::toMap() {
   }
 
   if (m_resolution.has_value()) {
-    result["resolution"] = getResolution();
+    result["resolution"] = m_resolution.value().toMap();
   }
 
   result["showAlphaVersions"] = getShowAlphaVersions();
@@ -337,14 +338,11 @@ void ProfileEntry::setResolution(const QVariant& resolution) {
 
   auto data {resolution.toMap()};
 
-  Resolution res {
-    .width = data.value("width").toUInt(),
-    .height = data.value("height").toUInt()
-  };
+  Resolution res {data};
 
   if (!m_resolution.has_value()
-    or m_resolution.value().width != res.width
-    or m_resolution.value().height != res.height) {
+    or m_resolution.value().getWidth() != res.getWidth()
+    or m_resolution.value().getHeight() != res.getHeight()) {
     m_resolution = res;
     emit resolutionChanged();
   }

@@ -44,8 +44,8 @@ void Game::launch(const QSharedPointer<ProfileEntry>& profile) {
 
     auto resolution {resolutionData.value<Resolution>()};
 
-    JavaVirtualMachine::setVariable("resolution_width", QString::number(resolution.width));
-    JavaVirtualMachine::setVariable("resolution_height", QString::number(resolution.height));
+    JavaVirtualMachine::setVariable("resolution_width", QString::number(resolution.getWidth()));
+    JavaVirtualMachine::setVariable("resolution_height", QString::number(resolution.getHeight()));
   }
 
   setState(GameState::PREPARING);

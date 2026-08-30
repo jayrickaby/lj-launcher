@@ -64,6 +64,8 @@ qt_add_executable(lj_launcher
         src/minecraft/ver/Rule.cc
         src/minecraft/exec/JavaVirtualMachine.cc
         src/minecraft/exec/JavaVirtualMachine.h
+        src/minecraft/profiles/Resolution.cc
+        src/minecraft/profiles/Resolution.h
 )
 
 qt_add_qml_module(lj_launcher
