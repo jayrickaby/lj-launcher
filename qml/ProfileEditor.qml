@@ -115,6 +115,12 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         Layout.preferredHeight: 21
 
+                        inputMethodHints: Qt.ImhDigitsOnly
+                        validator: IntValidator {
+                            bottom: 0;
+                            top: 65535;
+                        }
+
                         text: {
                             var res = currentProfile.resolution || Profiles.defaultResolution;
                             return res.width;
@@ -132,6 +138,12 @@ ApplicationWindow {
 
                         Layout.fillWidth: true
                         Layout.preferredHeight: 21
+
+                        inputMethodHints: Qt.ImhDigitsOnly
+                        validator: IntValidator {
+                            bottom: 0;
+                            top: 65535;
+                        }
 
                         text: {
                             var res = currentProfile.resolution || Profiles.defaultResolution;
@@ -386,8 +398,8 @@ ApplicationWindow {
         }
         if (checkResolution.checked) {
             json["resolution"] = {
-                "width": resolutionWidth.text,
-                "height": resolutionHeight.text
+                "width": Number(resolutionWidth.text),
+                "height": Number(resolutionHeight.text)
             }
         }
         else {
