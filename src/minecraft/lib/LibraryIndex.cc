@@ -47,11 +47,18 @@ LibraryIndex::LibraryIndex(const QVariantList& data, QObject *parent)
 void LibraryIndex::requestLibraries() {
   qDebug() << "Requesting libraries";
 
+  // Download job 'Version & Libraries' started (x files)
+  Launcher::addLog(
+    QString("Download job 'Version & Libraries' started (%1 files)")
+    .arg(m_libraries.size())
+  );
+
   const OperatingSystem USER_OS {SystemInfo::getOperatingSystem()};
 
   while (!m_libraries.isEmpty()) {
     const Library LIBRARY {m_libraries.dequeue()};
 
+    // TODO: Move to library parsing
     if (!LIBRARY.isUserSuitable(USER_OS)) {
       qDebug() << "Skipping" << LIBRARY.artifact.name << "due to imposed rules";
       continue;
@@ -63,7 +70,20 @@ void LibraryIndex::requestLibraries() {
     }
 
     expectedLibraryReplies++;
+
+    // Attempting do download x for jobs '...'...
+    Launcher::addLog(
+      QString("Attempting to download %1 for job 'Versions & Libraries'...")
+      .arg(LIBRARY.artifact.path)
+    );
+
     Downloader::addDownload(this, LIBRARY.artifact);
+
+    // Making directory x
+    Launcher::addLog(
+      QString("Making directory %1")
+      .arg(FileSystem::getParentDirectory(LIBRARY.artifact.path))
+    );
   }
 
   if (expectedLibraryReplies == 0) {
@@ -81,11 +101,20 @@ void LibraryIndex::onNetworkReply(QNetworkReply* reply) {
     throw std::runtime_error("Failed to download library");
   }
 
+  DownloadItem library {reply->property("requestParameters").value<DownloadItem>()};
+  // Finished downloading x for job '...': Downloaded successfully and hash matched
+  Launcher::addLog(
+    QString("Finished downloading %1 for job 'Libraries & Versions': Downloaded successfuly and hash matched")
+    .arg(library.path)
+  );
+
+
   expectedLibraryReplies--;
 
   if (expectedLibraryReplies == 0) {
     setState(LibraryIndexState::DOWNLOADED);
     setState(LibraryIndexState::INITIALISED);
+    Launcher::addLog("Job 'Resources' finished successfully");
   }
 }
 
