@@ -29,12 +29,21 @@ int main(int argc, char *argv[]) {
     QQuickStyle::setStyle("Fusion");
   }
 
+  // LJ-Launcher x.x.x started on x...
   Launcher::addLog(
     QString("%1 %2 started on %3...")
     .arg(
       Application::getApplicationName(),
       Application::getApplicationVersion(),
       QSysInfo::productType()
+    )
+  );
+
+  // Current time is Jan 1, 1970 0:00:00 AM"
+  Launcher::addLog(
+    QString("Current time is %1")
+    .arg(
+      QDateTime::currentDateTime().toString("MMM d, yyyy h:mm:ss AP")
     )
   );
 
