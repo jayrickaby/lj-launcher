@@ -12,6 +12,7 @@ Game* Game::s_instance {nullptr};
 Game::GameState Game::s_state {GameState::UNINITIALISED};
 ClientJson* Game::s_json {nullptr};
 QSharedPointer<ProfileEntry> Game::s_profile {nullptr};
+QList<Feature> Game::s_features {};
 
 Game::Game(QObject* parent)
 : QObject(parent) {
@@ -33,6 +34,19 @@ void Game::launch(const QSharedPointer<ProfileEntry>& profile) {
   }
 
   s_profile = profile;
+
+  clearFeatures();
+
+  auto resolutionData {profile->getResolution()};
+
+  if (resolutionData.isValid() and !resolutionData.isNull()) {
+    addFeature(Feature::HAS_CUSTOM_RESOLUTION);
+
+    auto resolution {resolutionData.value<Resolution>()};
+
+    JavaVirtualMachine::setVariable("resolution_width", QString::number(resolution.width));
+    JavaVirtualMachine::setVariable("resolution_height", QString::number(resolution.height));
+  }
 
   setState(GameState::PREPARING);
 
@@ -157,4 +171,14 @@ Game* Game::getInstance() {
     s_instance = new Game();
   }
   return s_instance;
+}
+
+void Game::addFeature(const Feature& feature) {
+  if (!s_features.contains(feature)) {
+    s_features.append(feature);
+  }
+}
+
+void Game::clearFeatures() {
+  s_features.clear();
 }

@@ -6,6 +6,8 @@
 
 #include <qversionnumber.h>
 
+#include "minecraft/exec/Game.h"
+
 bool RuleBearer::isUserSuitable(const OperatingSystem& user) const {
   if (rules.empty()) {
     return true;
@@ -18,8 +20,7 @@ bool RuleBearer::isUserSuitable(const OperatingSystem& user) const {
   for (const auto& rule : rules) {
     bool targetMatches {true};
 
-    // TODO: Skip features for now
-    if (rule.feature != Feature::NONE) {
+    if (rule.feature != Feature::NONE and !Game::getFeatures().contains(rule.feature)) {
       return false;
     }
 

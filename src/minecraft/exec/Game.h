@@ -22,6 +22,10 @@ public:
   static void launch(const QSharedPointer<ProfileEntry>& profile);
   static Game* getInstance();
 
+  static void addFeature(const Feature& feature);
+  static QList<Feature> getFeatures() {return s_features;};
+  static void clearFeatures();
+
   enum class GameState {
     UNINITIALISED,  // simple instance
     PREPARING,      // waiting until reaching a point of download
@@ -45,6 +49,7 @@ private:
   static QSharedPointer<ProfileEntry> s_profile;
   static Game* s_instance;
   static GameState s_state;
+  static QList<Feature> s_features;
 };
 
 #endif  // LJ_LAUNCHER_GAME_H_
