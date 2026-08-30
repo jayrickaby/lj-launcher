@@ -85,6 +85,8 @@ Item {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
+                // TODO: Get rid of bounce
+
                 TextArea {
                     font.family: Launcher.monospaceFont
                     font.pointSize: 12
