@@ -122,6 +122,7 @@ jobs:
     name: Upload Assets
     needs: [release, build]
     runs-on: ubuntu-latest
+    if: needs.release.outputs.new_release_published == 'true'
     steps:
       - name: Download Linux Binary
         uses: actions/download-artifact@v7
@@ -132,7 +133,7 @@ jobs:
       - name: Publish
         uses: softprops/action-gh-release@v3
         with:
-          tag_name: v${{ needs.release.outputs.new_release_published && needs.release.outputs.new_release_version || needs.release.outputs.last_release_version }}
+          tag_name: v${{ needs.release.outputs.new_release_version }}
           working_directory: dist
           files: |
             *
