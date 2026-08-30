@@ -81,13 +81,18 @@ Item {
             }
 
             // Launcher Log
-            ListView {
+            ScrollView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                model: Launcher.logs
-                delegate: Text {
-                    text: modelData
+                TextArea {
+                    font.family: Launcher.monospaceFont
+                    font.pointSize: 12
+
+                    readOnly: true
+                    wrapMode: TextArea.Wrap
+
+                    text: Launcher.logs.join("\n")
                 }
             }
 

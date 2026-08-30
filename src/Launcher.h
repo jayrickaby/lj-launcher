@@ -8,6 +8,7 @@
 #include <qqml.h>
 
 #include <QDir>
+#include <QFontDatabase>
 #include <QObject>
 #include <QStandardPaths>
 #include <QString>
@@ -35,6 +36,7 @@ class Launcher : public QObject {
   Q_PROPERTY(QString javaExecutable READ javaExecutable CONSTANT)
   Q_PROPERTY(QStringList logs READ logs NOTIFY logsChanged)
   Q_PROPERTY(QString userMessage READ userMessage NOTIFY userMessageChanged)
+  Q_PROPERTY(QString monospaceFont READ monospaceFont CONSTANT)
 
 signals:
   void launcherError(const ErrorMessage &message);
@@ -47,6 +49,7 @@ public:
 
   QString gameDirectory() { return getGameDirectory().toLocalFile(); };
   QString javaExecutable() { return getJavaExecutable().toLocalFile(); };
+  QString monospaceFont() { return getMonospaceFont(); };
   QStringList logs() { return s_logs; };
   QString userMessage();
 
@@ -55,6 +58,7 @@ public:
 
   static QUrl getGameDirectory();
   static QUrl getJavaExecutable();
+  static QString getMonospaceFont();
   static QString getUsername();
   static QString getTime(bool def = false);
 

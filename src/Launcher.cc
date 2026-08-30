@@ -35,6 +35,8 @@ Launcher::Launcher(QObject *parent)
   if (!s_instance) {
     s_instance = this;
   }
+
+  qDebug() << getMonospaceFont();
 }
 
 QUrl Launcher::getJavaExecutable() {
@@ -176,4 +178,9 @@ void Launcher::addLog(const QString& message) {
   s_logs.append(log);
 
   emit getInstance()->logsChanged();
+}
+
+QString Launcher::getMonospaceFont() {
+  QString font {QFontDatabase::systemFont(QFontDatabase::FixedFont).family()};
+  return font;
 }
