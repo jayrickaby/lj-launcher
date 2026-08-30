@@ -52,15 +52,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-#        os: [ubuntu-latest, macos-latest, windows-latest]
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         include:
-          - os: windows-latest
-            triplet: x64-windows
           - os: ubuntu-latest
             triplet: x64-linux
-#          - os: macos-latest
-#            triplet: x64-osx
 
     env:
       VCPKG_DEFAULT_TRIPLET: ${{ matrix.triplet }}
@@ -70,19 +65,8 @@ jobs:
         with:
           submodules: true
 
-      - name: Install Qt [Windows]
+      - name: Install Qt
         uses: jurplel/install-qt-action@v4.3.1
-        if: runner.os == 'Windows'
-        with:
-          version: '6.11.2'
-          arch: 'win64_msvc2022_64'
-          aqtsource: 'git+https://github.com/miurahr/aqtinstall.git@master'
-          modules: 'qtwebengine qtwebchannel qtpositioning'
-          py7zrversion: '==1.1.0'
-
-      - name: Install Qt [Linux]
-        uses: jurplel/install-qt-action@v4.3.1
-        if: runner.os == 'Linux'
         with:
           version: '6.11.2'
           modules: 'qtwebengine qtwebchannel qtpositioning'
@@ -92,36 +76,18 @@ jobs:
         run: find $RUNNER_WORKSPACE
         shell: bash
       
-      - name: Setup vcpkg [Linux]
-        if: runner.os == 'Linux'
+      - name: Setup vcpkg
         uses: lukka/run-vcpkg@v11
-        id: runvcpkgLinux
+        id: runvcpkg
         with:
           vcpkgGitCommitId: 'ddd0023b0eee70986e42ed49d9d4afb8098f212e'
           vcpkgJsonGlob: '**/vcpkg.json'
 
-      - name: Setup vcpkg [Windows]
-        if: runner.os == 'Windows'
-        uses: lukka/run-vcpkg@v11
-        id: runvcpkgWindows
-        with:
-          vcpkgDirectory: 'C:/vcpkg'
-          vcpkgGitCommitId: 'ddd0023b0eee70986e42ed49d9d4afb8098f212e'
-          vcpkgJsonGlob: '**/vcpkg.json'
-          
       - name: List $RUNNER_WORKSPACE before build
         run: find $RUNNER_WORKSPACE
         shell: bash
       - name: Prints output of run-vcpkg's action.
-        if: runner.os == 'Windows'
-        run: echo "root='${{ steps.runvcpkgWindows.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkgWindows.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
-          
-      - name: List $RUNNER_WORKSPACE before build
-        run: find $RUNNER_WORKSPACE
-        shell: bash
-      - name: Prints output of run-vcpkg's action.
-        if: runner.os == 'Linux'
-        run: echo "root='${{ steps.runvcpkgLinux.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkgLinux.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
+        run: echo "root='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}', triplet='${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_DEFAULT_TRIPLET_OUT }}' "
         
       - name: Run CMake+vcpkg+NinjaMulti-Config (Release configuration)
         uses: lukka/run-cmake@v10
@@ -157,12 +123,6 @@ jobs:
     needs: [release, build]
     runs-on: ubuntu-latest
     steps:
-      - name: Download Windows Binary
-        uses: actions/download-artifact@v7
-        with:
-          name: 'binary-windows-latest'
-          path: dist/
-
       - name: Download Linux Binary
         uses: actions/download-artifact@v7
         with:
