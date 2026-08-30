@@ -30,9 +30,15 @@ void ClientJson::refreshJson() {
   FileSystem::makePath(nativesPath);
   JavaVirtualMachine::setVariable("natives_directory", nativesPath);
 
-  const QVariantMap DATA {JsonUtils::readJson(m_clientJson.path).toVariantMap()};
+  const QVariantMap MAP {JsonUtils::readJson(m_clientJson.path).toVariantMap()};
 
-  QVariantMap arguments {DATA.value("arguments").toMap()};
+  // Installed CompleteVersion{id='x'...}
+  Launcher::addLog(
+    QString("Installed CompleteVersion%1")
+    .arg(FileSystem::cat(m_clientJson.path))
+  );
+
+  QVariantMap arguments {MAP.value("arguments").toMap()};
   for (const auto& rawDefaultJvmArg : arguments.value("default-user-jvm").toList()) {
     if (rawDefaultJvmArg.metaType().id() == QMetaType::QString) {
       defaultJvmArguments.unconditionalArguments.append(rawDefaultJvmArg.toString());
@@ -60,17 +66,17 @@ void ClientJson::refreshJson() {
     }
   }
 
-  m_assetIndex = new AssetIndex(DATA.value("assetIndex").toMap());
-  m_libraryIndex = new LibraryIndex(DATA.value("libraries").toList());
+  m_assetIndex = new AssetIndex(MAP.value("assetIndex").toMap());
+  m_libraryIndex = new LibraryIndex(MAP.value("libraries").toList());
 
   connect(m_assetIndex, &AssetIndex::stateChanged, this, &ClientJson::refreshState);
   connect(m_libraryIndex, &LibraryIndex::stateChanged, this, &ClientJson::refreshState);
 
-  m_mainClass = DATA.value("mainClass").toString();
+  m_mainClass = MAP.value("mainClass").toString();
 
   m_clientJar = (
     parseClientJar(
-    DATA
+    MAP
       .value("downloads").toMap()
       .value("client").toMap()
     )
@@ -80,6 +86,7 @@ void ClientJson::refreshJson() {
 
 void ClientJson::requestJson() {
   qDebug() << "Requesting client.json file...";
+  Launcher::addLog("Queueing Library & Version downloads");
 
   setState(ClientState::DOWNLOADING_JSON);
   Downloader::addDownload(this, m_clientJson);

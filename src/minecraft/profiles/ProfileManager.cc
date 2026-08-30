@@ -117,6 +117,9 @@ ProfileManager* ProfileManager::getInstance() {
 }
 
 QHash<QString, QSharedPointer<ProfileEntry>> ProfileManager::getProfiles() {
+  if (s_profiles.empty()) {
+    refreshProfiles();
+  }
   return s_profiles;
 }
 
@@ -150,6 +153,12 @@ void ProfileManager::refreshProfiles() {
 
     s_profiles.insert(profileId, profile);
   }
+
+  // Added x profile(s);
+  Launcher::addLog(
+    QString("Added %1 profile(s);")
+    .arg(s_profiles.size())
+  );
 
   emit getInstance()->refreshedProfiles();
 }

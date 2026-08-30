@@ -12,6 +12,7 @@
 Launcher* Launcher::s_instance {nullptr};
 QUrl Launcher::s_gameDirectory;
 QUrl Launcher::s_javaExecutable {QUrl::fromLocalFile(FileSystem::which("java"))}; // stores properly
+QStringList Launcher::s_logs {};
 QString Launcher::s_username;
 
 Launcher::Launcher(QObject *parent)
@@ -34,6 +35,8 @@ Launcher::Launcher(QObject *parent)
   if (!s_instance) {
     s_instance = this;
   }
+
+  qDebug() << getMonospaceFont();
 }
 
 QUrl Launcher::getJavaExecutable() {
@@ -161,4 +164,24 @@ void Launcher::play() {
   };
 
   Game::launch(profile);
+}
+
+void Launcher::addLog(const QString& message) {
+  QString log {
+    QString("[%1 %2] %3")
+    .arg(
+      QTime::currentTime().toString(),
+      "INFO",
+      message
+    )
+  };
+  s_logs.append(log);
+  qDebug() << log;
+
+  emit getInstance()->logsChanged();
+}
+
+QString Launcher::getMonospaceFont() {
+  QString font {QFontDatabase::systemFont(QFontDatabase::FixedFont).family()};
+  return font;
 }

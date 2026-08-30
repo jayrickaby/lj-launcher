@@ -81,10 +81,21 @@ Item {
             }
 
             // Launcher Log
-            Rectangle {
+            ScrollView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                color: "blue"
+
+                // TODO: Get rid of bounce
+
+                TextArea {
+                    font.family: Launcher.monospaceFont
+                    font.pointSize: 12
+
+                    readOnly: true
+                    wrapMode: TextArea.Wrap
+
+                    text: Launcher.logs.join("\n")
+                }
             }
 
             // Profile Editor
@@ -245,6 +256,7 @@ Item {
                         Layout.preferredWidth: 87
                         Layout.preferredHeight: 21
 
+                        // TODO: Disable this and others when launching
                         text: qsTr("Switch User")
 
                         enabled: authenticated

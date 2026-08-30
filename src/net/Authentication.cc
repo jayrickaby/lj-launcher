@@ -20,7 +20,7 @@ m_loginData(getLoginData()) {
 }
 
 void Authentication::tryStoredRefreshToken() {
-  qDebug("Trying to authenticate via stored refresh...");
+  Launcher::addLog("Refreshing auth...");
   if (!hasRefreshToken()) {
     return;
   }
@@ -437,7 +437,8 @@ QString Authentication::parseMinecraftToken(const QJsonObject& json) {
 
   JavaVirtualMachine::setVariable("auth_access_token", accessToken);
 
-  qDebug("Found Minecraft access token");
+  Launcher::addLog("Logging in with access token");
+
   return accessToken;
 }
 

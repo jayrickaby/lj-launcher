@@ -116,6 +116,7 @@ bool Versions::isDownloaded(const QString& versionId) {
 }
 
 QList<QVariantMap> Versions::getDownloadedVersions() {
+  Launcher::addLog("Refreshing local version list...");
   QDirIterator iterator(VERSIONS_PATH.toString(),
     QDir::Dirs | QDir::NoDotAndDotDot);
 
@@ -145,6 +146,7 @@ QList<QVariantMap> Versions::getDownloadedVersions() {
     qDebug() << "No downloaded versions found.";
   }
 
+  Launcher::addLog("Refresh complete.");
   return versions;
 }
 

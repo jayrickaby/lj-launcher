@@ -81,10 +81,17 @@ void AssetIndex::onNetworkReply(QNetworkReply* reply) {
     return;
   }
 
+  // Finished downloading x for job '...': Downloaded successfully and hash matched
+  // Launcher::addLog(
+  //   QString("Finished downloading %1 for job 'Resources': Downloaded successfuly and hash matched")
+  //   .arg(REQUEST.path)
+  // );
+
   expectedAssetReplies--;
   if (expectedAssetReplies == 0) {
     setState(AssetIndexState::DOWNLOADED_ASSETS);
     setState(AssetIndexState::INITIALISED);
+    Launcher::addLog("Job 'Resources' finished successfully");
   }
 }
 
@@ -101,6 +108,12 @@ void AssetIndex::requestIndex() {
 }
 
 void AssetIndex::requestAssets() {
+  // Download job 'Resources' started (x files)
+  Launcher::addLog(
+    QString("Download job 'Resources' started (%1 files)")
+    .arg(m_objects.size())
+  );
+
   quint64 folderSize {
     FileSystem::getFolderSize(
       FileSystem::joinPaths({ASSETS_PATH, "objects"})
@@ -122,7 +135,21 @@ void AssetIndex::requestAssets() {
     }
 
     expectedAssetReplies++;
+
+    // Attempting do download x for jobs '...'...
+    // Launcher::addLog(
+    //   QString("Attempting to download %1 for job 'Resources'...")
+    //   .arg(ASSET.path)
+    // );
+
     Downloader::addDownload(this, ASSET);
+
+    // Making directory x
+    // Launcher::addLog(
+    //   QString("Making directory %1")
+    //   .arg(FileSystem::getParentDirectory(ASSET.path))
+    // );
+
     setState(AssetIndexState::DOWNLOADING_ASSETS);
   }
 
