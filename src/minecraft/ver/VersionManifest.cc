@@ -104,7 +104,7 @@ QList<ManifestEntry> VersionManifest::getVersions(const QList<VersionType>& type
 }
 
 void VersionManifest::refreshManifest() {
-  qDebug() << "Refreshing versions manifest...";
+  Launcher::addLog("Refreshing remote version list...");
   const QVariantMap MANIFEST_DATA {JsonUtils::readJson(MANIFEST_PATH).toVariantMap()};
 
   s_latestVersions = parseLatestVersions(MANIFEST_DATA.value("latest").toMap());
@@ -119,6 +119,7 @@ void VersionManifest::refreshManifest() {
       continue;
     }
   }
+  Launcher::addLog("Refresh complete.");
 }
 
 ManifestLatest VersionManifest::parseLatestVersions(const QVariantMap& latestData) {

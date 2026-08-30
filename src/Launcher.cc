@@ -176,6 +176,7 @@ void Launcher::addLog(const QString& message) {
     )
   };
   s_logs.append(log);
+  qDebug() << log;
 
   emit getInstance()->logsChanged();
 }

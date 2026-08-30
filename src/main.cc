@@ -18,17 +18,7 @@
 #include "net/Downloader.h"
 #include "net/Versions.h"
 
-int main(int argc, char *argv[]) {
-  qputenv("QT_FORCE_STDERR_LOGGING", "1");
-  QGuiApplication app(argc, argv);
-
-  // Default to org.kde.desktop style unless the user forces another style
-  auto system {SystemInfo::getOperatingSystem()};
-  if (system.name == SystemName::LINUX and qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {
-    // QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
-    QQuickStyle::setStyle("Fusion");
-  }
-
+void generateLogs() {
   // LJ-Launcher x.x.x started on x...
   Launcher::addLog(
     QString("%1 %2 started on %3...")
@@ -46,6 +36,33 @@ int main(int argc, char *argv[]) {
       QDateTime::currentDateTime().toString("MMM d, yyyy h:mm:ss AP")
     )
   );
+
+  QList<QPair<QString, QString>> sysinfo = {
+    {"os.name", QSysInfo::prettyProductName()},
+    {"os.version", QSysInfo::productVersion()},
+    {"os.arch", QSysInfo::currentCpuArchitecture()},
+  };
+
+  for (const auto& info : sysinfo) {
+    Launcher::addLog(
+      QString("System.getProperty('%1') == '%2'")
+      .arg(info.first, info.second)
+    );
+  }
+}
+
+int main(int argc, char *argv[]) {
+  qputenv("QT_FORCE_STDERR_LOGGING", "1");
+  QGuiApplication app(argc, argv);
+
+  // Default to org.kde.desktop style unless the user forces another style
+  auto system {SystemInfo::getOperatingSystem()};
+  if (system.name == SystemName::LINUX and qEnvironmentVariableIsEmpty("QT_QUICK_CONTROLS_STYLE")) {
+    // QQuickStyle::setStyle(QStringLiteral("org.kde.desktop"));
+    QQuickStyle::setStyle("Fusion");
+  }
+
+  generateLogs();
 
   JavaVirtualMachine::setVariable("launcher_name", Application::getApplicationName());
   JavaVirtualMachine::setVariable("launcher_version", Application::getApplicationVersion());

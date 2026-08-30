@@ -154,6 +154,12 @@ void ProfileManager::refreshProfiles() {
     s_profiles.insert(profileId, profile);
   }
 
+  // Added x profile(s);
+  Launcher::addLog(
+    QString("Added %1 profile(s);")
+    .arg(s_profiles.size())
+  );
+
   emit getInstance()->refreshedProfiles();
 }
 

@@ -34,7 +34,6 @@ Profiles::Profiles(QObject *parent)
 
 
 void Profiles::setCurrentProfileId(const QString& profileId) {
-  qDebug() << "Setting current profile to:" << profileId;
   if (!ProfileManager::isProfile(profileId)) {
     qDebug() << "Tried to set current profile to one that doesn't exist!";
     return;
@@ -45,6 +44,12 @@ void Profiles::setCurrentProfileId(const QString& profileId) {
 
   s_currentProfileId = profileId;
   emit currentProfileIdChanged();
+
+  // Selected 'x'
+  Launcher::addLog(
+    QString("selected '%1'")
+    .arg(getProfile(profileId)->getName())
+  );
 }
 
 QList<QVariantMap> Profiles::profiles() {
