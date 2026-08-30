@@ -10,6 +10,14 @@ All notable changes to this project will be documented in this file.
 * add launcher log ([8f1d620](https://github.com/jayrickaby/lj-launcher/commit/8f1d6203bba81b9c5de128cc63c2f6b067c4fd22))
 * add resolution and basic feature support ([847847f](https://github.com/jayrickaby/lj-launcher/commit/847847f53db48e78cbdcabf82e6ced27766920c5))
 
+# [0.8.0](https://github.com/jayrickaby/lj-launcher/compare/v0.7.2...v0.8.0) (2026-08-30)
+
+
+### Features
+
+* add launcher log ([8f1d620](https://github.com/jayrickaby/lj-launcher/commit/8f1d6203bba81b9c5de128cc63c2f6b067c4fd22))
+* add resolution and basic feature support ([847847f](https://github.com/jayrickaby/lj-launcher/commit/847847f53db48e78cbdcabf82e6ced27766920c5))
+
 ## [0.7.2](https://github.com/jayrickaby/lj-launcher/compare/v0.7.1...v0.7.2) (2026-08-29)
 
 
