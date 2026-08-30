@@ -72,18 +72,18 @@ void LibraryIndex::requestLibraries() {
     expectedLibraryReplies++;
 
     // Attempting do download x for jobs '...'...
-    Launcher::addLog(
-      QString("Attempting to download %1 for job 'Versions & Libraries'...")
-      .arg(LIBRARY.artifact.path)
-    );
+    // Launcher::addLog(
+    //   QString("Attempting to download %1 for job 'Versions & Libraries'...")
+    //   .arg(LIBRARY.artifact.path)
+    // );
 
     Downloader::addDownload(this, LIBRARY.artifact);
 
     // Making directory x
-    Launcher::addLog(
-      QString("Making directory %1")
-      .arg(FileSystem::getParentDirectory(LIBRARY.artifact.path))
-    );
+    // Launcher::addLog(
+    //   QString("Making directory %1")
+    //   .arg(FileSystem::getParentDirectory(LIBRARY.artifact.path))
+    // );
   }
 
   if (expectedLibraryReplies == 0) {
@@ -103,10 +103,10 @@ void LibraryIndex::onNetworkReply(QNetworkReply* reply) {
 
   DownloadItem library {reply->property("requestParameters").value<DownloadItem>()};
   // Finished downloading x for job '...': Downloaded successfully and hash matched
-  Launcher::addLog(
-    QString("Finished downloading %1 for job 'Libraries & Versions': Downloaded successfuly and hash matched")
-    .arg(library.path)
-  );
+  // Launcher::addLog(
+  //   QString("Finished downloading %1 for job 'Libraries & Versions': Downloaded successfuly and hash matched")
+  //   .arg(library.path)
+  // );
 
 
   expectedLibraryReplies--;
@@ -114,7 +114,7 @@ void LibraryIndex::onNetworkReply(QNetworkReply* reply) {
   if (expectedLibraryReplies == 0) {
     setState(LibraryIndexState::DOWNLOADED);
     setState(LibraryIndexState::INITIALISED);
-    Launcher::addLog("Job 'Resources' finished successfully");
+    Launcher::addLog("Job 'Library & Versions' finished successfully");
   }
 }
 

@@ -86,7 +86,7 @@ void ClientJson::refreshJson() {
 
 void ClientJson::requestJson() {
   qDebug() << "Requesting client.json file...";
-  Launcher::addLog("Queueing library & version downloads");
+  Launcher::addLog("Queueing Library & Version downloads");
 
   setState(ClientState::DOWNLOADING_JSON);
   Downloader::addDownload(this, m_clientJson);

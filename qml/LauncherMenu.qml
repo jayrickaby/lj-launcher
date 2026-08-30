@@ -254,6 +254,7 @@ Item {
                         Layout.preferredWidth: 87
                         Layout.preferredHeight: 21
 
+                        // TODO: Disable this and others when launching
                         text: qsTr("Switch User")
 
                         enabled: authenticated
