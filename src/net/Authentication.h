@@ -49,6 +49,7 @@ class Authentication : public NetworkRequester {
   Q_OBJECT
   Q_PROPERTY(QUrl codeUrl READ codeUrl)
   Q_PROPERTY(AuthState authState READ authState NOTIFY authStateChanged)
+  Q_PROPERTY(bool authenticated READ authenticated NOTIFY authStateChanged)
   QML_ELEMENT
   QML_SINGLETON
 
@@ -73,6 +74,7 @@ public:
 
   [[nodiscard]] QUrl codeUrl() const { return m_loginData.url; }
   [[nodiscard]] AuthState authState() const { return s_authState; }
+  [[nodiscard]] bool authenticated() const { return s_authState == AuthState::AUTHENTICATED; }
   [[nodiscard]] static AuthState getAuthState() { return s_authState; }
 
   static Authentication* getInstance();

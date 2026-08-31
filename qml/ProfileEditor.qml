@@ -12,6 +12,12 @@ ApplicationWindow {
 
     title: qsTr("Profile Editor")
 
+    width: content.implicitWidth + leftPadding + rightPadding
+    height: content.implicitHeight + topPadding + bottomPadding
+
+    minimumWidth: content.implicitWidth + leftPadding + rightPadding
+    minimumHeight: content.implicitHeight + topPadding + bottomPadding
+
     property var currentProfile: null
     property var currentProfileId: null
 

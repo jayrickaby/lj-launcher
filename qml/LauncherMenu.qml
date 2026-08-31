@@ -4,24 +4,20 @@ import QtQuick.Layouts
 
 import jayrickaby.lj_launcher
 
+import "./CommandBar"
 import "./LauncherPages"
-import "./Actions"
 
 Item {
     id: control
 
-    property int authState: Authentication.authState
-    property bool authenticated: authState === Authentication.AuthState.AUTHENTICATED
+    readonly property int authState: Authentication.authState
+    readonly property bool authenticated: Authentication.authenticated
 
-    property int versionManifestState: VersionManifest.manifestState
-    property bool versionsGotten: versionManifestState === VersionManifest.ManifestState.PRESENT
+    readonly property int versionManifestState: VersionManifest.manifestState
+    readonly property bool versionsGotten: VersionManifest.present
 
-    property int gameState: Game.state
-    property bool gameUninitialised: Game.state === Game.GameState.UNINITIALISED
-    property bool gamePreparing: Game.state === Game.GameState.PREPARING
-    property bool gameDownloading: Game.state === Game.GameState.DOWNLOADING
-    property bool gameDownloaded: Game.state === Game.GameState.DOWNLOADED
-    property bool gameLaunching: Game.state === Game.GameState.LAUNCHING
+    readonly property int gameState: Game.state
+    readonly property bool gameDownloading: Game.state === Game.GameState.DOWNLOADING
 
     property alias profileEditor: profileEditorLoader
 
@@ -29,19 +25,6 @@ Item {
         id: profileEditorLoader
         active: false
         sourceComponent: ProfileEditor{}
-    }
-
-    NewProfileAction {
-        id: newProfileAction
-
-        editor: profileEditor
-        profileId: profileChooser.currentValue
-    }
-    EditProfileAction {
-        id: editProfileAction
-
-        editor: profileEditor
-        profileId: profileChooser.currentValue
     }
 
     ColumnLayout {
@@ -81,24 +64,12 @@ Item {
             }
 
             // Launcher Log
-            ScrollView {
+            LogsPage {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                // TODO: Get rid of bounce
-
-                TextArea {
-                    font.family: Launcher.monospaceFont
-                    font.pointSize: 12
-
-                    readOnly: true
-                    wrapMode: TextArea.Wrap
-
-                    text: Launcher.logs.join("\n")
-                }
             }
 
-            // Profile Editor
+            // Profile Page
             ProfilesPage {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -126,12 +97,12 @@ Item {
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
 
-                text: Downloader.currentFile
+                text: `Downloading ${Downloader.currentFile}`
             }
         }
 
         // Command Bar
-        Rectangle {
+        Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 60
 
@@ -144,126 +115,44 @@ Item {
                 anchors.topMargin: 5
                 anchors.rightMargin: 4
                 anchors.bottomMargin: 5
-                uniformCellSizes: true
 
-                // Profile
-                ColumnLayout {
+                ProfileSelector {
                     Layout.alignment: Qt.AlignLeft
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    Layout.horizontalStretchFactor: 2
 
-                    // Combobox
-                    RowLayout {
-                       Text { text: qsTr("Profile:") }
-                       ComboBox {
-                           id: profileChooser
-                           Layout.preferredWidth: 137
-                           Layout.preferredHeight: 20
-
-                           valueRole: "id"
-                           textRole: "name"
-
-                           model: authenticated && versionsGotten ? Profiles.profiles
-                                                : [{ "name": "Loading profiles...", "id": "" }]
-
-                           enabled: authenticated && versionsGotten
-
-                           currentIndex: {
-                               if (!versionsGotten) return 0;
-
-                               var list = Profiles.profiles;
-                               for (var i = 0; i < list.length; i++) {
-                                   if (list[i].id === Profiles.currentProfileId) return i;
-                               }
-                               return -1;
-                           }
-
-                           onActivated: {
-                               Profiles.currentProfileId = currentValue;
-                           }
-                       }
-                    }
-
-                    // Buttons
-                    RowLayout {
-                        Layout.alignment: Qt.AlignHCenter
-                        spacing: 2
-
-                        Button {
-                            Layout.preferredWidth: 85
-                            Layout.preferredHeight: 21
-
-                            action: newProfileAction
-
-                            enabled: authenticated && versionsGotten
-                        }
-                        Button {
-                            Layout.preferredWidth: 85
-                            Layout.preferredHeight: 21
-
-                            action: editProfileAction
-
-                            enabled: authenticated && versionsGotten
-                        }
-                    }
+                    editor: profileEditorLoader
                 }
 
-                // Play
-                Button {
-                    id: playButton
+                // spacer
+                Item {
+                    Layout.fillWidth: true
+                    Layout.horizontalStretchFactor: 1
+                }
+
+                PlayButton {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillHeight: true
-                    Layout.preferredWidth: 290
+                    Layout.fillWidth: true
+                    Layout.horizontalStretchFactor: 5
+                }
 
-                    font.bold: true
 
-                    text: {
-                        if (!authenticated || !versionsGotten) return qsTr("Loading...");
-                        if (gamePreparing) return qsTr("Preparing...");
-                        if (gameLaunching) return qsTr("Launching...");
-                        if (!gameUninitialised) return qsTr("Installing...");
-
-                        return qsTr("Play");
-                    }
-
-                    enabled: {
-                        if (!authenticated || !versionsGotten || !gameUninitialised) return false;
-                        return true;
-                    }
-
-                    onClicked: {
-                        Launcher.play();
-                    }
+                // spacer
+                Item {
+                    Layout.fillWidth: true
+                    Layout.horizontalStretchFactor: 1
                 }
 
                 // User
-                ColumnLayout {
+                UserManager {
                     Layout.alignment: Qt.AlignRight
                     Layout.fillHeight: true
-
-                    spacing: 2
-
-                    Text {
-                        Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                        Layout.topMargin: -4
-
-                        horizontalAlignment: Text.AlignHCenter
-                        text: qsTr(Launcher.userMessage)
-                    }
-
-                    Button {
-                        Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                        Layout.preferredWidth: 87
-                        Layout.preferredHeight: 21
-
-                        // TODO: Disable this and others when launching
-                        text: qsTr("Switch User")
-
-                        enabled: authenticated
-
-                        onClicked: Authentication.logOut();
-                    }
+                    Layout.fillWidth: true
+                    Layout.horizontalStretchFactor: 2
                 }
+
             }
         }
     }
