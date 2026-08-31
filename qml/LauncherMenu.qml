@@ -10,14 +10,14 @@ import "./LauncherPages"
 Item {
     id: control
 
-    property int authState: Authentication.authState
-    property bool authenticated: Authentication.authenticated
+    readonly property int authState: Authentication.authState
+    readonly property bool authenticated: Authentication.authenticated
 
-    property int versionManifestState: VersionManifest.manifestState
-    property bool versionsGotten: VersionManifest.present
+    readonly property int versionManifestState: VersionManifest.manifestState
+    readonly property bool versionsGotten: VersionManifest.present
 
-    property int gameState: Game.state
-    property bool gameDownloading: Game.state === Game.GameState.DOWNLOADING
+    readonly property int gameState: Game.state
+    readonly property bool gameDownloading: Game.state === Game.GameState.DOWNLOADING
 
     property alias profileEditor: profileEditorLoader
 

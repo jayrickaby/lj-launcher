@@ -9,8 +9,12 @@ import "../Actions"
 Item {
     id: root
 
-    property bool authenticated: Authentication.authenticated
-    property bool versionsGotten: VersionManifest.present
+    readonly property bool authenticated: Authentication.authenticated
+    readonly property bool versionsGotten: VersionManifest.present
+
+    readonly property int gameState: Game.state
+    readonly property bool gameUninitialised: Game.state === Game.GameState.UNINITIALISED
+
     property var editor
 
     NewProfileAction {
@@ -44,7 +48,7 @@ Item {
                 model: authenticated && versionsGotten ? Profiles.profiles
                     : [{ "name": "Loading profiles...", "id": "" }]
 
-                enabled: authenticated && versionsGotten
+                enabled: authenticated && versionsGotten && gameUninitialised
 
                 currentIndex: {
                     if (!versionsGotten) return 0;
@@ -75,7 +79,7 @@ Item {
 
                 action: newProfileAction
 
-                enabled: authenticated && versionsGotten
+                enabled: authenticated && versionsGotten && gameUninitialised
             }
             Button {
                 Layout.fillWidth: true
@@ -83,7 +87,7 @@ Item {
 
                 action: editProfileAction
 
-                enabled: authenticated && versionsGotten
+                enabled: authenticated && versionsGotten && gameUninitialised
             }
         }
     }

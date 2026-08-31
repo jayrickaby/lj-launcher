@@ -9,15 +9,13 @@ Button {
 
     font.bold: true
 
-    property bool authenticated: Authentication.authenticated
-    property bool versionsGotten: VersionManifest.present
+    readonly property bool authenticated: Authentication.authenticated
+    readonly property bool versionsGotten: VersionManifest.present
 
-    property int gameState: Game.state
-    property bool gameUninitialised: Game.state === Game.GameState.UNINITIALISED
-    property bool gamePreparing: Game.state === Game.GameState.PREPARING
-    property bool gameDownloading: Game.state === Game.GameState.DOWNLOADING
-    property bool gameDownloaded: Game.state === Game.GameState.DOWNLOADED
-    property bool gameLaunching: Game.state === Game.GameState.LAUNCHING
+    readonly property int gameState: Game.state
+    readonly property bool gameUninitialised: Game.state === Game.GameState.UNINITIALISED
+    readonly property bool gamePreparing: Game.state === Game.GameState.PREPARING
+    readonly property bool gameLaunching: Game.state === Game.GameState.LAUNCHING
 
     text: {
         if (!authenticated || !versionsGotten) return qsTr("Loading...");
