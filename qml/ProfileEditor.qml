@@ -233,7 +233,7 @@ ApplicationWindow {
                 CheckBox{
                     id: checkShowBetaVersions
                     Layout.columnSpan: 2
-                    text: qsTr("Allow use of old \"Beta\" Minecraft ver (From 2010-2011)")
+                    text: qsTr("Allow use of old \"Beta\" Minecraft versions (From 2010-2011)")
 
                     checked: currentProfile.showBetaVersions
                     onCheckedChanged: {
@@ -245,7 +245,7 @@ ApplicationWindow {
                 CheckBox{
                     id: checkShowAlphaVersions
                     Layout.columnSpan: 2
-                    text: qsTr("Allow use of old \"Alpha\" Minecraft ver (From 2010)")
+                    text: qsTr("Allow use of old \"Alpha\" Minecraft versions (From 2010)")
 
                     checked: currentProfile.showAlphaVersions
                     onCheckedChanged: {
