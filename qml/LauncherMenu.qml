@@ -130,6 +130,7 @@ Item {
                 uniformCellSizes: true
 
                 ProfileSelector {
+                    Layout.alignment: Qt.AlignLeft
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
@@ -141,7 +142,6 @@ Item {
                     Layout.fillWidth: true
                 }
 
-                // Play
                 PlayButton {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillHeight: true
@@ -155,34 +155,12 @@ Item {
                 }
 
                 // User
-                ColumnLayout {
+                UserManager {
                     Layout.alignment: Qt.AlignRight
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-
-                    spacing: 2
-
-                    Text {
-                        Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-                        Layout.topMargin: -4
-
-                        horizontalAlignment: Text.AlignHCenter
-                        text: qsTr(Launcher.userMessage)
-                    }
-
-                    Button {
-                        Layout.alignment: Qt.AlignHCenter | Qt.AlignBottom
-                        Layout.preferredWidth: 87
-                        Layout.preferredHeight: 21
-
-                        // TODO: Disable this and others when launching
-                        text: qsTr("Switch User")
-
-                        enabled: authenticated
-
-                        onClicked: Authentication.logOut();
-                    }
                 }
+
             }
         }
     }
