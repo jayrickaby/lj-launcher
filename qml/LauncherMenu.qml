@@ -114,7 +114,7 @@ Item {
         }
 
         // Command Bar
-        Rectangle {
+        Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 60
 
@@ -143,7 +143,6 @@ Item {
 
                 // Play
                 PlayButton {
-                    id: playButton
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillHeight: true
                     Layout.fillWidth: true
