@@ -97,7 +97,7 @@ Item {
                 anchors.fill: parent
                 horizontalAlignment: Text.AlignHCenter
 
-                text: Downloader.currentFile
+                text: `Downloading ${Downloader.currentFile}`
             }
         }
 
