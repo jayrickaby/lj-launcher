@@ -9,7 +9,7 @@ import "../Actions"
 Item {
     id: root
 
-    property bool authenticated: Authentication.authState === Authentication.AuthState.AUTHENTICATED
+    property bool authenticated: Authentication.authenticated
     property bool versionsGotten: VersionManifest.manifestState === VersionManifest.ManifestState.PRESENT
     property var editor
 

@@ -11,7 +11,7 @@ Item {
     id: control
 
     property int authState: Authentication.authState
-    property bool authenticated: authState === Authentication.AuthState.AUTHENTICATED
+    property bool authenticated: Authentication.authenticated
 
     property int versionManifestState: VersionManifest.manifestState
     property bool versionsGotten: versionManifestState === VersionManifest.ManifestState.PRESENT
