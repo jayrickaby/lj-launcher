@@ -17,11 +17,7 @@ Item {
     property bool versionsGotten: VersionManifest.present
 
     property int gameState: Game.state
-    property bool gameUninitialised: Game.state === Game.GameState.UNINITIALISED
-    property bool gamePreparing: Game.state === Game.GameState.PREPARING
     property bool gameDownloading: Game.state === Game.GameState.DOWNLOADING
-    property bool gameDownloaded: Game.state === Game.GameState.DOWNLOADED
-    property bool gameLaunching: Game.state === Game.GameState.LAUNCHING
 
     property alias profileEditor: profileEditorLoader
 
@@ -140,38 +136,17 @@ Item {
                     editor: profileEditorLoader
                 }
 
-
                 // spacer
                 Item {
                     Layout.fillWidth: true
                 }
 
                 // Play
-                Button {
+                PlayButton {
                     id: playButton
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillHeight: true
                     Layout.fillWidth: true
-
-                    font.bold: true
-
-                    text: {
-                        if (!authenticated || !versionsGotten) return qsTr("Loading...");
-                        if (gamePreparing) return qsTr("Preparing...");
-                        if (gameLaunching) return qsTr("Launching...");
-                        if (!gameUninitialised) return qsTr("Installing...");
-
-                        return qsTr("Play");
-                    }
-
-                    enabled: {
-                        if (!authenticated || !versionsGotten || !gameUninitialised) return false;
-                        return true;
-                    }
-
-                    onClicked: {
-                        Launcher.play();
-                    }
                 }
 
 
