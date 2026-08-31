@@ -66,10 +66,11 @@ Item {
         // Buttons
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
             spacing: 2
 
             Button {
-                Layout.preferredWidth: 85
+                Layout.fillWidth: true
                 Layout.preferredHeight: 21
 
                 action: newProfileAction
@@ -77,7 +78,7 @@ Item {
                 enabled: authenticated && versionsGotten
             }
             Button {
-                Layout.preferredWidth: 85
+                Layout.fillWidth: true
                 Layout.preferredHeight: 21
 
                 action: editProfileAction
