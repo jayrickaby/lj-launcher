@@ -10,6 +10,7 @@ Item {
     property bool authenticated: Authentication.authenticated
 
     ColumnLayout {
+        anchors.fill: parent
         spacing: 2
 
         Text {

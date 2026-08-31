@@ -127,12 +127,12 @@ Item {
                 anchors.topMargin: 5
                 anchors.rightMargin: 4
                 anchors.bottomMargin: 5
-                uniformCellSizes: true
 
                 ProfileSelector {
                     Layout.alignment: Qt.AlignLeft
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    Layout.horizontalStretchFactor: 2
 
                     editor: profileEditorLoader
                 }
@@ -140,18 +140,21 @@ Item {
                 // spacer
                 Item {
                     Layout.fillWidth: true
+                    Layout.horizontalStretchFactor: 1
                 }
 
                 PlayButton {
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.horizontalStretchFactor: 5
                 }
 
 
                 // spacer
                 Item {
                     Layout.fillWidth: true
+                    Layout.horizontalStretchFactor: 1
                 }
 
                 // User
@@ -159,6 +162,7 @@ Item {
                     Layout.alignment: Qt.AlignRight
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    Layout.horizontalStretchFactor: 2
                 }
 
             }
