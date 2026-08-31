@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.1](https://github.com/jayrickaby/lj-launcher/compare/v0.8.0...v0.8.1) (2026-08-31)
+
+
+### Bug Fixes
+
+* adjust some styling issues ([ac3fb44](https://github.com/jayrickaby/lj-launcher/commit/ac3fb44e2307966a42018bb2f5a10a5f509a3b5b))
+
 # [0.8.0](https://github.com/jayrickaby/lj-launcher/compare/v0.7.2...v0.8.0) (2026-08-30)
 
 
