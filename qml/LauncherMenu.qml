@@ -14,7 +14,7 @@ Item {
     property bool authenticated: Authentication.authenticated
 
     property int versionManifestState: VersionManifest.manifestState
-    property bool versionsGotten: versionManifestState === VersionManifest.ManifestState.PRESENT
+    property bool versionsGotten: VersionManifest.present
 
     property int gameState: Game.state
     property bool gameUninitialised: Game.state === Game.GameState.UNINITIALISED

@@ -28,6 +28,7 @@ struct ManifestLatest {
 class VersionManifest: public NetworkRequester {
   Q_OBJECT
   Q_PROPERTY(ManifestState manifestState MEMBER s_manifestState NOTIFY stateChanged)
+  Q_PROPERTY(bool present READ present NOTIFY stateChanged)
 
 signals:
   void stateChanged();
@@ -42,6 +43,8 @@ public:
 
   explicit VersionManifest(QObject *parent = nullptr);
   void onNetworkReply(QNetworkReply* reply) override;
+
+  bool present() {return s_manifestState==ManifestState::PRESENT;}
 
   static void refreshManifest();
 
