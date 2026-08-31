@@ -24,17 +24,26 @@ I made this in order to understand the fundamentals of how a Minecraft Launcher 
 
 - Download and extract `lj-launcher-ubuntu-latest.zip`
 - Give the executable permissions, i.e. `chmod a+rx ./lj_launcher`
-- Run the executable `lj_launcher`
-### Windows
-- Latest Microsoft Visual C++ Redistributable
-- Latest JDK (i.e 26)
+- Run the executable `./lj_launcher`
 
-NOTE: The Windows Binary is highly unstable and is prone to crashes and bugs that are hard to diagnose in my current setup. So, there is currently not much official support until circumstances change.
-- Download and extract `lj-launcher-windows-latest.zip`
-- Run the executable `lj_launcher.exe`
+It is recommended that you use the KDE desktop environment. 
+
+[//]: # (### Windows)
+
+[//]: # (- Latest Microsoft Visual C++ Redistributable)
+
+[//]: # (- Latest JDK &#40;i.e 26&#41;)
+
+[//]: # ()
+[//]: # (NOTE: The Windows Binary is highly unstable and is prone to crashes and bugs that are hard to diagnose in my current setup. So, there is currently not much official support until circumstances change.)
+
+[//]: # (- Download and extract `lj-launcher-windows-latest.zip`)
+
+[//]: # (- Run the executable `lj_launcher.exe`)
 
 ## Gallery
-<img src="docs/assets/gallery/login.png" width=50% alt="login">
-<img src="docs/assets/gallery/launcher.png" width=50% alt="launcher">
-<img src="docs/assets/gallery/profileEditor.png" width=50% alt="launcher">
-<img src="docs/assets/gallery/profilePage.png" width=50% alt="launcher">
+<img src="docs/assets/gallery/login.png" width=50% alt="login screen">
+<img src="docs/assets/gallery/launcher.png" width=50% alt="launcher page">
+<img src="docs/assets/gallery/logsPage.png" width=50% alt="logs page">
+<img src="docs/assets/gallery/profilePage.png" width=50% alt="profiles page">
+<img src="docs/assets/gallery/profileEditor.png" width=50% alt="profile editor">
