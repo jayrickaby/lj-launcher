@@ -39,7 +39,7 @@ private:
   inline static const QString DEFAULT_TITLE {"LegacyJava Launcher"};
 
   inline static const QString APPLICATION_NAME {"LJ-Launcher"};
-  inline static const QString APPLICATION_VERSION {"v0.8.0"};
+  inline static const QString APPLICATION_VERSION {"v0.8.1"};
   inline static const QString ORGANISATION_DOMAIN {"jayrickaby.com"};
   inline static const QString ORGANISATION_NAME {"JayRickaby"};
 
