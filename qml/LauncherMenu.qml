@@ -64,21 +64,9 @@ Item {
             }
 
             // Launcher Log
-            ScrollView {
+            LogsPage {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                // TODO: Get rid of bounce
-
-                TextArea {
-                    font.family: Launcher.monospaceFont
-                    font.pointSize: 12
-
-                    readOnly: true
-                    wrapMode: TextArea.Wrap
-
-                    text: Launcher.logs.join("\n")
-                }
             }
 
             // Profile Page

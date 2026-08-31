@@ -84,6 +84,7 @@ qt_add_qml_module(lj_launcher
         qml/CommandBar/PlayButton.qml
         qml/CommandBar/ProfileSelector.qml
         qml/CommandBar/UserManager.qml
+        qml/LauncherPages/LogsPage.qml
         qml/LauncherPages/NewsPage.qml
         qml/LauncherPages/ProfilesPage.qml
         qml/LauncherPages/ProfilesPage/ProfileCellDelegate.qml
