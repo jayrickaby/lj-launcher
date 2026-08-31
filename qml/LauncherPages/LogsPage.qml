@@ -11,8 +11,8 @@ FocusScope {
         anchors.fill: parent
 
         TextArea {
-            // font.family: Launcher.monospaceFont
-            // font.pointSize: 12
+            font.family: Launcher.monospaceFont
+            font.pointSize: 12
 
             readOnly: true
             wrapMode: TextArea.Wrap

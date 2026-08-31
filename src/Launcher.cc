@@ -35,8 +35,6 @@ Launcher::Launcher(QObject *parent)
   if (!s_instance) {
     s_instance = this;
   }
-
-  qDebug() << getMonospaceFont();
 }
 
 QUrl Launcher::getJavaExecutable() {
