@@ -52,7 +52,7 @@ ApplicationWindow {
     ColumnLayout {
         id: content
         anchors.fill: parent
-        spacing: 0
+        spacing: 8
 
         // Profile Info
         GroupBox {
