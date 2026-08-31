@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.2](https://github.com/jayrickaby/lj-launcher/compare/v0.8.1...v0.8.2) (2026-08-31)
+
+
+### Bug Fixes
+
+* hide unimplemented keep launcher visible option ([dca1f56](https://github.com/jayrickaby/lj-launcher/commit/dca1f56ee068cab565a77dd630f9cfe38ca1971f))
+* readd spacing to profile editor ([4ab7ce7](https://github.com/jayrickaby/lj-launcher/commit/4ab7ce7413bc49d62c902ecf406680659d13f57e))
+* unshorten 'ver' ([6e54519](https://github.com/jayrickaby/lj-launcher/commit/6e545193facfb601222c21b4e3d5c8e83f76ceb2))
+
 ## [0.8.1](https://github.com/jayrickaby/lj-launcher/compare/v0.8.0...v0.8.1) (2026-08-31)
 
 
