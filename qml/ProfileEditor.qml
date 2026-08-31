@@ -174,16 +174,16 @@ ApplicationWindow {
                 // }
 
                 // Row 5
-                CheckBox {
-                    id: checkLauncherVisible
-                    text: qsTr("Keep Launcher Open")
-
-                    checked: Launcher.settings.keepLauncherOpen
-
-                    font.pointSize: 8
-
-                    onCheckedChanged: Launcher.set_setting("keepLauncherOpen", checked)
-                }
+                // CheckBox {
+                //     id: checkLauncherVisible
+                //     text: qsTr("Keep Launcher Open")
+                //
+                //     checked: Launcher.settings.keepLauncherOpen
+                //
+                //     font.pointSize: 8
+                //
+                //     onCheckedChanged: Launcher.set_setting("keepLauncherOpen", checked)
+                // }
                 // CheckBox {
                 //     id: checkLauncherVisible
                 //     text: qsTr("Launcher Visibility:")
