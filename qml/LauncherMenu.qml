@@ -4,8 +4,8 @@ import QtQuick.Layouts
 
 import jayrickaby.lj_launcher
 
+import "./CommandBar"
 import "./LauncherPages"
-import "./Actions"
 
 Item {
     id: control
@@ -29,19 +29,6 @@ Item {
         id: profileEditorLoader
         active: false
         sourceComponent: ProfileEditor{}
-    }
-
-    NewProfileAction {
-        id: newProfileAction
-
-        editor: profileEditor
-        profileId: profileChooser.currentValue
-    }
-    EditProfileAction {
-        id: editProfileAction
-
-        editor: profileEditor
-        profileId: profileChooser.currentValue
     }
 
     ColumnLayout {
@@ -98,7 +85,7 @@ Item {
                 }
             }
 
-            // Profile Editor
+            // Profile Page
             ProfilesPage {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
@@ -146,66 +133,17 @@ Item {
                 anchors.bottomMargin: 5
                 uniformCellSizes: true
 
-                // Profile
-                ColumnLayout {
-                    Layout.alignment: Qt.AlignLeft
+                ProfileSelector {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    // Combobox
-                    RowLayout {
-                       Text { text: qsTr("Profile:") }
-                       ComboBox {
-                           id: profileChooser
-                           Layout.preferredWidth: 137
-                           Layout.preferredHeight: 20
+                    editor: profileEditorLoader
+                }
 
-                           valueRole: "id"
-                           textRole: "name"
 
-                           model: authenticated && versionsGotten ? Profiles.profiles
-                                                : [{ "name": "Loading profiles...", "id": "" }]
-
-                           enabled: authenticated && versionsGotten
-
-                           currentIndex: {
-                               if (!versionsGotten) return 0;
-
-                               var list = Profiles.profiles;
-                               for (var i = 0; i < list.length; i++) {
-                                   if (list[i].id === Profiles.currentProfileId) return i;
-                               }
-                               return -1;
-                           }
-
-                           onActivated: {
-                               Profiles.currentProfileId = currentValue;
-                           }
-                       }
-                    }
-
-                    // Buttons
-                    RowLayout {
-                        Layout.alignment: Qt.AlignHCenter
-                        spacing: 2
-
-                        Button {
-                            Layout.preferredWidth: 85
-                            Layout.preferredHeight: 21
-
-                            action: newProfileAction
-
-                            enabled: authenticated && versionsGotten
-                        }
-                        Button {
-                            Layout.preferredWidth: 85
-                            Layout.preferredHeight: 21
-
-                            action: editProfileAction
-
-                            enabled: authenticated && versionsGotten
-                        }
-                    }
+                // spacer
+                Item {
+                    Layout.fillWidth: true
                 }
 
                 // Play
@@ -213,7 +151,7 @@ Item {
                     id: playButton
                     Layout.alignment: Qt.AlignHCenter
                     Layout.fillHeight: true
-                    Layout.preferredWidth: 290
+                    Layout.fillWidth: true
 
                     font.bold: true
 
@@ -236,10 +174,17 @@ Item {
                     }
                 }
 
+
+                // spacer
+                Item {
+                    Layout.fillWidth: true
+                }
+
                 // User
                 ColumnLayout {
                     Layout.alignment: Qt.AlignRight
                     Layout.fillHeight: true
+                    Layout.fillWidth: true
 
                     spacing: 2
 
