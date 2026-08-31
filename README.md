@@ -20,13 +20,14 @@ I made this in order to understand the fundamentals of how a Minecraft Launcher 
 
 ## Requirements & How to Run
 ### Linux (Ubuntu)
+#### Requirements
 `libopengl0 libxcb-cursor0 libxkbcommon-x11-0 libxcb-icccm4 libxcb-keysyms1 libxcb-xkb1 openjdk-26-jdk`
-
+#### How to Run
 - Download and extract `lj-launcher-ubuntu-latest.zip`
 - Give the executable permissions, i.e. `chmod a+rx ./lj_launcher`
 - Run the executable `./lj_launcher`
 
-It is recommended that you use the KDE desktop environment. 
+It is recommended that you use KDE. In my testing, GNOME has a weird issue where all the text is big and monospaced.
 
 [//]: # (### Windows)
 
