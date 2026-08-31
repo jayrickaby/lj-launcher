@@ -86,8 +86,8 @@ qt_add_qml_module(lj_launcher
         qml/CommandBar/UserManager.qml
         qml/LauncherPages/NewsPage.qml
         qml/LauncherPages/ProfilesPage.qml
-        qml/LauncherPages/template/ProfileCellDelegate.qml
-        qml/LauncherPages/template/ProfilesTableMenu.qml
+        qml/LauncherPages/ProfilesPage/ProfileCellDelegate.qml
+        qml/LauncherPages/ProfilesPage/ProfilesTableMenu.qml
         qml/ProfileEditor/CheckBoxPopup.qml
     RESOURCES
         assets/dirt.png

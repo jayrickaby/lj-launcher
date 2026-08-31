@@ -3,7 +3,7 @@ import QtQuick.Controls
 import QtQuick.Dialogs
 import QtQuick.Layouts
 
-import "./template"
+import "./ProfilesPage"
 import "../Actions"
 
 // Adapted plasma-systemmonitor/src/table/BaseTableView.qml
